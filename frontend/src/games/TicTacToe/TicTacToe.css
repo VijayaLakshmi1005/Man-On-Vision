@@ -1,0 +1,219 @@
+.ttt-cinematic-container {
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  padding: 20px;
+}
+
+.ttt-header-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 15px;
+}
+
+.player-glass, .draws-glass {
+  background: rgba(20, 20, 20, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.player-glass.active {
+  border-color: rgba(212, 175, 55, 0.5);
+  background: rgba(212, 175, 55, 0.05);
+}
+
+.glow-red.active {
+  box-shadow: 0 0 20px rgba(139, 0, 0, 0.3);
+  border-color: #8b0000;
+}
+
+.glow-gold.active {
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+  border-color: #d4af37;
+}
+
+.label {
+  font-size: 0.6rem;
+  color: #888;
+  letter-spacing: 2px;
+}
+
+.icon-large {
+  font-size: 2rem;
+}
+
+.score-val {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.difficulty-pills {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.pill {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #aaa;
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.pill.selected {
+  background: #d4af37;
+  color: #000;
+  border-color: #d4af37;
+}
+
+.ttt-grid-cinematic {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  padding: 15px;
+  background: rgba(15, 15, 15, 0.5);
+  border-radius: 20px;
+  border: 1px solid rgba(212, 175, 55, 0.1);
+}
+
+.ttt-square {
+  aspect-ratio: 1;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+
+.ttt-square:hover:not(.occupied) {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(212, 175, 55, 0.2);
+}
+
+.ttt-square.winner {
+  background: rgba(212, 175, 55, 0.1);
+  border-color: #d4af37;
+  animation: winnerPulse 1s infinite;
+}
+
+@keyframes winnerPulse {
+  0%, 100% { box-shadow: 0 0 10px rgba(212, 175, 55, 0.2); }
+  50% { box-shadow: 0 0 25px rgba(212, 175, 55, 0.5); }
+}
+
+.ttt-icon {
+  font-size: 2.5rem;
+  animation: iconAppear 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes iconAppear {
+  0% { transform: scale(0) rotate(-45deg); opacity: 0; }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+
+.ttt-overlay-cinematic {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 20px;
+  z-index: 100;
+  backdrop-filter: blur(8px);
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.overlay-card {
+  padding: 40px;
+  text-align: center;
+  border-radius: 30px;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  box-shadow: 0 0 50px rgba(0,0,0,0.5);
+  background: rgba(15, 15, 15, 0.8);
+  width: 90%;
+}
+
+.overlay-card h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.5rem;
+  color: #fff;
+  margin-bottom: 25px;
+  letter-spacing: 4px;
+  text-shadow: 0 0 20px rgba(255,255,255,0.3);
+}
+
+.btn-primary {
+  background: #d4af37;
+  color: #000;
+  border: none;
+  padding: 15px 40px;
+  border-radius: 15px;
+  font-weight: 800;
+  font-size: 0.9rem;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 10px 20px rgba(212, 175, 55, 0.2);
+}
+
+.btn-primary:hover {
+  background: #fff;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 15px 30px rgba(255,255,255,0.2);
+}
+
+.reset-match-btn {
+  background: transparent;
+  color: #555;
+  border: 1px solid #333;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+  transition: all 0.3s;
+}
+
+.reset-match-btn:hover {
+  color: #8b0000;
+  border-color: #8b0000;
+}
+
+.name-capture-field input {
+  transition: all 0.3s;
+}
+
+.name-capture-field input:focus {
+  background: rgba(212, 175, 55, 0.05);
+  border-color: #d4af37 !important;
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+}
+
+@media (max-width: 480px) {
+  .overlay-card h2 { font-size: 1.8rem; }
+  .btn-primary { padding: 12px 25px; font-size: 0.8rem; }
+}

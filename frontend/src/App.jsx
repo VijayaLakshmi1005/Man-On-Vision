@@ -36,6 +36,22 @@ const AdminDriveGalleryDetail = lazy(() => import('./admin/pages/DriveGalleryDet
 const AdminClientEvents = lazy(() => import('./admin/pages/ClientEvents'));
 const AdminUserManagement = lazy(() => import('./admin/pages/UserManagement'));
 
+// Game Experience Zone
+const GameZone = lazy(() => import('./games/GameZone'));
+const TicTacToe = lazy(() => import('./games/TicTacToe/TicTacToe'));
+const Game2048 = lazy(() => import('./games/Game2048/Game2048'));
+const SpotDifference = lazy(() => import('./games/SpotDifference/SpotDifference'));
+
+// Admin Game Management
+const AdminGameDashboard = lazy(() => import('./admin/pages/games/AdminGameDashboard'));
+const AdminTicTacToeManager = lazy(() => import('./admin/pages/games/TicTacToeManager'));
+const Admin2048Manager = lazy(() => import('./admin/pages/games/Game2048Manager'));
+const AdminSpotDifferenceManager = lazy(() => import('./admin/pages/games/SpotDifferenceManager'));
+const AdminPageManager = lazy(() => import('./admin/pages/games/AdminPageManager'));
+
+
+
+
 const PortalLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { user } = useAuth();
@@ -149,9 +165,22 @@ function App() {
                   <Route path="activity-log" element={<AdminActivityLog />} />
                   <Route path="chats" element={<AdminChats />} />
                   <Route path="users" element={<AdminUserManagement />} />
+                  <Route path="games" element={<AdminGameDashboard />} />
+                  <Route path="games/tictactoe" element={<AdminTicTacToeManager />} />
+                  <Route path="games/2048" element={<Admin2048Manager />} />
+                  <Route path="games/spot_difference" element={<AdminSpotDifferenceManager />} />
+                  <Route path="games/page-settings" element={<AdminPageManager />} />
+
                 </Route>
               </Route>
+
+              {/* Game Experience Zone Routes */}
+              <Route path="/games" element={<GameZone />} />
+              <Route path="/games/tictactoe" element={<TicTacToe />} />
+              <Route path="/games/2048" element={<Game2048 />} />
+              <Route path="/games/spot_difference" element={<SpotDifference />} />
               <Route path="*" element={<AuthPage />} />
+
             </Routes>
           </AnimatePresence>
         </Suspense>

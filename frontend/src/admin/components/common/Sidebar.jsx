@@ -83,8 +83,10 @@ const Sidebar = function Sidebar({ onClose }) {
     { name: "Calendar", path: "/admin/calendar", icon: Calendar },
 
     { name: "Activity Log", path: "/admin/activity-log", icon: Bell },
+    { name: "Games Manager", path: "/admin/games", icon: Gamepad2 },
     { name: "User Management", path: "/admin/users", icon: Shield },
   ];
+
 
   return (
     <div className="w-[280px] lg:w-64 h-full bg-[#fdfbf7] lg:bg-white/55 lg:backdrop-blur-[14px] rounded-none lg:rounded-[24px] border-r border-[#e6e3df] lg:border-white/40 px-6 py-10 flex flex-col shadow-2xl lg:shadow-[0_4px_15px_rgba(0,0,0,0.03)] relative z-50">

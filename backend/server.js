@@ -440,6 +440,9 @@ app.use('/api/media', require('./routes/media'));
 app.use('/api/drive-gallery', require('./routes/driveGalleryRoutes'));
 app.use('/api/admin-users', require('./routes/adminUserRoutes'));
 app.use('/api/services', serviceRoutes);
+app.use('/api/games', require('./routes/gameRoutes'));
+app.use('/api/admin/games', require('./routes/adminGameRoutes'));
+
 
 
 // --- Standalone API Configuration ---

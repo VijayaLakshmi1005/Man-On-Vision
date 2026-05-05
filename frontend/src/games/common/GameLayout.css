@@ -1,0 +1,175 @@
+.game-zone-container {
+  min-height: 100vh;
+  background: radial-gradient(circle at center, #1a0a0a 0%, #000000 100%);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  padding: 40px 20px;
+  font-family: 'Outfit', sans-serif;
+  cursor: none !important; /* Hide default cursor to show custom one */
+}
+
+.global-cursor {
+  position: fixed;
+  width: 30px;
+  height: 30px;
+  border: 2px solid #d4af37;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: width 0.15s, height 0.15s;
+}
+
+.global-cursor::after {
+  content: '';
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: #d4af37;
+  border-radius: 50%;
+}
+
+.global-cursor::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+
+@media (max-width: 768px) {
+  .game-zone-container {
+    cursor: auto !important; /* Restore for mobile so OS handles it, but our div still follows */
+  }
+}
+
+.back-button {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  color: #d4af37;
+  padding: 10px 20px;
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  z-index: 100;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+  font-weight: bold;
+  letter-spacing: 1px;
+  font-size: 0.8rem;
+}
+
+.back-button:hover {
+  background: rgba(139, 0, 0, 0.4);
+  border-color: #d4af37;
+  transform: translateX(-5px);
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+}
+
+.back-button .arrow {
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
+}
+
+.back-button:hover .arrow {
+  transform: translateX(-3px);
+}
+
+.particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: #d4af37;
+  border-radius: 50%;
+  opacity: 0.3;
+  animation: float linear infinite;
+}
+
+@keyframes float {
+  0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+  50% { opacity: 0.6; }
+  100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+}
+
+.game-header {
+  text-align: center;
+  margin-bottom: 50px;
+  position: relative;
+  z-index: 1;
+}
+
+.glow-text {
+  font-size: 3rem;
+  letter-spacing: 4px;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(212, 175, 55, 0.5), 0 0 20px rgba(139, 0, 0, 0.8);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.accent-line {
+  width: 150px;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #d4af37, transparent);
+  margin: 0 auto;
+}
+
+.game-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.game-footer {
+  text-align: center;
+  margin-top: 60px;
+  padding: 20px;
+  border-top: 1px solid rgba(212, 175, 55, 0.1);
+}
+
+.cta-link {
+  color: #d4af37;
+  text-decoration: none;
+  font-weight: bold;
+  border-bottom: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.cta-link:hover {
+  border-color: #d4af37;
+  text-shadow: 0 0 10px rgba(212, 175, 55, 0.8);
+}
+
+@media (max-width: 768px) {
+  .glow-text {
+    font-size: 1.8rem;
+  }
+}

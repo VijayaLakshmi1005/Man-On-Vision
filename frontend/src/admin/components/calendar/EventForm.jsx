@@ -13,6 +13,14 @@ const TYPE_COLORS = {
 
 const TEAM_INITIAL_COLORS = ["#FCA5A5", "#FDE68A", "#7DD3FC", "#C4B5FD", "#A9AC83", "#E8D0DC"];
 
+const formatDateForInput = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    const offset = date.getTimezoneOffset() * 60000;
+    const localISOTime = (new Date(date - offset)).toISOString().slice(0, 16);
+    return localISOTime;
+};
+
 export default function EventForm({ onClose, onSave, onDelete, initialData }) {
     const [formData, setFormData] = useState({
         title: initialData?.title || "",
@@ -25,14 +33,6 @@ export default function EventForm({ onClose, onSave, onDelete, initialData }) {
     });
 
     const isEditing = !!initialData?._id;
-
-    const formatDateForInput = (dateString) => {
-        if (!dateString) return "";
-        const date = new Date(dateString);
-        const offset = date.getTimezoneOffset() * 60000;
-        const localISOTime = (new Date(date - offset)).toISOString().slice(0, 16);
-        return localISOTime;
-    };
 
     const [photographers, setPhotographers] = useState([]);
 

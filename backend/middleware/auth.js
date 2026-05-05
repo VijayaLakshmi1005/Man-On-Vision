@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-module.exports = function (req, res, next) {
+const auth = function (req, res, next) {
     // Get token from header
     let token = req.header('x-auth-token');
 
@@ -24,7 +24,19 @@ module.exports = function (req, res, next) {
         next();
     } catch (err) {
         console.error('--- [AUTH/ERROR] --- Validation failed:', err.message);
-        // Possible reasons: "jwt malformed", "jwt expired", "invalid signature"
         res.status(401).json({ msg: `Token is not valid: ${err.message}` });
     }
 };
+
+const admin = function (req, res, next) {
+    if (req.user && req.user.role === 'admin') {
+        next();
+    } else {
+        res.status(403).json({ msg: 'Access denied: Admins only' });
+    }
+};
+
+module.exports = auth;
+module.exports.auth = auth;
+module.exports.admin = admin;
+
