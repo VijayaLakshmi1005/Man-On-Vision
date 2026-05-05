@@ -21,7 +21,7 @@ const Experience = () => {
                         <GSAPController />
                         <CameraRig />
                         <ScrollManager />
-                        
+
                         <SceneWorld />
 
                         <Scroll html>

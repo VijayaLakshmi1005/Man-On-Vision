@@ -6,8 +6,11 @@ import React, { useRef, useEffect } from 'react';
  * Features ultra-thin, crisp lines for a sharp and modern aesthetic.
  * Supports a dynamic 'twirl' uniform for hypnotic transitions.
  */
+import { useTheme } from '../../context/ThemeContext';
+
 const WaveBackground = () => {
     const canvasRef = useRef(null);
+    const { isDarkMode } = useTheme();
     const mouseRef = useRef({ x: 0, y: 0, targetX: 0, targetY: 0 });
     const twirlRef = useRef(0);
 
@@ -118,7 +121,9 @@ const WaveBackground = () => {
                 vec3 colorPink = vec3(1.0, 0.3, 0.55);   
                 vec3 colorOrange = vec3(1.0, 0.7, 0.3);   
                 vec3 lineColor = mix(colorPink, colorOrange, uv.x * 0.8 + uv.y * 0.4);
-                vec3 bgColor = vec3(1.0, 1.0, 0.99);
+                vec3 colorPinkSubtle = vec3(1.0, 0.94, 0.95);
+                vec3 colorOrangeSubtle = vec3(1.0, 0.97, 0.92);
+                vec3 bgColor = ${isDarkMode ? 'vec3(0.04, 0.04, 0.04)' : 'mix(colorPinkSubtle, colorOrangeSubtle, uv.x * 0.6 + uv.y * 0.4)'};
                 
                 vec3 finalColor = mix(lineColor, bgColor, mask);
                 gl_FragColor = vec4(finalColor, 1.0);
@@ -152,10 +157,8 @@ const WaveBackground = () => {
 
         const resize = () => {
             const dpr = Math.min(window.devicePixelRatio || 1, 2);
-            canvas.width = window.innerWidth * dpr;
-            canvas.height = window.innerHeight * dpr;
-            canvas.style.width = '100vw';
-            canvas.style.height = '100vh';
+            canvas.width = canvas.clientWidth * dpr;
+            canvas.height = canvas.clientHeight * dpr;
             gl.viewport(0, 0, canvas.width, canvas.height);
         };
 
@@ -186,13 +189,13 @@ const WaveBackground = () => {
             window.removeEventListener('touchmove', handleTouchMove);
             cancelAnimationFrame(animationFrameId);
         };
-    }, []);
+    }, [isDarkMode]);
 
     return (
         <canvas
             ref={canvasRef}
             id="hero-canvas"
-            className="fixed top-0 left-0 -z-10 block pointer-events-none"
+            className="absolute inset-0 z-0 block pointer-events-none w-full h-full"
         />
     );
 };

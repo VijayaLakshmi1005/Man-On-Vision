@@ -6,6 +6,7 @@ import { Bell } from 'lucide-react';
 import { useAuth } from './context/AuthContext';
 import LenisProvider from './components/common/LenisProvider';
 import ProtectedRoute from './components/ProtectedRoute';
+import { useTheme } from './context/ThemeContext';
 import Breadcrumbs from './components/common/Breadcrumbs';
 import PageTransition from './components/common/PageTransition';
 
@@ -132,10 +133,15 @@ const PortalLayout = () => {
 
 function App() {
   const location = useLocation();
+  const { isDarkMode } = useTheme();
 
   return (
     <LenisProvider>
-      <div className="font-sans text-stone-900 min-h-screen selection:bg-stone-200 overflow-x-hidden relative">
+      <div className={`font-sans min-h-screen overflow-x-hidden relative transition-colors duration-1000 ${
+        isDarkMode 
+        ? 'text-white selection:bg-orange-600/30 selection:text-white' 
+        : 'text-stone-900 selection:bg-stone-200'
+      }`}>
         <Toaster position="top-right" />
         <Suspense fallback={<div className="flex h-screen w-full items-center justify-center text-xl font-serif">MAN ON VISION</div>}>
           <AnimatePresence mode="wait">

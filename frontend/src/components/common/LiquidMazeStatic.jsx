@@ -1,20 +1,12 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 
-/**
- * LiquidMazeStatic - Ultra-Thin Continuous Topographic Background
- * 
- * Features:
- * - Solid, continuous architectural lines.
- * - Extremely slow, almost unnoticeable movement.
- * - Pastel light pink theme.
- */
 const LiquidMazeStatic = ({ 
-    color1 = "#FFF0F5", // Lavender Blush (Very light pink)
-    color2 = "#FFE4E1", // Misty Rose (Very light pink)
-    bgColor = "#ffffff",
+    color1 = "#ff5a96", 
+    color2 = "#ffb040", 
+    bgColor = "#0c0a09", 
     opacity = 1.0,
-    speed = 0.005,      // Extremely slow, almost static
-    density = 0.8
+    speed = 0.005,
+    density = 0.2
 }) => {
     const canvasRef = useRef(null);
 
@@ -43,6 +35,8 @@ const LiquidMazeStatic = ({
             precision highp float;
             uniform float u_time;
             uniform vec2 u_resolution;
+            uniform float u_twirl;
+            uniform float u_scroll;
 
             vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
 
@@ -79,15 +73,26 @@ const LiquidMazeStatic = ({
                 vec2 p = (uv * 2.0) - 1.0;
                 p.x *= aspect;
 
+                // --- HYPNOTIC TWIRL ---
+                float angle = u_twirl * exp(-length(p) * 1.5);
+                float s = sin(angle);
+                float c = cos(angle);
+                p = vec2(p.x * c - p.y * s, p.x * s + p.y * c);
+
+                // --- CONTINUOUS SCROLL FLOW ---
+                vec2 noiseP = p;
+                noiseP.y += u_scroll * 5.0;
+                noiseP.x += sin(u_scroll * 3.14159) * 0.2;
+
                 float slowTime = u_time * ${speed.toFixed(6)};
                 
-                float n = snoise(p * ${density.toFixed(2)} + slowTime);
-                n += 0.4 * snoise(p * ${(density * 2).toFixed(2)} - slowTime * 1.5);
+                float n = snoise(noiseP * ${density.toFixed(2)} + slowTime);
+                n += 0.3 * snoise(noiseP * ${(density * 1.5).toFixed(2)} - slowTime * 1.2);
                 
-                float pattern = sin(n * 10.0 + u_time * 0.01); // Minimal automatic pulse
+                float pattern = sin(n * 4.0 + u_time * 0.005); 
                 
-                float threshold = 0.05; 
-                float edge = 0.03;      
+                float threshold = 0.12; 
+                float edge = 0.01;      
                 float mask = smoothstep(threshold - edge, threshold + edge, abs(pattern));
                 
                 vec3 c1 = ${hexToRgb(color1)};
@@ -123,6 +128,8 @@ const LiquidMazeStatic = ({
 
         const timeLoc = gl.getUniformLocation(program, 'u_time');
         const resLoc = gl.getUniformLocation(program, 'u_resolution');
+        const twirlLoc = gl.getUniformLocation(program, 'u_twirl');
+        const scrollLoc = gl.getUniformLocation(program, 'u_scroll');
 
         const resize = () => {
             const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -136,8 +143,16 @@ const LiquidMazeStatic = ({
 
         let animationFrameId;
         const render = (time) => {
+            const twirl = window.heroTwirl || 0;
+            const scrollTotal = document.documentElement.scrollHeight - window.innerHeight;
+            const scroll = scrollTotal > 0 ? window.scrollY / scrollTotal : 0;
+            
+            gl.useProgram(program);
             gl.uniform1f(timeLoc, time * 0.001);
             gl.uniform2f(resLoc, canvas.width, canvas.height);
+            gl.uniform1f(twirlLoc, twirl);
+            gl.uniform1f(scrollLoc, scroll);
+
             gl.drawArrays(gl.TRIANGLES, 0, 6);
             animationFrameId = requestAnimationFrame(render);
         };

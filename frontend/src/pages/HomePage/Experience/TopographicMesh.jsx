@@ -58,9 +58,9 @@ const TopographicMesh = () => {
     });
 
     return (
-        <mesh 
-            ref={meshRef} 
-            rotation={[-Math.PI / 2, 0, 0]} 
+        <mesh
+            ref={meshRef}
+            rotation={[-Math.PI / 2, 0, 0]}
             position={[0, -5, 0]}
             receiveShadow
         >

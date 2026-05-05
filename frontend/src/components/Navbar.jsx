@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { Link as ScrollLink } from 'react-scroll';
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Moon, Sun } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { isDarkMode, toggleTheme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
@@ -51,10 +53,46 @@ const Navbar = () => {
 
   return (
     <>
+      {/* Theme Toggle Button (Square Drawn by User) */}
+      <button 
+        onClick={toggleTheme}
+        className={`fixed top-8 right-24 z-[200] w-12 h-12 flex items-center justify-center backdrop-blur-md border transition-all duration-500 rounded-full shadow-sm ${
+          isDarkMode 
+          ? 'bg-orange-600/20 border-orange-600/30 text-orange-500 hover:bg-orange-600/40' 
+          : 'bg-white/10 border-white/20 text-stone-900 hover:bg-stone-100'
+        }`}
+      >
+        <AnimatePresence mode="wait">
+          {isDarkMode ? (
+            <motion.div
+              key="sun"
+              initial={{ rotate: -90, opacity: 0 }}
+              animate={{ rotate: 0, opacity: 1 }}
+              exit={{ rotate: 90, opacity: 0 }}
+            >
+              <Sun size={20} />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="moon"
+              initial={{ rotate: 90, opacity: 0 }}
+              animate={{ rotate: 0, opacity: 1 }}
+              exit={{ rotate: -90, opacity: 0 }}
+            >
+              <Moon size={20} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </button>
+
       {/* Hamburger Toggle (Only visible UI element) */}
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed top-8 right-8 z-[200] w-12 h-12 flex items-center justify-center bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-stone-900 hover:bg-stone-900 hover:text-white transition-all duration-500 shadow-sm"
+        className={`fixed top-8 right-8 z-[200] w-12 h-12 flex items-center justify-center backdrop-blur-md border rounded-full transition-all duration-500 shadow-sm ${
+          isDarkMode 
+          ? 'bg-white/10 border-white/20 text-white hover:bg-white hover:text-stone-950' 
+          : 'bg-white/10 border-white/20 text-stone-900 hover:bg-stone-900 hover:text-white'
+        }`}
       >
         <AnimatePresence mode="wait">
           {isOpen ? (
