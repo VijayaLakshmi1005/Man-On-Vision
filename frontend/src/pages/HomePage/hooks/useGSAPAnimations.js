@@ -15,13 +15,14 @@ const useGSAPAnimations = (rootRef) => {
                     scrollTrigger: {
                         trigger: "#intro-container",
                         start: "top top",
-                        end: "+=200%",
-                        scrub: 0.3,
-                        pin: true,
-                        pinSpacing: true,
+                        end: "+=300%",     // More distance = smoother, more granular control
+                        scrub: true,       // Immediate response for perfect sync
+                        pin: true,         
+                        pinSpacing: true,  
+                        anticipatePin: 1,  // Helps prevent jumps during fast scroll
                         invalidateOnRefresh: true,
                         onUpdate: (self) => {
-                            window.heroTwirl = self.progress * 15;
+                            window.heroTwirl = self.progress * 20; // Slightly more twirl for drama
                         }
                     }
                 });
@@ -30,8 +31,8 @@ const useGSAPAnimations = (rootRef) => {
                     introTl.fromTo("#hero-logo-container", 
                         { scale: 1, opacity: 1 },
                         {
-                            scale: 110,
-                            ease: "power1.inOut",
+                            scale: 120,    // Slightly more zoom
+                            ease: "none",  // Linear tracking with scroll is smoothest for scrub
                             duration: 3,
                             force3D: true,
                             overwrite: "auto",
@@ -40,35 +41,35 @@ const useGSAPAnimations = (rootRef) => {
                     )
                     .to("#hero-logo-container", {
                         opacity: 0,
-                        duration: 0.4,
+                        duration: 0.3,
                         ease: "power1.out",
                         lazy: true
-                    }, "-=0.6");
+                    }, "-=0.3"); // Fade out exactly at the end
                 }
                 
                 if (document.querySelector("#hero-canvas")) {
                     introTl.to("#hero-canvas", {
                         opacity: 0,
                         duration: 2,
-                        ease: "power1.inOut",
+                        ease: "power2.inOut",
                         lazy: true
-                    }, 0.4);
+                    }, 0.5);
                 }
 
                 if (document.querySelector("#flow-section")) {
                     introTl.fromTo("#flow-section", 
-                        { opacity: 0, y: 30, scale: 0.99, pointerEvents: "none" },
+                        { opacity: 0, y: 40, scale: 0.98, pointerEvents: "none" },
                         {
                             opacity: 1,
                             y: 0,
                             scale: 1,
                             pointerEvents: "auto",
-                            duration: 1.5,
-                            ease: "power2.out",
+                            duration: 1.2,
+                            ease: "power3.out",
                             force3D: true,
                             lazy: true
                         }, 
-                        "-=1.0"
+                        "-=0.8"
                     );
                 }
             }
