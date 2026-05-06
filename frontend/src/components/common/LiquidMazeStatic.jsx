@@ -157,15 +157,21 @@ const LiquidMazeStatic = ({
         resize();
 
         let animationFrameId;
+        let currentTwirl = 0;
+        
         const render = (time) => {
-            const twirl = window.heroTwirl || 0;
+            const targetTwirl = window.heroTwirl || 0;
+            // Smoothly interpolate twirl to prevent jumps on mobile
+            currentTwirl += (targetTwirl - currentTwirl) * 0.1;
+
             const scrollTotal = document.documentElement.scrollHeight - window.innerHeight;
-            const scroll = scrollTotal > 0 ? window.scrollY / scrollTotal : 0;
+            // Clamp scroll between 0 and 1 to prevent rubber-banding glitches
+            const scroll = scrollTotal > 0 ? Math.max(0, Math.min(1, window.scrollY / scrollTotal)) : 0;
             
             gl.useProgram(program);
             gl.uniform1f(timeLoc, time * 0.001);
             gl.uniform2f(resLoc, canvas.width, canvas.height);
-            gl.uniform1f(twirlLoc, twirl);
+            gl.uniform1f(twirlLoc, currentTwirl);
             gl.uniform1f(scrollLoc, scroll);
 
             gl.drawArrays(gl.TRIANGLES, 0, 6);

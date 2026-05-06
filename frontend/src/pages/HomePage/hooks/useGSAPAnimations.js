@@ -17,8 +17,8 @@ const useGSAPAnimations = (rootRef) => {
                     scrollTrigger: {
                         trigger: "#intro-container",
                         start: "top top",
-                        end: isMobile ? "+=150%" : "+=250%", // Shorter scroll on mobile for better UX
-                        scrub: isMobile ? 0.5 : 1,            // Tighter scrub on mobile
+                        end: isMobile ? "+=120%" : "+=250%", 
+                        scrub: isMobile ? 0.3 : 1,            
                         pin: true,
                         pinSpacing: true,
                         anticipatePin: 1,
@@ -26,7 +26,17 @@ const useGSAPAnimations = (rootRef) => {
                         preventOverlaps: true,
                         invalidateOnRefresh: true,
                         onUpdate: (self) => {
-                            window.heroTwirl = self.progress * (isMobile ? 10 : 15);
+                            // Ensure twirl is 0 at the very top
+                            if (self.progress === 0) {
+                                window.heroTwirl = 0;
+                            } else {
+                                window.heroTwirl = self.progress * (isMobile ? 8 : 15);
+                            }
+                        },
+                        onToggle: (self) => {
+                            if (!self.isActive && self.progress === 0) {
+                                window.heroTwirl = 0;
+                            }
                         }
                     }
                 });
@@ -35,10 +45,11 @@ const useGSAPAnimations = (rootRef) => {
                     introTl.fromTo("#hero-logo-container", 
                         { scale: 1, opacity: 1 },
                         {
-                            scale: isMobile ? 12 : 15,    // Slightly smaller scale on mobile
+                            // Mobile: 6x is enough to fill the narrow viewport and avoids GPU crashes
+                            scale: isMobile ? 6 : 15,    
                             ease: "power2.inOut", 
                             duration: 3,
-                            force3D: true,
+                            force3D: !isMobile, // Disable force3D on mobile to prevent memory-related 'stuck' frames
                             overwrite: "auto"
                         }
                     )
