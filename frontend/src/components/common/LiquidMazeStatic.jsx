@@ -84,13 +84,13 @@ const LiquidMazeStatic = ({
                 p = vec2(p.x * c - p.y * s, p.x * s + p.y * c);
 
                 vec2 noiseP = p;
-                noiseP.y += u_scroll * 5.0;
-                noiseP.x += sin(u_scroll * 3.14159) * 0.2;
+                noiseP.y += u_scroll * 4.0; // Reduced scroll speed for stability
+                noiseP.x += sin(u_scroll * 3.14) * 0.1;
 
                 float slowTime = u_time * ${speed.toFixed(6)};
                 
+                // Simplified for Mobile: Only one noise octave to prevent lag
                 float n = snoise(noiseP * ${density.toFixed(2)} + slowTime);
-                n += 0.3 * snoise(noiseP * ${(density * 1.5).toFixed(2)} - slowTime * 1.2);
                 
                 float pattern = sin(n * 4.0 + u_time * 0.005); 
                 
@@ -144,7 +144,9 @@ const LiquidMazeStatic = ({
         const scrollLoc = gl.getUniformLocation(program, 'u_scroll');
 
         const resize = () => {
-            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            const isMobile = window.innerWidth < 768;
+            // Force dpr 1 on mobile to prevent pixel-fill lag
+            const dpr = isMobile ? 1 : Math.min(window.devicePixelRatio || 1, 2);
             const displayWidth = canvas.clientWidth || window.innerWidth;
             const displayHeight = canvas.clientHeight || window.innerHeight;
             
