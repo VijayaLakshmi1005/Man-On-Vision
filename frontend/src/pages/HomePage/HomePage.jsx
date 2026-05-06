@@ -32,7 +32,7 @@ const HomePage = () => {
             {/* The Integrated Intro Flow (Hero + First Story Section) */}
             <div id="intro-container" className="relative w-full overflow-hidden">
                 <HeroSection />
-                <div id="flow-section" className="absolute inset-0 opacity-0 pointer-events-none">
+                <div id="flow-section" className="absolute inset-0 opacity-0 pointer-events-none will-change-[transform,opacity]">
                     <SectionIntro />
                 </div>
             </div>

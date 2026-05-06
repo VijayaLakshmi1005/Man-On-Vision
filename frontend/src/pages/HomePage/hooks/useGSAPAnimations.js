@@ -14,43 +14,56 @@ const useGSAPAnimations = (rootRef) => {
                 scrollTrigger: {
                     trigger: "#intro-container",
                     start: "top top",
-                    end: "+=200%",     // Perfect scroll distance
-                    scrub: 1.2,        
+                    end: "+=175%",     
+                    scrub: 0.5,        
                     pin: true,         
                     pinSpacing: true,  
                     invalidateOnRefresh: true,
                     onUpdate: (self) => {
-                        window.heroTwirl = self.progress * 20; 
+                        window.heroTwirl = self.progress * 15;
                     }
                 }
             });
 
+            // Explicitly set starting values in the timeline for perfect reverse scroll recovery
             introTl
-                .to("#hero-logo-container", {
-                    scale: 150,
-                    ease: "power2.in",
-                    duration: 3
-                })
+                .fromTo("#hero-logo-container", 
+                    { scale: 1, opacity: 1 },
+                    {
+                        scale: 110,
+                        ease: "power1.in", 
+                        duration: 3,
+                        force3D: true,
+                        overwrite: "auto",
+                        lazy: true
+                    }
+                )
                 .to("#hero-logo-container", {
                     opacity: 0,
-                    duration: 0.5
+                    duration: 0.5,
+                    ease: "none",
+                    lazy: true
                 }, "-=0.5")
+                
                 .to("#hero-canvas", {
                     opacity: 0,
-                    filter: "blur(100px)",
-                    duration: 2.5
+                    duration: 2,
+                    lazy: true
                 }, 0.5)
 
                 .fromTo("#flow-section", 
-                    { opacity: 0, scale: 0.5, pointerEvents: "none" },
+                    { opacity: 0, y: 50, scale: 0.98, pointerEvents: "none" },
                     {
                         opacity: 1,
+                        y: 0,
                         scale: 1,
                         pointerEvents: "auto",
-                        duration: 2.0,
-                        ease: "power2.out"
+                        duration: 2,
+                        ease: "power2.out",
+                        force3D: true,
+                        lazy: true
                     }, 
-                    "-=1.5"
+                    "-=1.2"
                 );
 
             // 2. STORYTELLING SECTIONS - STACKED SYSTEM
