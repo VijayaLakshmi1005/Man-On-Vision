@@ -22,32 +22,33 @@ const HeroSection = () => {
             {/* Content Container */}
             <div className="relative z-10 flex flex-col items-center justify-center">
                 
-                {/* 1. Zoomable Logo Icon ONLY - Standard div for exclusive GSAP control */}
+                {/* Glow Effect moved outside of GSAP zoom container to prevent massive blur scaling */}
+                <AnimatePresence>
+                    {isDarkMode && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="absolute inset-0 bg-orange-500/5 blur-[100px] rounded-full pointer-events-none z-[-1]"
+                            style={{ transform: 'translateZ(0)' }}
+                        />
+                    )}
+                </AnimatePresence>
+
+                {/* 1. Zoomable Logo Icon - Standard div for exclusive GSAP control */}
                 <div
                     id="hero-logo-container"
-                    className="relative flex items-center justify-center origin-[50%_45%] will-change-transform" // Optimized for zoom
-                    style={{ opacity: 1, transform: 'scale(1)' }}
+                    className="relative flex items-center justify-center origin-[50%_45%] will-change-transform transform-gpu" 
+                    style={{ opacity: 1, transform: 'scale(1) translateZ(0)', backfaceVisibility: 'hidden' }}
                 >
-                    {/* Glow Effect for Dark Mode - Can remain motion as it doesn't conflict with GSAP zoom */}
-                    <AnimatePresence>
-                        {isDarkMode && (
-                            <motion.div
-                                initial={{ opacity: 0, scale: 0.8 }}
-                                animate={{ opacity: 1, scale: 1.1 }}
-                                exit={{ opacity: 0, scale: 0.8 }}
-                                className="absolute inset-0 bg-orange-500/10 blur-[80px] rounded-full pointer-events-none"
-                            />
-                        )}
-                    </AnimatePresence>
-
                     <img 
                         src="/assets/MOV-logo.png" 
                         alt="Man On Vision Logo" 
-                        className={`w-[200px] md:w-[450px] h-auto object-contain transition-opacity duration-500 ${
+                        className={`w-[200px] md:w-[450px] h-auto object-contain transition-opacity duration-700 ${
                             isDarkMode 
-                            ? 'drop-shadow-[0_0_30px_rgba(249,115,22,0.3)] brightness-110' 
+                            ? 'drop-shadow-[0_0_35px_rgba(249,115,22,0.2)] brightness-110' 
                             : 'drop-shadow-[0_0_20px_rgba(0,0,0,0.05)]'
-                        } filter`}
+                        }`}
                     />
                 </div>
             </div>
