@@ -14,7 +14,7 @@ const SectionShowcase = () => {
 
             <div 
                 id="horizontal-scroll-content" 
-                className="h-full flex items-center gap-12 px-[10vw] min-w-max"
+                className="h-full flex items-center gap-6 md:gap-12 px-[5vw] md:px-[10vw] min-w-max"
             >
                 {[
                     { title: "The Last Frame", category: "Cinematic" },
@@ -25,7 +25,7 @@ const SectionShowcase = () => {
                 ].map((item, i) => (
                     <div 
                         key={i} 
-                        className={`w-[85vw] md:w-[35vw] aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden relative group cursor-pointer border transition-colors duration-1000 ${
+                        className={`w-[80vw] md:w-[35vw] aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden relative group cursor-pointer border transition-colors duration-1000 ${
                             isDarkMode ? 'bg-stone-900 border-white/5' : 'bg-stone-100 border-stone-200'
                         }`}
                     >
@@ -37,9 +37,9 @@ const SectionShowcase = () => {
                             isDarkMode ? 'bg-black/40' : 'bg-white/10'
                         }`} />
                         
-                        <div className="absolute bottom-10 left-10">
-                            <span className="text-orange-600 font-bold text-[10px] uppercase tracking-widest mb-2 block">{item.category}</span>
-                            <h3 className={`text-3xl font-serif transition-colors duration-1000 ${isDarkMode ? 'text-white' : 'text-stone-900'}`}>{item.title}</h3>
+                        <div className="absolute bottom-6 left-6 md:bottom-10 md:left-10">
+                            <span className="text-orange-600 font-bold text-[8px] md:text-[10px] uppercase tracking-widest mb-1 md:mb-2 block">{item.category}</span>
+                            <h3 className={`text-xl md:text-3xl font-serif transition-colors duration-1000 ${isDarkMode ? 'text-white' : 'text-stone-900'}`}>{item.title}</h3>
                         </div>
                     </div>
                 ))}

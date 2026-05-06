@@ -9,32 +9,33 @@ const useGSAPAnimations = (rootRef) => {
         const ctx = gsap.context(() => {
             window.heroTwirl = 0;
 
+            const isMobile = window.innerWidth < 768;
+
             // 1. CINEMATIC OVERLAY TRANSITION (THE FLOW)
             if (document.querySelector("#intro-container")) {
                 const introTl = gsap.timeline({
                     scrollTrigger: {
                         trigger: "#intro-container",
                         start: "top top",
-                        end: "+=250%",      // Optimized distance
-                        scrub: 1,           // Slight smoothing (1s) instead of 'true' to prevent jitters
+                        end: isMobile ? "+=150%" : "+=250%", // Shorter scroll on mobile for better UX
+                        scrub: isMobile ? 0.5 : 1,            // Tighter scrub on mobile
                         pin: true,
                         pinSpacing: true,
                         anticipatePin: 1,
-                        fastScrollEnd: true, // Crucial for preventing 'stuck' states on fast scroll
+                        fastScrollEnd: true,
                         preventOverlaps: true,
                         invalidateOnRefresh: true,
                         onUpdate: (self) => {
-                            window.heroTwirl = self.progress * 15;
+                            window.heroTwirl = self.progress * (isMobile ? 10 : 15);
                         }
                     }
                 });
 
                 if (document.querySelector("#hero-logo-container")) {
-                    // Optimized Scale: 15x is plenty to cover the screen and stay within GPU limits
                     introTl.fromTo("#hero-logo-container", 
                         { scale: 1, opacity: 1 },
                         {
-                            scale: 15,    
+                            scale: isMobile ? 12 : 15,    // Slightly smaller scale on mobile
                             ease: "power2.inOut", 
                             duration: 3,
                             force3D: true,
@@ -43,9 +44,9 @@ const useGSAPAnimations = (rootRef) => {
                     )
                     .to("#hero-logo-container", {
                         opacity: 0,
-                        duration: 1, // Longer fade for smoother transition
+                        duration: 1,
                         ease: "power1.inOut",
-                    }, "-=1.5"); // Start fading halfway through the zoom
+                    }, "-=1.5");
                 }
                 
                 if (document.querySelector("#hero-canvas")) {
@@ -58,7 +59,7 @@ const useGSAPAnimations = (rootRef) => {
 
                 if (document.querySelector("#flow-section")) {
                     introTl.fromTo("#flow-section", 
-                        { opacity: 0, y: 50, scale: 0.95, pointerEvents: "none" },
+                        { opacity: 0, y: isMobile ? 30 : 50, scale: 0.95, pointerEvents: "none" },
                         {
                             opacity: 1,
                             y: 0,
@@ -77,10 +78,8 @@ const useGSAPAnimations = (rootRef) => {
             const sections = gsap.utils.toArray('.scroll-section');
             
             sections.forEach((section, index) => {
-                // Skip 'about' as it is part of the intro overlay
                 if (section.id === 'about') return;
 
-                // Ensure a clean starting state
                 gsap.set(section, { 
                     zIndex: index + 10,
                     position: 'relative' 
@@ -90,7 +89,6 @@ const useGSAPAnimations = (rootRef) => {
                 const isLastSection = index === sections.length - 1;
                 const isGallery = section.id === 'gallery';
 
-                // Ensure initial visibility
                 gsap.set(section, { opacity: 1 });
 
                 if (!isLastSection && !isGallery) {
@@ -101,7 +99,7 @@ const useGSAPAnimations = (rootRef) => {
                             ease: "power1.in",
                             scrollTrigger: {
                                 trigger: section,
-                                start: "bottom 20%", 
+                                start: isMobile ? "bottom 40%" : "bottom 20%", 
                                 end: "bottom top",
                                 scrub: true,
                                 preventOverlaps: true,
@@ -115,7 +113,7 @@ const useGSAPAnimations = (rootRef) => {
                 const animateItems = section.querySelectorAll('.animate-item');
                 if (animateItems.length > 0) {
                     gsap.fromTo(animateItems,
-                        { opacity: 0, y: 30, scale: 0.95 },
+                        { opacity: 0, y: isMobile ? 20 : 30, scale: 0.98 },
                         {
                             opacity: 1,
                             y: 0,
@@ -125,7 +123,7 @@ const useGSAPAnimations = (rootRef) => {
                             ease: "power2.out",
                             scrollTrigger: {
                                 trigger: section,
-                                start: "top 85%",
+                                start: isMobile ? "top 90%" : "top 85%",
                                 toggleActions: "play none none reverse"
                             }
                         }
@@ -144,8 +142,8 @@ const useGSAPAnimations = (rootRef) => {
                             scrollTrigger: {
                                 trigger: section,
                                 start: "top top",
-                                end: () => `+=${content.scrollWidth * 1.5}`,
-                                scrub: 1,
+                                end: () => isMobile ? `+=${content.scrollWidth * 1.2}` : `+=${content.scrollWidth * 1.5}`,
+                                scrub: isMobile ? 0.8 : 1,
                                 pin: true,
                                 pinSpacing: true,
                                 invalidateOnRefresh: true,
@@ -161,7 +159,7 @@ const useGSAPAnimations = (rootRef) => {
                     ScrollTrigger.create({
                         trigger: section,
                         start: "top top",
-                        end: "+=100%", 
+                        end: isMobile ? "+=80%" : "+=100%", // Slightly shorter pin on mobile
                         pin: true,
                         pinSpacing: true, 
                         scrub: true,

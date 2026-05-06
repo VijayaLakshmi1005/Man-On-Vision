@@ -32,7 +32,12 @@ const LiquidMazeStatic = ({
         `;
 
         const fsSource = `
+            #ifdef GL_ES
+            precision mediump float;
+            #else
             precision highp float;
+            #endif
+
             uniform float u_time;
             uniform vec2 u_resolution;
             uniform float u_twirl;
@@ -73,13 +78,11 @@ const LiquidMazeStatic = ({
                 vec2 p = (uv * 2.0) - 1.0;
                 p.x *= aspect;
 
-                // --- HYPNOTIC TWIRL ---
                 float angle = u_twirl * exp(-length(p) * 1.5);
                 float s = sin(angle);
                 float c = cos(angle);
                 p = vec2(p.x * c - p.y * s, p.x * s + p.y * c);
 
-                // --- CONTINUOUS SCROLL FLOW ---
                 vec2 noiseP = p;
                 noiseP.y += u_scroll * 5.0;
                 noiseP.x += sin(u_scroll * 3.14159) * 0.2;
@@ -110,12 +113,21 @@ const LiquidMazeStatic = ({
             const shader = gl.createShader(type);
             gl.shaderSource(shader, source);
             gl.compileShader(shader);
+            if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+                console.error('Shader compile error:', gl.getShaderInfoLog(shader));
+                gl.deleteShader(shader);
+                return null;
+            }
             return shader;
         };
 
         const program = gl.createProgram();
-        gl.attachShader(program, createShader(gl, gl.VERTEX_SHADER, vsSource));
-        gl.attachShader(program, createShader(gl, gl.FRAGMENT_SHADER, fsSource));
+        const vs = createShader(gl, gl.VERTEX_SHADER, vsSource);
+        const fs = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
+        if (!vs || !fs) return;
+
+        gl.attachShader(program, vs);
+        gl.attachShader(program, fs);
         gl.linkProgram(program);
         gl.useProgram(program);
 
@@ -133,8 +145,11 @@ const LiquidMazeStatic = ({
 
         const resize = () => {
             const dpr = Math.min(window.devicePixelRatio || 1, 2);
-            canvas.width = canvas.clientWidth * dpr;
-            canvas.height = canvas.clientHeight * dpr;
+            const displayWidth = canvas.clientWidth || window.innerWidth;
+            const displayHeight = canvas.clientHeight || window.innerHeight;
+            
+            canvas.width = displayWidth * dpr;
+            canvas.height = displayHeight * dpr;
             gl.viewport(0, 0, canvas.width, canvas.height);
         };
 
