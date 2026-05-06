@@ -31,14 +31,8 @@ const LiquidMazeStatic = ({
             }
         `;
 
-            const isMobile = window.innerWidth < 768;
-
             const fsSource = `
-                #ifdef GL_ES
-                precision mediump float;
-                #else
                 precision highp float;
-                #endif
 
                 uniform float u_time;
                 uniform vec2 u_resolution;
@@ -80,19 +74,22 @@ const LiquidMazeStatic = ({
                     vec2 p = (uv * 2.0) - 1.0;
                     p.x *= aspect;
 
+                    // --- HYPNOTIC TWIRL ---
                     float angle = u_twirl * exp(-length(p) * 1.5);
                     float s = sin(angle);
                     float c = cos(angle);
                     p = vec2(p.x * c - p.y * s, p.x * s + p.y * c);
 
+                    // --- CONTINUOUS SCROLL FLOW ---
                     vec2 noiseP = p;
-                    noiseP.y += u_scroll * ${isMobile ? '4.0' : '5.0'};
-                    noiseP.x += sin(u_scroll * 3.14) * ${isMobile ? '0.1' : '0.2'};
+                    noiseP.y += u_scroll * 5.0;
+                    noiseP.x += sin(u_scroll * 3.14159) * 0.2;
 
                     float slowTime = u_time * ${speed.toFixed(6)};
                     
+                    // High Fidelity Noise (Multi-octave)
                     float n = snoise(noiseP * ${density.toFixed(2)} + slowTime);
-                    ${!isMobile ? `n += 0.3 * snoise(noiseP * ${(density * 1.5).toFixed(2)} - slowTime * 1.2);` : ''}
+                    n += 0.3 * snoise(noiseP * ${(density * 1.5).toFixed(2)} - slowTime * 1.2);
                     
                     float pattern = sin(n * 4.0 + u_time * 0.005); 
                     
@@ -146,9 +143,8 @@ const LiquidMazeStatic = ({
         const scrollLoc = gl.getUniformLocation(program, 'u_scroll');
 
         const resize = () => {
-            const isMobile = window.innerWidth < 768;
-            // Force dpr 1 on mobile to prevent pixel-fill lag
-            const dpr = isMobile ? 1 : Math.min(window.devicePixelRatio || 1, 2);
+            // Restore High DPI rendering for maximum visual impact
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
             const displayWidth = canvas.clientWidth || window.innerWidth;
             const displayHeight = canvas.clientHeight || window.innerHeight;
             

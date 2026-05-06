@@ -38,7 +38,7 @@ const HeroSection = () => {
                 {/* 1. Zoomable Logo Icon - Standard div for exclusive GSAP control */}
                 <div
                     id="hero-logo-container"
-                    className="relative flex items-center justify-center origin-[50%_45%] will-change-transform transform-gpu" 
+                    className="relative flex items-center justify-center origin-[50%_45%] will-change-transform" 
                     style={{ opacity: 1, transform: 'scale(1) translateZ(0)', backfaceVisibility: 'hidden' }}
                 >
                     <img 
@@ -46,8 +46,8 @@ const HeroSection = () => {
                         alt="Man On Vision Logo" 
                         className={`w-[200px] md:w-[450px] h-auto object-contain transition-opacity duration-700 ${
                             isDarkMode 
-                            ? 'drop-shadow-[0_0_35px_rgba(249,115,22,0.2)] brightness-110' 
-                            : 'drop-shadow-[0_0_20px_rgba(0,0,0,0.05)]'
+                            ? 'md:drop-shadow-[0_0_35px_rgba(249,115,22,0.2)] brightness-110' 
+                            : 'md:drop-shadow-[0_0_20px_rgba(0,0,0,0.05)]'
                         }`}
                     />
                 </div>

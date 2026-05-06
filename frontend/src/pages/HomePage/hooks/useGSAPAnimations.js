@@ -17,8 +17,8 @@ const useGSAPAnimations = (rootRef) => {
                     scrollTrigger: {
                         trigger: "#intro-container",
                         start: "top top",
-                        end: isMobile ? "+=100%" : "+=250%", // Aggressively shorter for mobile
-                        scrub: isMobile ? true : 1,          // Zero delay on mobile for snappiness
+                        end: isMobile ? "+=150%" : "+=250%", // Increased back for impact
+                        scrub: isMobile ? 0.5 : 1,            // Balanced smoothing
                         pin: true,
                         pinSpacing: true,
                         anticipatePin: 1,
@@ -29,7 +29,7 @@ const useGSAPAnimations = (rootRef) => {
                             if (self.progress === 0) {
                                 window.heroTwirl = 0;
                             } else {
-                                window.heroTwirl = self.progress * (isMobile ? 8 : 15);
+                                window.heroTwirl = self.progress * (isMobile ? 15 : 15);
                             }
                         },
                         onToggle: (self) => {
@@ -42,20 +42,21 @@ const useGSAPAnimations = (rootRef) => {
 
                 if (document.querySelector("#hero-logo-container")) {
                     introTl.fromTo("#hero-logo-container", 
-                        { scale: 1, opacity: 1 },
+                        { scale: 1, autoAlpha: 1 },
                         {
-                            scale: isMobile ? 5 : 15,    // Further reduced for mobile performance
+                            // 4x is perfectly safe for mobile memory limits while still filling the screen
+                            scale: isMobile ? 4 : 15,    
                             ease: "power2.inOut", 
                             duration: 3,
-                            force3D: !isMobile,
+                            force3D: !isMobile, 
                             overwrite: "auto"
                         }
                     )
                     .to("#hero-logo-container", {
-                        opacity: 0,
-                        duration: 0.8,
+                        autoAlpha: 0,
+                        duration: 1,
                         ease: "power1.inOut",
-                    }, "-=1.8"); // Fade out much earlier
+                    }, "-=1.5");
                 }
                 
                 if (document.querySelector("#hero-canvas")) {
@@ -68,17 +69,17 @@ const useGSAPAnimations = (rootRef) => {
 
                 if (document.querySelector("#flow-section")) {
                     introTl.fromTo("#flow-section", 
-                        { opacity: 0, y: isMobile ? 20 : 50, scale: 0.98, pointerEvents: "none" },
+                        { opacity: 0, y: isMobile ? 30 : 50, scale: 0.95, pointerEvents: "none" },
                         {
                             opacity: 1,
                             y: 0,
                             scale: 1,
                             pointerEvents: "auto",
-                            duration: 1.2,
+                            duration: 1.5,
                             ease: "power3.out",
                             force3D: true
                         }, 
-                        "-=1.5"
+                        "-=1.2"
                     );
                 }
             }
@@ -108,7 +109,7 @@ const useGSAPAnimations = (rootRef) => {
                             ease: "power1.in",
                             scrollTrigger: {
                                 trigger: section,
-                                start: isMobile ? "bottom 60%" : "bottom 20%", 
+                                start: isMobile ? "bottom 40%" : "bottom 20%", 
                                 end: "bottom top",
                                 scrub: true,
                                 preventOverlaps: true,
@@ -122,7 +123,7 @@ const useGSAPAnimations = (rootRef) => {
                 const animateItems = section.querySelectorAll('.animate-item');
                 if (animateItems.length > 0) {
                     gsap.fromTo(animateItems,
-                        { opacity: 0, y: isMobile ? 15 : 30, scale: 0.99 },
+                        { opacity: 0, y: isMobile ? 20 : 30, scale: 0.98 },
                         {
                             opacity: 1,
                             y: 0,
@@ -132,7 +133,7 @@ const useGSAPAnimations = (rootRef) => {
                             ease: "power2.out",
                             scrollTrigger: {
                                 trigger: section,
-                                start: isMobile ? "top 95%" : "top 85%",
+                                start: isMobile ? "top 90%" : "top 85%",
                                 toggleActions: "play none none reverse"
                             }
                         }
@@ -151,8 +152,8 @@ const useGSAPAnimations = (rootRef) => {
                             scrollTrigger: {
                                 trigger: section,
                                 start: "top top",
-                                end: () => isMobile ? `+=${content.scrollWidth * 1.1}` : `+=${content.scrollWidth * 1.5}`,
-                                scrub: isMobile ? true : 1,
+                                end: () => isMobile ? `+=${content.scrollWidth * 1.2}` : `+=${content.scrollWidth * 1.5}`,
+                                scrub: isMobile ? 0.8 : 1,
                                 pin: true,
                                 pinSpacing: true,
                                 invalidateOnRefresh: true,
@@ -168,7 +169,7 @@ const useGSAPAnimations = (rootRef) => {
                     ScrollTrigger.create({
                         trigger: section,
                         start: "top top",
-                        end: isMobile ? "+=40%" : "+=100%", // Very short pin on mobile for speed
+                        end: isMobile ? "+=80%" : "+=100%", // Restored for impact
                         pin: true,
                         pinSpacing: true, 
                         scrub: true,
