@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 
-const LiquidMazeStatic = ({ 
-    color1 = "#ff5a96", 
-    color2 = "#ffb040", 
-    bgColor = "#0c0a09", 
+const LiquidMazeStatic = ({
+    color1 = "#ff5a96",
+    color2 = "#ffb040",
+    bgColor = "#0c0a09",
     opacity = 1.0,
     speed = 0.005,
     density = 0.2
@@ -31,7 +31,7 @@ const LiquidMazeStatic = ({
             }
         `;
 
-            const fsSource = `
+        const fsSource = `
                 precision highp float;
 
                 uniform float u_time;
@@ -147,7 +147,7 @@ const LiquidMazeStatic = ({
             const dpr = Math.min(window.devicePixelRatio || 1, 2);
             const displayWidth = canvas.clientWidth || window.innerWidth;
             const displayHeight = canvas.clientHeight || window.innerHeight;
-            
+
             canvas.width = displayWidth * dpr;
             canvas.height = displayHeight * dpr;
             gl.viewport(0, 0, canvas.width, canvas.height);
@@ -158,16 +158,24 @@ const LiquidMazeStatic = ({
 
         let animationFrameId;
         let currentTwirl = 0;
-        
+        let lastScrollY = window.scrollY;
+
         const render = (time) => {
             const targetTwirl = window.heroTwirl || 0;
-            // Smoothly interpolate twirl to prevent jumps on mobile
             currentTwirl += (targetTwirl - currentTwirl) * 0.1;
 
-            const scrollTotal = document.documentElement.scrollHeight - window.innerHeight;
-            // Clamp scroll between 0 and 1 to prevent rubber-banding glitches
+            // Use a more stable scroll calculation that accounts for mobile UI shifts
+            const docHeight = Math.max(
+                document.body.scrollHeight, 
+                document.documentElement.scrollHeight,
+                document.body.offsetHeight, 
+                document.documentElement.offsetHeight,
+                document.body.clientHeight, 
+                document.documentElement.clientHeight
+            );
+            const scrollTotal = docHeight - window.innerHeight;
             const scroll = scrollTotal > 0 ? Math.max(0, Math.min(1, window.scrollY / scrollTotal)) : 0;
-            
+
             gl.useProgram(program);
             gl.uniform1f(timeLoc, time * 0.001);
             gl.uniform2f(resLoc, canvas.width, canvas.height);
@@ -179,8 +187,17 @@ const LiquidMazeStatic = ({
         };
         animationFrameId = requestAnimationFrame(render);
 
+        // Mobile optimization: Refresh on visibility change to prevent frozen context
+        const handleVisibility = () => {
+            if (document.visibilityState === 'visible') {
+                resize();
+            }
+        };
+        window.addEventListener('visibilitychange', handleVisibility);
+
         return () => {
             window.removeEventListener('resize', resize);
+            window.removeEventListener('visibilitychange', handleVisibility);
             cancelAnimationFrame(animationFrameId);
         };
     }, [color1, color2, bgColor, opacity, speed, density]);

@@ -46,25 +46,22 @@ const HeroSection = () => {
                         <img
                             src="/assets/MOV-logo.png"
                             alt="Man On Vision"
-                            className={`w-[200px] md:w-[450px] h-auto object-contain transition-all duration-700 ${
-                                isDarkMode ? 'brightness-110' : 'brightness-100'
-                            }`}
-                            style={{ 
-                                clipPath: 'inset(0 0 28% 0)', 
-                                marginBottom: '-13%' 
+                            className={`w-[200px] md:w-[450px] h-auto object-contain transition-all duration-700 ${isDarkMode ? 'brightness-110' : 'brightness-100'
+                                }`}
+                            style={{
+                                clipPath: 'inset(0 0 28% 0)',
+                                marginBottom: '-13%'
                             }}
                         />
-                        
+
                         {/* High-Fidelity Typography - Color adapts to mode */}
                         <div className="flex flex-col items-center text-center mt-2 md:mt-4 z-10">
-                            <h1 className={`text-[1.8rem] md:text-[4.5rem] font-black tracking-tight leading-[0.9] transition-colors duration-700 ${
-                                isDarkMode ? 'text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]' : 'text-black'
-                            }`}>
+                            <h1 className={`text-[1.8rem] md:text-[4.5rem] font-black tracking-tight leading-[0.9] transition-colors duration-700 ${isDarkMode ? 'text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]' : 'text-black'
+                                }`}>
                                 MAN ON VISION
                             </h1>
-                            <p className={`text-[7px] md:text-[12px] tracking-[0.8em] uppercase font-semibold mt-2 md:mt-4 transition-colors duration-700 translate-x-[0.4em] ${
-                                isDarkMode ? 'text-stone-400' : 'text-stone-600'
-                            }`}>
+                            <p className={`text-[7px] md:text-[12px] tracking-[0.8em] uppercase font-semibold mt-2 md:mt-4 transition-colors duration-700 translate-x-[0.4em] ${isDarkMode ? 'text-stone-400' : 'text-stone-600'
+                                }`}>
                                 ENTERTAINMENT
                             </p>
                         </div>

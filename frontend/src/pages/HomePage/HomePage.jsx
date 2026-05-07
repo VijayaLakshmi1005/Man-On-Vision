@@ -17,7 +17,7 @@ const HomePage = () => {
     return (
         <main ref={mainRef} className={`relative w-full overflow-x-hidden transition-colors duration-1000 bg-transparent`}>
             {/* Global Continuous Background - Using the '2nd Background' preferred by user */}
-            <div className="fixed inset-0 z-[-1]">
+            <div className="fixed inset-0 z-[-1] will-change-transform" style={{ transform: 'translateZ(0)', backfaceVisibility: 'hidden' }}>
                 <LiquidMazeStatic 
                     color1="#ff5a96" 
                     color2="#ffb040" 

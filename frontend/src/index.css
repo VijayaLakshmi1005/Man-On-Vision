@@ -40,6 +40,13 @@
     @apply antialiased text-stone-900;
     font-family: var(--font-sans);
     background-color: var(--luxury-beige);
+    overscroll-behavior-y: none; /* Prevent pull-to-refresh on mobile */
+    -webkit-overflow-scrolling: touch;
+  }
+
+  html {
+    overscroll-behavior-y: none;
+    scroll-behavior: auto !important; /* Lenis handles smoothing */
   }
 
 

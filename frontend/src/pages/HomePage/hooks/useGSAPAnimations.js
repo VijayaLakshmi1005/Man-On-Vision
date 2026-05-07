@@ -3,6 +3,10 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
+ScrollTrigger.config({ 
+    ignoreMobileResize: true, // Prevents jumps when mobile address bar hides/shows
+    limitCallbacks: true 
+});
 
 const useGSAPAnimations = (rootRef) => {
     useLayoutEffect(() => {
@@ -41,24 +45,24 @@ const useGSAPAnimations = (rootRef) => {
                 });
 
                 if (document.querySelector("#hero-logo-container")) {
-                    introTl.fromTo("#hero-logo-container", 
+                    introTl.fromTo("#hero-logo-container",
                         { scale: 1, autoAlpha: 1 },
                         {
                             // 4x is perfectly safe for mobile memory limits while still filling the screen
-                            scale: isMobile ? 4 : 15,    
-                            ease: "power2.inOut", 
+                            scale: isMobile ? 4 : 15,
+                            ease: "power2.inOut",
                             duration: 3,
-                            force3D: !isMobile, 
+                            force3D: !isMobile,
                             overwrite: "auto"
                         }
                     )
-                    .to("#hero-logo-container", {
-                        autoAlpha: 0,
-                        duration: 1,
-                        ease: "power1.inOut",
-                    }, "-=1.5");
+                        .to("#hero-logo-container", {
+                            autoAlpha: 0,
+                            duration: 1,
+                            ease: "power1.inOut",
+                        }, "-=1.5");
                 }
-                
+
                 if (document.querySelector("#hero-canvas")) {
                     introTl.to("#hero-canvas", {
                         opacity: 0,
@@ -68,7 +72,7 @@ const useGSAPAnimations = (rootRef) => {
                 }
 
                 if (document.querySelector("#flow-section")) {
-                    introTl.fromTo("#flow-section", 
+                    introTl.fromTo("#flow-section",
                         { opacity: 0, y: isMobile ? 30 : 50, scale: 0.95, pointerEvents: "none" },
                         {
                             opacity: 1,
@@ -78,7 +82,7 @@ const useGSAPAnimations = (rootRef) => {
                             duration: 1.5,
                             ease: "power3.out",
                             force3D: true
-                        }, 
+                        },
                         "-=1.2"
                     );
                 }
@@ -86,13 +90,13 @@ const useGSAPAnimations = (rootRef) => {
 
             // 2. STORYTELLING SECTIONS - STACKED SYSTEM
             const sections = gsap.utils.toArray('.scroll-section');
-            
+
             sections.forEach((section, index) => {
                 if (section.id === 'about') return;
 
-                gsap.set(section, { 
+                gsap.set(section, {
                     zIndex: index + 10,
-                    position: 'relative' 
+                    position: 'relative'
                 });
 
                 // --- SECTION FADE SCRUB ---
@@ -102,14 +106,14 @@ const useGSAPAnimations = (rootRef) => {
                 gsap.set(section, { opacity: 1 });
 
                 if (!isLastSection && !isGallery) {
-                    gsap.fromTo(section, 
+                    gsap.fromTo(section,
                         { opacity: 1 },
                         {
                             opacity: 0,
                             ease: "power1.in",
                             scrollTrigger: {
                                 trigger: section,
-                                start: isMobile ? "bottom 40%" : "bottom 20%", 
+                                start: isMobile ? "bottom 40%" : "bottom 20%",
                                 end: "bottom top",
                                 scrub: true,
                                 preventOverlaps: true,
@@ -145,7 +149,7 @@ const useGSAPAnimations = (rootRef) => {
                     const content = section.querySelector('#horizontal-scroll-content');
                     if (content) {
                         const getScrollAmount = () => -(content.scrollWidth - window.innerWidth);
-                        
+
                         gsap.to(content, {
                             x: getScrollAmount,
                             ease: "none",
@@ -171,7 +175,7 @@ const useGSAPAnimations = (rootRef) => {
                         start: "top top",
                         end: isMobile ? "+=80%" : "+=100%", // Restored for impact
                         pin: true,
-                        pinSpacing: true, 
+                        pinSpacing: true,
                         scrub: true,
                         invalidateOnRefresh: true,
                         fastScrollEnd: true,
