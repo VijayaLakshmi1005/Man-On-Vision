@@ -72,7 +72,6 @@ export default function ClientSidebar({ onClose }) {
     { name: "Edited Photos", path: "/portal/gallery", icon: Image },
 
     { name: "Concierge", path: "/portal/chats", icon: MessageSquare, hasUnread: unreadCount > 0 },
-    { name: "Game Zone", path: "/games", icon: Gamepad2 },
     { name: "My Profile", path: "/portal/profile", icon: User },
   ];
 

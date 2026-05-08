@@ -9,9 +9,9 @@ const GameLayout = ({ children, title }) => {
   const [isTouch, setIsTouch] = useState(false);
 
   const handleExit = () => {
-    // If we are on the main Games Hub, go back to the Client Portal
+    // If we are on the main Games Hub, go back to the Home Page
     if (location.pathname === '/games') {
-      navigate('/portal');
+      navigate('/');
     } else {
       // If we are inside a specific game, go back to the Games Hub
       navigate('/games');

@@ -5,10 +5,10 @@ import { API_URL } from '../../../utils/api';
 import './AdminGameDashboard.css';
 
 const gameModules = [
-  { id: 'page-settings', name: 'Zone Appearance', icon: '🎨', color: '#d4af37', description: 'Titles, Backgrounds & Game Visibility' },
-  { id: 'tictactoe', name: 'Tic Tac Toe', icon: '🎥', color: '#8b0000', description: 'Manage AI & Player Icons' },
-  { id: '2048', name: '2048 Game', icon: '🔢', color: '#b22222', description: 'Manage Tile Labels & Speed' },
-  { id: 'spot_difference', name: 'Spot Difference', icon: '🔍', color: '#666', description: 'Manage Image Sets & Markers' }
+  { id: 'page-settings', name: 'Zone Appearance', icon: '🎨', color: '#d4af37', label: 'INTERFACE', description: 'Titles, Backgrounds & Game Visibility' },
+  { id: 'tictactoe', name: 'Tic Tac Toe', icon: '🎥', color: '#8b0000', label: 'LOGIC', description: 'Manage AI & Player Icons' },
+  { id: '2048', name: '2048 Game', icon: '🔢', color: '#ba6a5d', label: 'ALGORITHM', description: 'Manage Tile Labels & Speed' },
+  { id: 'spot_difference', name: 'Spot Master', icon: '🔍', color: '#1a1a1a', label: 'PRECISION', description: 'Manage Image Sets & Markers' }
 ];
 
 const AdminGameDashboard = () => {
@@ -55,8 +55,10 @@ const AdminGameDashboard = () => {
             style={{ '--module-color': module.color }}
             onClick={() => navigate(`/admin/games/${module.id}`)}
           >
-            <div className="module-glow"></div>
-            <div className="module-icon">{module.icon}</div>
+            <div className="module-icon-container">
+              <div className="module-icon">{module.icon}</div>
+              <span className="module-label">{module.label}</span>
+            </div>
             <div className="module-info">
               <h3>{module.name}</h3>
               <p>{module.description}</p>

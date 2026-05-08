@@ -5,8 +5,13 @@ const Score = require('../models/Score');
 
 exports.getRandomGameData = async (req, res) => {
   try {
-    const { gameType, userId, sessionId } = req.query;
-    console.log(`[GAME] Fetching data for ${gameType} | Session: ${sessionId}`);
+    const { gameType, userId, sessionId, all } = req.query;
+    console.log(`[GAME] Fetching data for ${gameType} | All: ${all} | Session: ${sessionId}`);
+
+    if (all === 'true') {
+      const allContent = await GameImage.find({ gameType, isActive: true }).sort({ createdAt: -1 });
+      return res.status(200).json(allContent);
+    }
 
     // Get user history
     let history = null;

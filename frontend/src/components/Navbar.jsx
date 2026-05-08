@@ -19,6 +19,7 @@ const Navbar = () => {
     { name: 'About', to: 'about' },
     { name: 'Services', to: 'services' },
     { name: 'Portfolio', to: 'gallery' },
+    { name: 'Games', to: '/games', isExternal: true },
   ];
 
   const handleNavClick = (to) => {
@@ -132,7 +133,15 @@ const Navbar = () => {
               animate={isOpen ? { y: 0, opacity: 1 } : { y: 50, opacity: 0 }}
               transition={{ delay: 0.1 * i + 0.2 }}
             >
-              {isHomePage ? (
+              {link.isExternal ? (
+                <RouterLink
+                  to={link.to}
+                  onClick={() => setIsOpen(false)}
+                  className="text-4xl md:text-7xl font-serif italic tracking-tighter hover:text-orange-600 transition-colors block"
+                >
+                  {link.name}
+                </RouterLink>
+              ) : isHomePage ? (
                 <ScrollLink
                   to={link.to}
                   smooth={true}

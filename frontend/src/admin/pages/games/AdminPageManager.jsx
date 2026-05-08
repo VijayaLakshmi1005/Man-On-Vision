@@ -103,7 +103,7 @@ const AdminPageManager = () => {
                 value={settings.description}
                 onChange={e => setSettings({...settings, description: e.target.value})}
                 rows={2}
-                className="w-full p-4 rounded-2xl border border-stone-200 bg-stone-50"
+                className="w-full px-6 py-4 bg-stone-50 border border-stone-100 rounded-[24px] outline-none focus:border-stone-200 transition-all text-sm font-medium text-stone-900"
               />
             </div>
           </div>
@@ -140,6 +140,7 @@ const AdminPageManager = () => {
                     <label>Display Title</label>
                     <input 
                       type="text" 
+                      className="w-full px-6 py-4 bg-stone-50 border border-stone-100 rounded-[24px] outline-none focus:border-stone-200 transition-all text-sm font-medium text-stone-900"
                       value={game.title}
                       onChange={e => handleGameUpdate(index, 'title', e.target.value)}
                     />
@@ -148,6 +149,7 @@ const AdminPageManager = () => {
                     <label>Thumbnail Image URL</label>
                     <input 
                       type="text" 
+                      className="w-full px-6 py-4 bg-stone-50 border border-stone-100 rounded-[24px] outline-none focus:border-stone-200 transition-all text-sm font-medium text-stone-900"
                       value={game.image}
                       onChange={e => handleGameUpdate(index, 'image', e.target.value)}
                     />
@@ -156,6 +158,7 @@ const AdminPageManager = () => {
                     <label>Description (Short)</label>
                     <input 
                       type="text" 
+                      className="w-full px-6 py-4 bg-stone-50 border border-stone-100 rounded-[24px] outline-none focus:border-stone-200 transition-all text-sm font-medium text-stone-900"
                       value={game.description}
                       onChange={e => handleGameUpdate(index, 'description', e.target.value)}
                     />

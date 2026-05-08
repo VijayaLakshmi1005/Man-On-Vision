@@ -1,19 +1,30 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
+import { motion, AnimatePresence } from 'framer-motion';
 import GameLayout from '../common/GameLayout';
 import { useSound } from '../common/useSound';
+import { useSwipe } from '../common/useSwipe';
 import { API_URL } from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
 import './Game2048.css';
 
+/**
+ * AAA Production-Grade 2048 Event Edition
+ * Features: Advanced Swipe Engine, Input Locking, Smooth Framer Motion Animations
+ */
 const Game2048 = () => {
   const { user } = useAuth();
-  const [grid, setGrid] = useState(Array(16).fill(0));
+  const [grid, setGrid] = useState(Array(16).fill(0).map(() => ({ value: 0, id: Math.random().toString(36).substr(2, 9), merged: false })));
   const [score, setScore] = useState(0);
   const [bestScore, setBestScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [won, setWon] = useState(false);
   const [guestName, setGuestName] = useState(localStorage.getItem('guest_name') || '');
+  const [isMoving, setIsMoving] = useState(false);
+  
+  const moveLock = useRef(false);
+  const { playSound } = useSound();
+
   const [labels, setLabels] = useState({
     2: 'Light', 4: 'Mic', 8: 'Camera', 16: 'Lens', 32: 'Drone',
     64: 'Stage', 128: 'Screen', 256: 'Baraat', 512: 'Decor',
@@ -35,34 +46,41 @@ const Game2048 = () => {
   }, []);
 
   const addRandomTile = useCallback((currentGrid, currentDiff = 'medium') => {
-    const emptyCells = currentGrid.map((v, i) => v === 0 ? i : null).filter(v => v !== null);
+    const emptyCells = currentGrid.map((tile, i) => tile.value === 0 ? i : null).filter(v => v !== null);
     if (emptyCells.length === 0) return currentGrid;
+    
     const randomIndex = emptyCells[Math.floor(Math.random() * emptyCells.length)];
     const newGrid = [...currentGrid];
     
-    // Difficulty logic: Hard spawns higher numbers to fill board faster/make it harder to organize
+    let newValue = 2;
     const rand = Math.random();
     if (currentDiff === 'hard') {
-      if (rand < 0.7) newGrid[randomIndex] = 2;
-      else if (rand < 0.9) newGrid[randomIndex] = 4;
-      else newGrid[randomIndex] = 8;
-    } else if (currentDiff === 'easy') {
-      newGrid[randomIndex] = 2; // Always 2 for easy
+      if (rand < 0.7) newValue = 2;
+      else if (rand < 0.9) newValue = 4;
+      else newValue = 8;
     } else {
-      newGrid[randomIndex] = rand < 0.9 ? 2 : 4;
+      newValue = rand < 0.9 ? 2 : 4;
     }
+    
+    newGrid[randomIndex] = { 
+      value: newValue, 
+      id: Math.random().toString(36).substr(2, 9),
+      merged: false,
+      isNew: true 
+    };
     
     return newGrid;
   }, []);
 
   const initGame = useCallback(() => {
-    let newGrid = Array(16).fill(0);
+    let newGrid = Array(16).fill(0).map(() => ({ value: 0, id: Math.random().toString(36).substr(2, 9), merged: false }));
     newGrid = addRandomTile(newGrid);
     newGrid = addRandomTile(newGrid);
     setGrid(newGrid);
     setScore(0);
     setGameOver(false);
     setWon(false);
+    moveLock.current = false;
   }, [addRandomTile]);
 
   useEffect(() => {
@@ -75,7 +93,6 @@ const Game2048 = () => {
     try {
       const sessionId = localStorage.getItem('game_session_id') || Math.random().toString(36).substring(7);
       localStorage.setItem('game_session_id', sessionId);
-      
       if (guestName) localStorage.setItem('guest_name', guestName);
       
       await axios.post(`${API_URL}/games/score`, {
@@ -92,18 +109,19 @@ const Game2048 = () => {
     }
   };
 
-  const { playSound } = useSound();
-
   const move = useCallback((direction) => {
-    if (gameOver) return;
+    if (gameOver || moveLock.current) return;
+    
+    // Lock input during animation duration
+    moveLock.current = true;
+    setIsMoving(true);
 
-    let newGrid = [...grid];
+    let tempGrid = grid.map(tile => ({ ...tile, merged: false, isNew: false }));
     let moved = false;
     let newScore = score;
-    let merged = false;
 
     const rotate = (g) => {
-      const res = Array(16).fill(0);
+      const res = Array(16).fill(null);
       for (let r = 0; r < 4; r++) {
         for (let c = 0; c < 4; c++) {
           res[c * 4 + (3 - r)] = g[r * 4 + c];
@@ -117,53 +135,61 @@ const Game2048 = () => {
     if (direction === 'right') rotations = 2;
     if (direction === 'down') rotations = 3;
 
-    for (let i = 0; i < rotations; i++) newGrid = rotate(newGrid);
+    for (let i = 0; i < rotations; i++) tempGrid = rotate(tempGrid);
 
     for (let r = 0; r < 4; r++) {
-      let row = newGrid.slice(r * 4, r * 4 + 4).filter(v => v !== 0);
-      for (let i = 0; i < row.length - 1; i++) {
-        if (row[i] === row[i + 1]) {
-          row[i] *= 2;
-          newScore += row[i];
-          row.splice(i + 1, 1);
+      let row = tempGrid.slice(r * 4, r * 4 + 4);
+      let filteredRow = row.filter(tile => tile.value !== 0);
+      let newRow = [];
+
+      for (let i = 0; i < filteredRow.length; i++) {
+        if (i < filteredRow.length - 1 && filteredRow[i].value === filteredRow[i + 1].value) {
+          newRow.push({ 
+            value: filteredRow[i].value * 2, 
+            id: filteredRow[i].id, 
+            merged: true 
+          });
+          newScore += filteredRow[i].value * 2;
+          if (filteredRow[i].value * 2 === 2048) setWon(true);
+          i++;
           moved = true;
-          merged = true;
-          if (row[i] === 2048) {
-            setWon(true);
-            playSound('success');
-          }
+        } else {
+          newRow.push({ ...filteredRow[i], merged: false });
         }
       }
-      while (row.length < 4) row.push(0);
-      
-      const startIdx = r * 4;
+
+      while (newRow.length < 4) {
+        newRow.push({ value: 0, id: Math.random().toString(36).substr(2, 9), merged: false });
+      }
+
       for (let i = 0; i < 4; i++) {
-        if (newGrid[startIdx + i] !== row[i]) moved = true;
-        newGrid[startIdx + i] = row[i];
+        if (tempGrid[r * 4 + i].value !== newRow[i].value) moved = true;
+        tempGrid[r * 4 + i] = newRow[i];
       }
     }
 
     const backRotations = (4 - rotations) % 4;
-    for (let i = 0; i < backRotations; i++) newGrid = rotate(newGrid);
+    for (let i = 0; i < backRotations; i++) tempGrid = rotate(tempGrid);
 
     if (moved) {
       playSound('move');
-      const finalGrid = addRandomTile(newGrid);
+      if (window.navigator.vibrate) window.navigator.vibrate(10);
+      
+      const finalGrid = addRandomTile(tempGrid);
       setGrid(finalGrid);
       setScore(newScore);
       if (newScore > bestScore) {
         setBestScore(newScore);
         localStorage.setItem('2048_best', newScore.toString());
       }
-// ... rest of logic
 
       const canMove = (g) => {
-        if (g.includes(0)) return true;
+        if (g.some(tile => tile.value === 0)) return true;
         for (let r = 0; r < 4; r++) {
           for (let c = 0; c < 4; c++) {
-            const val = g[r * 4 + c];
-            if (c < 3 && val === g[r * 4 + c + 1]) return true;
-            if (r < 3 && val === g[(r + 1) * 4 + c]) return true;
+            const val = g[r * 4 + c].value;
+            if (c < 3 && val === g[r * 4 + c + 1].value) return true;
+            if (r < 3 && val === g[(r + 1) * 4 + c].value) return true;
           }
         }
         return false;
@@ -173,21 +199,21 @@ const Game2048 = () => {
         setGameOver(true);
         saveScoreToBackend(newScore);
       }
-      if (won) saveScoreToBackend(newScore);
     }
-  }, [grid, score, bestScore, gameOver, won, addRandomTile]);
 
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
-        e.preventDefault();
-        const dir = e.key.replace('Arrow', '').toLowerCase();
-        move(dir);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [move]);
+    // Unlock after animation frame (150ms for smooth feel)
+    setTimeout(() => {
+      moveLock.current = false;
+      setIsMoving(false);
+    }, 150);
+  }, [grid, score, bestScore, gameOver, addRandomTile, playSound]);
+
+  // AAA Swipe Engine Integration
+  useSwipe((dir) => move(dir), {
+    threshold: 30,
+    velocityThreshold: 0.2,
+    enabled: !gameOver && !won
+  });
 
   return (
     <GameLayout title="2048 EVENT EDITION">
@@ -204,58 +230,75 @@ const Game2048 = () => {
           <button className="new-event-btn" onClick={initGame}>NEW EVENT</button>
         </div>
 
-        <div className="g2048-board-wrapper glass">
+        <div className="g2048-board-wrapper">
           <div className="g2048-grid">
-            {grid.map((val, i) => (
-              <div key={i} className={`tile tile-${val} ${val > 0 ? 'pop' : 'empty'}`}>
-                {val > 0 && (
-                  <div className="tile-content">
-                    <span className="tile-num">{val}</span>
-                    <span className="tile-txt">{labels[val]}</span>
-                  </div>
-                )}
+            {grid.map((tile, i) => (
+              <div key={`cell-${i}`} className="tile-cell">
+                <AnimatePresence mode="popLayout">
+                  {tile.value > 0 && (
+                    <motion.div
+                      key={tile.id}
+                      initial={tile.isNew ? { scale: 0, opacity: 0 } : false}
+                      animate={{ 
+                        scale: 1, 
+                        opacity: 1,
+                        filter: isMoving ? 'blur(0.5px)' : 'blur(0px)'
+                      }}
+                      exit={{ scale: 0.5, opacity: 0 }}
+                      transition={{ 
+                        type: 'spring', 
+                        stiffness: 500, 
+                        damping: 30,
+                        mass: 0.8
+                      }}
+                      className={`tile tile-${tile.value} ${tile.merged ? 'merged' : ''}`}
+                    >
+                      <div className="tile-content">
+                        <span className="tile-num">{tile.value}</span>
+                        <span className="tile-txt">{labels[tile.value]}</span>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             ))}
           </div>
 
           {(gameOver || won) && (
             <div className="g2048-overlay-cinematic">
-              <div className="overlay-content-2048 glass">
-                <h2>{won ? 'VISIONARY SUCCESS!' : 'EVENT CONCLUDED'}</h2>
-                <p>Final Score: <strong>{score}</strong></p>
+              <div className="overlay-content-2048">
+                <motion.div
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                >
+                  <h2>{won ? 'VISIONARY SUCCESS!' : 'EVENT CONCLUDED'}</h2>
+                  <p className="text-stone-400 text-xs uppercase tracking-widest mb-4">Final Score: <strong className="text-luxury-gold">{score}</strong></p>
 
-                {!user && (
-                  <div className="name-capture-field my-4">
-                    <label className="text-[10px] font-bold text-stone-400 block mb-2 tracking-widest">RANKING IDENTITY</label>
-                    <input 
-                      type="text" 
-                      value={guestName}
-                      onChange={(e) => setGuestName(e.target.value)}
-                      placeholder="ENTER NAME"
-                      className="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-luxury-gold transition-all text-center uppercase font-bold tracking-widest"
-                    />
-                  </div>
-                )}
-                <button className="btn-primary" onClick={initGame}>RESTART EVENT</button>
+                  {!user && (
+                    <div className="name-capture-field my-6">
+                      <label className="text-[10px] font-bold text-stone-500 block mb-2 tracking-[0.2em] uppercase">RANKING IDENTITY</label>
+                      <input 
+                        type="text" 
+                        value={guestName}
+                        onChange={(e) => setGuestName(e.target.value)}
+                        placeholder="ENTER NAME"
+                        className="w-full bg-white/5 border border-white/10 p-4 rounded-2xl text-white outline-none focus:border-luxury-gold transition-all text-center uppercase font-bold tracking-[0.2em] text-sm"
+                      />
+                    </div>
+                  )}
+                  <button className="new-event-btn w-full" onClick={initGame}>RESTART EVENT</button>
+                </motion.div>
               </div>
             </div>
           )}
         </div>
-
-        <div className="g2048-mobile-controls">
-          <div className="d-pad-cinematic">
-            <button className="ctrl-btn up" onClick={() => move('up')}>▲</button>
-            <div className="ctrl-row">
-              <button className="ctrl-btn left" onClick={() => move('left')}>◀</button>
-              <button className="ctrl-btn down" onClick={() => move('down')}>▼</button>
-              <button className="ctrl-btn right" onClick={() => move('right')}>▶</button>
-            </div>
-          </div>
-        </div>
+        
+        <p className="text-[10px] text-center text-stone-500 uppercase tracking-[0.3em] font-medium opacity-50 animate-pulse">
+          SWIPE OR DRAG TO ORCHESTRATE
+        </p>
       </div>
     </GameLayout>
   );
 };
 
 export default Game2048;
-

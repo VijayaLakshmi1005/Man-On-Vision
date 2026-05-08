@@ -213,7 +213,46 @@
   box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
 }
 
-@media (max-width: 480px) {
-  .overlay-card h2 { font-size: 1.8rem; }
-  .btn-primary { padding: 12px 25px; font-size: 0.8rem; }
+@media (max-width: 600px) {
+  .ttt-cinematic-container {
+    @apply p-4 gap-6;
+  }
+
+  .ttt-header-stats {
+    @apply grid-cols-1 gap-4;
+  }
+
+  .player-glass, .draws-glass {
+    @apply flex-row justify-between p-4;
+    gap: 0;
+  }
+
+  .icon-large {
+    @apply text-xl;
+  }
+
+  .score-val {
+    @apply text-lg;
+  }
+
+  .ttt-grid-cinematic {
+    @apply gap-2 p-2;
+  }
+
+  .overlay-card h2 {
+    @apply text-2xl mb-4;
+  }
+
+  .btn-primary {
+    @apply w-full py-4;
+  }
+}
+
+@media (max-height: 700px) {
+  .ttt-cinematic-container {
+    @apply gap-4;
+  }
+  .ttt-grid-cinematic {
+    @apply max-w-[320px] mx-auto;
+  }
 }

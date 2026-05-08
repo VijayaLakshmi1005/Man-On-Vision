@@ -5,7 +5,7 @@
   color: #fff;
 }
 
-/* Glass Luxury Cards */
+/* Glass Luxury Base */
 .glass-luxury {
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(20px);
@@ -14,29 +14,129 @@
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Mastery Banner */
+.mastery-banner {
+  margin-bottom: 40px;
+  padding: 30px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  box-shadow: inset 0 0 50px rgba(212, 175, 55, 0.05);
+  border-radius: 24px;
+}
+
+.mastery-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  z-index: 1;
+}
+
+.level-badge {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.level-num {
+  position: absolute;
+  font-size: 0.9rem;
+  font-weight: 900;
+  color: #fff;
+  margin-top: -2px;
+}
+
+.mastery-text h3 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #d4af37;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.mastery-text p {
+  font-size: 0.6rem;
+  font-weight: 900;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 3px;
+}
+
+.mastery-progress-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  z-index: 1;
+}
+
+.progress-track {
+  flex: 1;
+  height: 10px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #d4af37, #ffd700);
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+}
+
+.progress-val {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #d4af37;
+  min-width: 50px;
+}
+
+.mastery-decor {
+  position: absolute;
+  right: -10px;
+  top: -10px;
+  pointer-events: none;
+}
+
 /* Header Stats Row */
 .hub-stats-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 24px;
   margin-bottom: 60px;
 }
 
 .hub-stat-card {
-  padding: 24px;
+  padding: 30px;
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hub-stat-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top right, rgba(255,255,255,0.05), transparent 70%);
 }
 
 .stat-icon-wrapper {
-  width: 52px;
-  height: 52px;
-  border-radius: 16px;
+  width: 56px;
+  height: 56px;
+  border-radius: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.4);
 }
 
 .bg-gold-gradient { background: linear-gradient(135deg, #d4af37, #aa8a2e); }
@@ -54,13 +154,13 @@
 }
 
 .stat-value {
-  font-size: 1.5rem;
-  font-weight: 800;
+  font-size: 1.8rem;
+  font-weight: 900;
   font-family: 'Outfit', sans-serif;
-  letter-spacing: -0.5px;
+  color: #fff;
 }
 
-/* Navigation - Luxury Style */
+/* Hub Navigation */
 .hub-nav-cinematic {
   display: flex;
   justify-content: center;
@@ -118,30 +218,36 @@
 }
 
 .game-card-premium {
-  background: rgba(10, 10, 10, 0.5);
+  background: rgba(15, 15, 15, 0.6);
   border-radius: 32px;
-  border: 1px solid rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.03);
   overflow: hidden;
   cursor: pointer;
-  transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
-  animation: revealUp 0.8s ease forwards;
-  animation-delay: var(--anim-delay);
-  opacity: 0;
+  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  position: relative;
 }
 
-@keyframes revealUp {
-  from { transform: translateY(40px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+.game-card-premium::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(212,175,55,0.05), transparent);
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+.game-card-premium:hover::before {
+  opacity: 1;
 }
 
 .game-card-premium:hover {
-  transform: translateY(-12px);
-  border-color: #d4af37;
-  box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+  transform: translateY(-10px) scale(1.02);
+  border-color: rgba(212, 175, 55, 0.3);
+  box-shadow: 0 40px 80px rgba(0,0,0,0.8);
 }
 
 .card-image-panel {
-  height: 240px;
+  height: 260px;
   position: relative;
   overflow: hidden;
 }
@@ -210,16 +316,17 @@
 
 .enter-btn {
   width: 100%;
-  background: linear-gradient(135deg, #1a1a1a, #000);
+  background: rgba(255,255,255,0.05);
   color: #fff;
   border: 1px solid rgba(255,255,255,0.1);
   padding: 14px;
   border-radius: 16px;
   font-size: 0.75rem;
-  font-weight: 800;
+  font-weight: 900;
   letter-spacing: 2px;
   cursor: pointer;
   transition: all 0.3s;
+  text-transform: uppercase;
 }
 
 .game-card-premium:hover .enter-btn {
@@ -229,38 +336,35 @@
   transform: scale(1.02);
 }
 
-/* Leaderboard Hall of Fame Redesign */
+/* Leaderboard */
 .leaderboard-premium-view {
   max-width: 1000px;
   margin: 0 auto;
 }
 
 .leaderboard-branding {
-  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
   margin-bottom: 50px;
 }
 
 .branding-text h2 {
-  font-size: 3.5rem;
+  font-size: 3rem;
   font-family: 'Cormorant Garamond', serif;
-  letter-spacing: 4px;
-  background: linear-gradient(to bottom, #fff, #888);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
 }
 
 .branding-text p {
   font-size: 0.8rem;
   color: #d4af37;
-  letter-spacing: 4px;
+  letter-spacing: 2px;
   font-weight: 600;
-  margin-bottom: 40px;
 }
 
 .game-selector-pills {
   display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
   gap: 12px;
 }
 
@@ -281,12 +385,10 @@
   background: #d4af37;
   color: #000;
   border-color: #d4af37;
-  box-shadow: 0 10px 20px rgba(212, 175, 55, 0.2);
 }
 
 .leaderboard-list-luxury {
   padding: 20px;
-  border-radius: 32px;
 }
 
 .rank-row {
@@ -295,19 +397,14 @@
   padding: 16px 30px;
   border-radius: 20px;
   margin-bottom: 12px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid transparent;
+  transition: all 0.3s;
+  background: rgba(255,255,255,0.02);
 }
 
 .rank-row:hover {
   background: rgba(255,255,255,0.05);
-  transform: scale(1.01) translateX(5px);
-  border-color: rgba(255,255,255,0.1);
+  transform: translateX(10px);
 }
-
-.rank-1 { background: linear-gradient(90deg, rgba(212, 175, 55, 0.15), transparent); border-color: rgba(212, 175, 55, 0.2); }
-.rank-2 { background: linear-gradient(90deg, rgba(192, 192, 192, 0.1), transparent); border-color: rgba(192, 192, 192, 0.1); }
-.rank-3 { background: linear-gradient(90deg, rgba(205, 127, 50, 0.08), transparent); border-color: rgba(205, 127, 50, 0.1); }
 
 .rank-pos {
   width: 60px;
@@ -319,11 +416,7 @@
   gap: 8px;
 }
 
-.rank-1 .rank-pos { color: #d4af37; font-size: 1.5rem; }
-.rank-2 .rank-pos { color: #silver; }
-.rank-3 .rank-pos { color: #cd7f32; }
-
-.star-icon { fill: currentColor; }
+.rank-1 .rank-pos { color: #d4af37; }
 
 .player-meta {
   flex: 1;
@@ -342,21 +435,15 @@
   justify-content: center;
   font-weight: 900;
   border: 2px solid rgba(255,255,255,0.1);
-  color: #fff;
 }
-
-.rank-1 .avatar-shield { border-color: #d4af37; background: #3a2e10; color: #d4af37; }
 
 .player-name {
   font-weight: 700;
   font-size: 1.1rem;
-  letter-spacing: 0.5px;
 }
 
 .player-score {
   text-align: right;
-  display: flex;
-  flex-direction: column;
 }
 
 .pts-val {
@@ -372,11 +459,10 @@
   letter-spacing: 2px;
 }
 
-/* Hub Action Footer */
+/* Footer Action */
 .hub-action-footer {
   margin-top: 100px;
   text-align: center;
-  position: relative;
 }
 
 .footer-line {
@@ -390,30 +476,20 @@
   font-size: 1rem;
   color: #aaa;
   letter-spacing: 3px;
-  font-weight: 300;
   margin-bottom: 30px;
 }
 
 .luxury-cta-btn {
   background: #d4af37;
   color: #000;
-  border: none;
   padding: 18px 60px;
   border-radius: 40px;
   font-weight: 900;
   letter-spacing: 3px;
-  font-size: 0.85rem;
   cursor: pointer;
   position: relative;
   overflow: hidden;
   transition: all 0.4s;
-  box-shadow: 0 15px 30px rgba(212, 175, 55, 0.3);
-}
-
-.luxury-cta-btn:hover {
-  background: #fff;
-  transform: scale(1.05) translateY(-5px);
-  box-shadow: 0 20px 40px rgba(255,255,255,0.2);
 }
 
 .btn-shimmer {
@@ -432,10 +508,31 @@
   100% { left: 100%; }
 }
 
-@media (max-width: 900px) {
-  .game-grid-premium { grid-template-columns: 1fr; }
-  .branding-text h2 { font-size: 2.2rem; }
-  .rank-row { padding: 12px 15px; }
-  .player-name { font-size: 0.9rem; }
-  .pts-val { font-size: 1.1rem; }
+/* Loader */
+.experience-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  gap: 30px;
+}
+
+.loader-ring {
+  width: 60px;
+  height: 60px;
+  border: 2px solid rgba(212, 175, 55, 0.1);
+  border-top-color: #d4af37;
+  border-radius: 50%;
+  animation: spin 1s infinite linear;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+  .mastery-banner { flex-direction: column; text-align: center; }
+  .hub-stats-row { grid-template-columns: 1fr; }
+  .leaderboard-branding { flex-direction: column; align-items: center; gap: 20px; }
 }

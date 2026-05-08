@@ -321,14 +321,14 @@ export default function UserManagement() {
               <div className="flex-1 overflow-y-auto custom-scrollbar px-10 pb-6">
                 <form onSubmit={handleCreate} className="space-y-6 py-4">
                   <div className="space-y-2.5">
-                    <label className="text-[9px] font-black uppercase tracking-[2px] text-stone-300 ml-5 flex items-center gap-2">
+                    <label className="text-[9px] font-black uppercase tracking-[2px] text-stone-500 ml-5 flex items-center gap-2">
                       <div className="w-1 h-1 rounded-full bg-[#e3ae97]" />
                       Association
                     </label>
                     <div className="relative group">
                       <select
                         onChange={(e) => handleLeadSelect(e.target.value)}
-                        className="w-full px-6 py-4 bg-stone-50/50 border border-stone-100/50 rounded-[24px] outline-none focus:bg-white focus:border-stone-200 focus:shadow-sm transition-all text-[14px] font-medium appearance-none cursor-pointer pr-12"
+                        className="w-full px-6 py-4 bg-stone-50/50 border border-stone-100/50 rounded-[24px] outline-none focus:bg-white focus:border-stone-200 focus:shadow-sm transition-all text-[14px] font-medium text-stone-900 appearance-none cursor-pointer pr-12"
                       >
                         <option value="">Search lead repository...</option>
                         {leads.map(lead => (
@@ -337,89 +337,89 @@ export default function UserManagement() {
                           </option>
                         ))}
                       </select>
-                      <Plus className="absolute right-5 top-1/2 -translate-y-1/2 text-stone-300 size-4" />
+                      <Plus className="absolute right-5 top-1/2 -translate-y-1/2 text-stone-400 size-4" />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2.5">
-                      <label className="text-[8px] font-black uppercase tracking-[2px] text-stone-300 ml-5">First Name</label>
+                      <label className="text-[8px] font-black uppercase tracking-[2px] text-stone-500 ml-5">First Name</label>
                       <input 
                         type="text" 
                         required 
                         value={formData.firstName}
                         onChange={(e) => setFormData({...formData, firstName: e.target.value})}
-                        className="w-full px-6 py-4 bg-stone-50/50 border border-stone-100/50 rounded-[20px] outline-none focus:bg-white focus:border-stone-200 transition-all text-[14px] font-medium" 
+                        className="w-full px-6 py-4 bg-stone-50/50 border border-stone-100/50 rounded-[20px] outline-none focus:bg-white focus:border-stone-200 transition-all text-[14px] font-medium text-stone-900" 
                       />
                     </div>
                     <div className="space-y-2.5">
-                      <label className="text-[8px] font-black uppercase tracking-[2px] text-stone-300 ml-5">Last Name</label>
+                      <label className="text-[8px] font-black uppercase tracking-[2px] text-stone-500 ml-5">Last Name</label>
                       <input 
                         type="text" 
                         required 
                         value={formData.lastName}
                         onChange={(e) => setFormData({...formData, lastName: e.target.value})}
-                        className="w-full px-6 py-4 bg-stone-50/50 border border-stone-100/50 rounded-[20px] outline-none focus:bg-white focus:border-stone-200 transition-all text-[14px] font-medium" 
+                        className="w-full px-6 py-4 bg-stone-50/50 border border-stone-100/50 rounded-[20px] outline-none focus:bg-white focus:border-stone-200 transition-all text-[14px] font-medium text-stone-900" 
                       />
                     </div>
                   </div>
 
                   <div className="space-y-2.5">
-                    <label className="text-[8px] font-black uppercase tracking-[2px] text-stone-300 ml-5">Primary Email Path</label>
+                    <label className="text-[8px] font-black uppercase tracking-[2px] text-stone-500 ml-5">Primary Email Path</label>
                     <input 
                       type="email" 
                       required 
                       placeholder="example@studio.com"
                       value={formData.email}
                       onChange={(e) => setFormData({...formData, email: e.target.value})}
-                      className="w-full px-6 py-4 bg-stone-50/50 border border-stone-100/50 rounded-[24px] outline-none focus:bg-white focus:border-stone-200 transition-all text-[14px] font-medium placeholder:text-stone-200" 
+                      className="w-full px-6 py-4 bg-stone-50/50 border border-stone-100/50 rounded-[24px] outline-none focus:bg-white focus:border-stone-200 transition-all text-[14px] font-medium text-stone-900 placeholder:text-stone-300" 
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2.5">
-                      <label className="text-[8px] font-black uppercase tracking-[2px] text-stone-300 ml-5">Permissions</label>
+                      <label className="text-[8px] font-black uppercase tracking-[2px] text-stone-500 ml-5">Permissions</label>
                       <select 
                         value={formData.role}
                         onChange={(e) => setFormData({...formData, role: e.target.value})}
-                        className="w-full px-6 py-4 bg-stone-50/50 border border-stone-100/50 rounded-[20px] outline-none focus:bg-white focus:border-stone-200 appearance-none cursor-pointer text-[11px] font-black uppercase tracking-widest"
+                        className="w-full px-6 py-4 bg-stone-50/50 border border-stone-100/50 rounded-[20px] outline-none focus:bg-white focus:border-stone-200 appearance-none cursor-pointer text-[11px] font-black uppercase tracking-widest text-stone-900"
                       >
                         <option value="client">Client Agent</option>
                         <option value="admin">System Admin</option>
                       </select>
                     </div>
                     <div className="space-y-2.5">
-                      <label className="text-[8px] font-black uppercase tracking-[2px] text-stone-300 ml-5">Vault Pass</label>
+                      <label className="text-[8px] font-black uppercase tracking-[2px] text-stone-500 ml-5">Vault Pass</label>
                       <input 
                         type="password" 
                         required 
                         placeholder="Generate..."
                         value={formData.password}
                         onChange={(e) => setFormData({...formData, password: e.target.value})}
-                        className="w-full px-6 py-4 bg-stone-50/50 border border-stone-100/50 rounded-[20px] outline-none focus:bg-white focus:border-stone-200 transition-all text-[14px] font-medium placeholder:text-stone-200" 
+                        className="w-full px-6 py-4 bg-stone-50/50 border border-stone-100/50 rounded-[20px] outline-none focus:bg-white focus:border-stone-200 transition-all text-[14px] font-medium text-stone-900 placeholder:text-stone-300" 
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2.5">
-                      <label className="text-[8px] font-black uppercase tracking-[2px] text-stone-300 ml-5">Cloud Link (Gallery/Drive)</label>
+                      <label className="text-[8px] font-black uppercase tracking-[2px] text-stone-500 ml-5">Cloud Link (Gallery/Drive)</label>
                       <input 
                         type="url" 
                         placeholder="https://..."
                         value={formData.cloudLink}
                         onChange={(e) => setFormData({...formData, cloudLink: e.target.value})}
-                        className="w-full px-6 py-4 bg-stone-50/50 border border-stone-100/50 rounded-[20px] outline-none focus:bg-white focus:border-stone-200 transition-all text-[14px] font-medium placeholder:text-stone-200" 
+                        className="w-full px-6 py-4 bg-stone-50/50 border border-stone-100/50 rounded-[20px] outline-none focus:bg-white focus:border-stone-200 transition-all text-[14px] font-medium text-stone-900 placeholder:text-stone-300" 
                       />
                     </div>
                     <div className="space-y-2.5">
-                      <label className="text-[8px] font-black uppercase tracking-[2px] text-stone-300 ml-5">Cloud Password</label>
+                      <label className="text-[8px] font-black uppercase tracking-[2px] text-stone-500 ml-5">Cloud Password</label>
                       <input 
                         type="text" 
                         placeholder="External Pass..."
                         value={formData.cloudPassword}
                         onChange={(e) => setFormData({...formData, cloudPassword: e.target.value})}
-                        className="w-full px-6 py-4 bg-stone-50/50 border border-stone-100/50 rounded-[20px] outline-none focus:bg-white focus:border-stone-200 transition-all text-[14px] font-medium placeholder:text-stone-200" 
+                        className="w-full px-6 py-4 bg-stone-50/50 border border-stone-100/50 rounded-[20px] outline-none focus:bg-white focus:border-stone-200 transition-all text-[14px] font-medium text-stone-900 placeholder:text-stone-300" 
                       />
                     </div>
                   </div>
@@ -473,79 +473,79 @@ export default function UserManagement() {
                 <form onSubmit={handleUpdate} className="space-y-6 py-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2.5">
-                      <label className="text-[8px] font-black uppercase tracking-[2px] text-stone-300 ml-5">First Name</label>
+                      <label className="text-[8px] font-black uppercase tracking-[2px] text-stone-500 ml-5">First Name</label>
                       <input 
                         type="text" 
                         required 
                         value={editingUser.firstName}
                         onChange={(e) => setEditingUser({...editingUser, firstName: e.target.value})}
-                        className="w-full px-6 py-4 bg-stone-50/50 border border-stone-100/50 rounded-[20px] outline-none focus:bg-white focus:border-stone-200 transition-all text-[14px] font-medium" 
+                        className="w-full px-6 py-4 bg-stone-50/50 border border-stone-100/50 rounded-[20px] outline-none focus:bg-white focus:border-stone-200 transition-all text-[14px] font-medium text-stone-900" 
                       />
                     </div>
                     <div className="space-y-2.5">
-                      <label className="text-[8px] font-black uppercase tracking-[2px] text-stone-300 ml-5">Last Name</label>
+                      <label className="text-[8px] font-black uppercase tracking-[2px] text-stone-500 ml-5">Last Name</label>
                       <input 
                         type="text" 
                         required 
                         value={editingUser.lastName}
                         onChange={(e) => setEditingUser({...editingUser, lastName: e.target.value})}
-                        className="w-full px-6 py-4 bg-stone-50/50 border border-stone-100/50 rounded-[20px] outline-none focus:bg-white focus:border-stone-200 transition-all text-[14px] font-medium" 
+                        className="w-full px-6 py-4 bg-stone-50/50 border border-stone-100/50 rounded-[20px] outline-none focus:bg-white focus:border-stone-200 transition-all text-[14px] font-medium text-stone-900" 
                       />
                     </div>
                   </div>
 
                   <div className="space-y-2.5">
-                    <label className="text-[8px] font-black uppercase tracking-[2px] text-stone-300 ml-5">Email Path</label>
+                    <label className="text-[8px] font-black uppercase tracking-[2px] text-stone-500 ml-5">Email Path</label>
                     <input 
                       type="email" 
                       required 
                       value={editingUser.email}
                       onChange={(e) => setEditingUser({...editingUser, email: e.target.value})}
-                      className="w-full px-6 py-4 bg-stone-50/50 border border-stone-100/50 rounded-[24px] outline-none focus:bg-white focus:border-stone-200 transition-all text-[14px] font-medium" 
+                      className="w-full px-6 py-4 bg-stone-50/50 border border-stone-100/50 rounded-[24px] outline-none focus:bg-white focus:border-stone-200 transition-all text-[14px] font-medium text-stone-900" 
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2.5">
-                      <label className="text-[8px] font-black uppercase tracking-[2px] text-stone-300 ml-5">Access Level</label>
+                      <label className="text-[8px] font-black uppercase tracking-[2px] text-stone-500 ml-5">Access Level</label>
                       <select 
                         value={editingUser.role}
                         onChange={(e) => setEditingUser({...editingUser, role: e.target.value})}
-                        className="w-full px-6 py-4 bg-stone-50/50 border border-stone-100/50 rounded-[20px] outline-none focus:bg-white focus:border-stone-200 appearance-none cursor-pointer text-[11px] font-black uppercase tracking-widest"
+                        className="w-full px-6 py-4 bg-stone-50/50 border border-stone-100/50 rounded-[20px] outline-none focus:bg-white focus:border-stone-200 appearance-none cursor-pointer text-[11px] font-black uppercase tracking-widest text-stone-900"
                       >
                         <option value="client">Client</option>
                         <option value="admin">Admin</option>
                       </select>
                     </div>
                     <div className="space-y-2.5">
-                      <label className="text-[8px] font-black uppercase tracking-[2px] text-stone-300 ml-5">Vault Pass</label>
+                      <label className="text-[8px] font-black uppercase tracking-[2px] text-stone-500 ml-5">Vault Pass</label>
                       <input 
                         type="password" 
                         placeholder="Leave blank to keep"
                         value={editingUser.password || ''}
                         onChange={(e) => setEditingUser({...editingUser, password: e.target.value})}
-                        className="w-full px-6 py-4 bg-stone-50/50 border border-stone-100/50 rounded-[20px] outline-none focus:bg-white focus:border-stone-200 transition-all text-[14px] font-medium" 
+                        className="w-full px-6 py-4 bg-stone-50/50 border border-stone-100/50 rounded-[20px] outline-none focus:bg-white focus:border-stone-200 transition-all text-[14px] font-medium text-stone-900 placeholder:text-stone-300" 
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2.5">
-                      <label className="text-[8px] font-black uppercase tracking-[2px] text-stone-300 ml-5">Cloud Link</label>
+                      <label className="text-[8px] font-black uppercase tracking-[2px] text-stone-500 ml-5">Cloud Link</label>
                       <input 
                         type="url" 
                         value={editingUser.cloudLink || ''}
                         onChange={(e) => setEditingUser({...editingUser, cloudLink: e.target.value})}
-                        className="w-full px-6 py-4 bg-stone-50/50 border border-stone-100/50 rounded-[20px] outline-none focus:bg-white focus:border-stone-200 transition-all text-[14px] font-medium" 
+                        className="w-full px-6 py-4 bg-stone-50/50 border border-stone-100/50 rounded-[20px] outline-none focus:bg-white focus:border-stone-200 transition-all text-[14px] font-medium text-stone-900" 
                       />
                     </div>
                     <div className="space-y-2.5">
-                      <label className="text-[8px] font-black uppercase tracking-[2px] text-stone-300 ml-5">Cloud Password</label>
+                      <label className="text-[8px] font-black uppercase tracking-[2px] text-stone-500 ml-5">Cloud Password</label>
                       <input 
                         type="text" 
                         value={editingUser.cloudPassword || ''}
                         onChange={(e) => setEditingUser({...editingUser, cloudPassword: e.target.value})}
-                        className="w-full px-6 py-4 bg-stone-50/50 border border-stone-100/50 rounded-[20px] outline-none focus:bg-white focus:border-stone-200 transition-all text-[14px] font-medium" 
+                        className="w-full px-6 py-4 bg-stone-50/50 border border-stone-100/50 rounded-[20px] outline-none focus:bg-white focus:border-stone-200 transition-all text-[14px] font-medium text-stone-900" 
                       />
                     </div>
                   </div>
