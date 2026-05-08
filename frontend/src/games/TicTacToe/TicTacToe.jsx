@@ -1,13 +1,17 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import GameLayout from '../common/GameLayout';
+import GuestNameModal from '../common/GuestNameModal';
 import { useSound } from '../common/useSound';
 import { API_URL } from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 import './TicTacToe.css';
 
 const TicTacToe = () => {
   const { user } = useAuth();
+  const { isDarkMode } = useTheme();
+  const iconColor = isDarkMode ? "currentColor" : "#000000";
   const [board, setBoard] = useState(Array(9).fill(null));
   const [isXNext, setIsXNext] = useState(true);
   const [winner, setWinner] = useState(null);
@@ -17,6 +21,7 @@ const TicTacToe = () => {
   const [icons, setIcons] = useState({ user: '🎥', ai: '💡' });
   const [loading, setLoading] = useState(false);
   const [guestName, setGuestName] = useState(localStorage.getItem('guest_name') || '');
+  const [showNameModal, setShowNameModal] = useState(false);
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -165,6 +170,10 @@ const TicTacToe = () => {
 
   const handleClick = (i) => {
     if (board[i] || winner || !isXNext) return;
+    if (!user && !guestName) {
+      setShowNameModal(true);
+      return;
+    }
     playSound('click');
 
     const newBoard = [...board];
@@ -192,6 +201,17 @@ const TicTacToe = () => {
     setWinner(null);
     setWinningLine([]);
   };
+
+  const handleNameComplete = (name) => {
+    setGuestName(name);
+    setShowNameModal(false);
+  };
+
+  useEffect(() => {
+    if (!user && !guestName) {
+      setShowNameModal(true);
+    }
+  }, [user, guestName]);
 
   return (
     <GameLayout title="TIC TAC TOE">
@@ -245,25 +265,13 @@ const TicTacToe = () => {
           <div className="ttt-overlay-cinematic">
             <div className="overlay-card glass">
               <h2>{winner === 'draw' ? "STALEMATE" : winner === 'X' ? "VICTORY!" : "DEFEAT"}</h2>
-              
-              {!user && (
-                <div className="name-capture-field my-4">
-                  <label className="text-[10px] font-bold text-stone-400 block mb-2 tracking-widest">HALL OF FAME IDENTITY</label>
-                  <input 
-                    type="text" 
-                    value={guestName}
-                    onChange={(e) => setGuestName(e.target.value)}
-                    placeholder="ENTER NAME"
-                    className="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-luxury-gold transition-all text-center uppercase font-bold tracking-widest"
-                  />
-                </div>
-              )}
               <button className="btn-primary" onClick={resetGame}>REMATCH</button>
             </div>
           </div>
         )}
 
         <button className="reset-match-btn" onClick={() => setScore({user:0, ai:0, draws:0})}>RESET SERIES</button>
+        <GuestNameModal isOpen={showNameModal} onComplete={handleNameComplete} />
       </div>
     </GameLayout>
   );

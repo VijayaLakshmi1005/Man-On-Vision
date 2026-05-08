@@ -2,24 +2,28 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import GameLayout from '../common/GameLayout';
+import GuestNameModal from '../common/GuestNameModal';
 import { useSound } from '../common/useSound';
 import { useSwipe } from '../common/useSwipe';
 import { API_URL } from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 import './Game2048.css';
 
 /**
  * AAA Production-Grade 2048 Event Edition
- * Features: Advanced Swipe Engine, Input Locking, Smooth Framer Motion Animations
  */
 const Game2048 = () => {
   const { user } = useAuth();
+  const { isDarkMode } = useTheme();
+  const iconColor = isDarkMode ? "currentColor" : "#000000";
   const [grid, setGrid] = useState(Array(16).fill(0).map(() => ({ value: 0, id: Math.random().toString(36).substr(2, 9), merged: false })));
   const [score, setScore] = useState(0);
   const [bestScore, setBestScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [won, setWon] = useState(false);
   const [guestName, setGuestName] = useState(localStorage.getItem('guest_name') || '');
+  const [showNameModal, setShowNameModal] = useState(false);
   const [isMoving, setIsMoving] = useState(false);
   
   const moveLock = useRef(false);
@@ -109,10 +113,24 @@ const Game2048 = () => {
     }
   };
 
+  const handleNameComplete = (name) => {
+    setGuestName(name);
+    setShowNameModal(false);
+  };
+
+  useEffect(() => {
+    if (!user && !guestName) {
+      setShowNameModal(true);
+    }
+  }, [user, guestName]);
+
   const move = useCallback((direction) => {
     if (gameOver || moveLock.current) return;
+    if (!user && !guestName) {
+      setShowNameModal(true);
+      return;
+    }
     
-    // Lock input during animation duration
     moveLock.current = true;
     setIsMoving(true);
 
@@ -201,14 +219,12 @@ const Game2048 = () => {
       }
     }
 
-    // Unlock after animation frame (150ms for smooth feel)
     setTimeout(() => {
       moveLock.current = false;
       setIsMoving(false);
     }, 150);
-  }, [grid, score, bestScore, gameOver, addRandomTile, playSound]);
+  }, [grid, score, bestScore, gameOver, addRandomTile, playSound, guestName, user, won]);
 
-  // AAA Swipe Engine Integration
   useSwipe((dir) => move(dir), {
     threshold: 30,
     velocityThreshold: 0.2,
@@ -233,7 +249,7 @@ const Game2048 = () => {
         <div className="g2048-board-wrapper">
           <div className="g2048-grid">
             {grid.map((tile, i) => (
-              <div key={`cell-${i}`} className="tile-cell">
+              <div key={`cell-${i}`} className="grid-cell">
                 <AnimatePresence mode="popLayout">
                   {tile.value > 0 && (
                     <motion.div
@@ -253,10 +269,8 @@ const Game2048 = () => {
                       }}
                       className={`tile tile-${tile.value} ${tile.merged ? 'merged' : ''}`}
                     >
-                      <div className="tile-content">
-                        <span className="tile-num">{tile.value}</span>
-                        <span className="tile-txt">{labels[tile.value]}</span>
-                      </div>
+                      <span className="tile-num">{tile.value}</span>
+                      <span className="tile-txt">{labels[tile.value]}</span>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -271,21 +285,12 @@ const Game2048 = () => {
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                 >
-                  <h2>{won ? 'VISIONARY SUCCESS!' : 'EVENT CONCLUDED'}</h2>
-                  <p className="text-stone-400 text-xs uppercase tracking-widest mb-4">Final Score: <strong className="text-luxury-gold">{score}</strong></p>
-
-                  {!user && (
-                    <div className="name-capture-field my-6">
-                      <label className="text-[10px] font-bold text-stone-500 block mb-2 tracking-[0.2em] uppercase">RANKING IDENTITY</label>
-                      <input 
-                        type="text" 
-                        value={guestName}
-                        onChange={(e) => setGuestName(e.target.value)}
-                        placeholder="ENTER NAME"
-                        className="w-full bg-white/5 border border-white/10 p-4 rounded-2xl text-white outline-none focus:border-luxury-gold transition-all text-center uppercase font-bold tracking-[0.2em] text-sm"
-                      />
-                    </div>
-                  )}
+                  <h2 className="font-serif italic text-4xl text-white mb-6">
+                    {won ? 'VISIONARY SUCCESS!' : 'EVENT CONCLUDED'}
+                  </h2>
+                  <p className="text-white/40 text-xs uppercase tracking-widest mb-8">
+                    Final Score: <strong className="text-white">{score}</strong>
+                  </p>
                   <button className="new-event-btn w-full" onClick={initGame}>RESTART EVENT</button>
                 </motion.div>
               </div>
@@ -293,9 +298,10 @@ const Game2048 = () => {
           )}
         </div>
         
-        <p className="text-[10px] text-center text-stone-500 uppercase tracking-[0.3em] font-medium opacity-50 animate-pulse">
+        <p className="text-[10px] text-center text-white/40 uppercase tracking-[0.3em] font-medium opacity-50">
           SWIPE OR DRAG TO ORCHESTRATE
         </p>
+        <GuestNameModal isOpen={showNameModal} onComplete={handleNameComplete} />
       </div>
     </GameLayout>
   );

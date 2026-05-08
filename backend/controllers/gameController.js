@@ -198,21 +198,34 @@ exports.getGameZoneData = async (req, res) => {
 exports.getGameStats = async (req, res) => {
   try {
     const totalImages = await GameImage.countDocuments();
-    const scores = await Score.find();
-    const totalPlays = await UserGameHistory.aggregate([
-      { $unwind: "$playedContent" },
-      { $count: "count" }
-    ]);
     
-    const avgScore = scores.length > 0 
-      ? Math.round(scores.reduce((acc, s) => acc + s.score, 0) / scores.length) 
-      : 0;
+    const scoreAgg = await Score.aggregate([
+      { $group: { _id: null, avg: { $avg: "$score" } } }
+    ]);
+    const avgScore = scoreAgg.length > 0 ? Math.round(scoreAgg[0].avg) : 0;
+
+    const totalPlays = await Score.countDocuments();
+    
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const activeSessions24h = await UserGameHistory.countDocuments({ 
+      lastPlayed: { $gte: oneDayAgo } 
+    });
+    
+    const totalSessions = await UserGameHistory.countDocuments();
+    
+    let engagementLabel = "LOW";
+    if (totalSessions > 0) {
+      const rate = (activeSessions24h / totalSessions) * 100;
+      if (rate > 70) engagementLabel = "OPTIMAL";
+      else if (rate > 30) engagementLabel = "HIGH";
+      else if (rate > 10) engagementLabel = "MODERATE";
+    }
 
     res.json({
       totalImages,
       avgScore,
-      totalPlays: totalPlays[0]?.count || 0,
-      engagementRate: totalPlays[0]?.count > 0 ? "HIGH" : "N/A"
+      totalPlays,
+      engagementRate: engagementLabel
     });
   } catch (err) {
     res.status(500).json({ message: err.message });

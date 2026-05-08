@@ -1,43 +1,26 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
 import axios from 'axios';
-import GameLayout from './common/GameLayout';
-import { Trophy, Zap, Star, LayoutGrid, Clock, Users, Shield, Sparkles, TrendingUp } from 'lucide-react';
+import { 
+  Zap, Star, TrendingUp, Grid, Search, Puzzle, 
+  ChevronRight, ArrowRight, Sun, Moon, 
+  LayoutGrid, Trophy, Settings, Shield, User,
+  Activity, ZapOff, Sparkles
+} from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
+import LiquidMazeStatic from '../components/common/LiquidMazeStatic';
 import './GameZone.css';
 
 const GameZone = () => {
   const navigate = useNavigate();
-  const [zoneData, setZoneData] = useState({ title: 'Game Experience Zone', games: [] });
-  const [stats, setStats] = useState({ totalPoints: 0, streaks: {}, totalPlays: 0 });
-  const [leaderboard, setLeaderboard] = useState([]);
+  const { isDarkMode, toggleTheme } = useTheme();
+  const [activeTab, setActiveTab] = useState('experiences');
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('games');
-  const [leaderboardGame, setLeaderboardGame] = useState('spot_difference');
+  const [stats, setStats] = useState({ totalPoints: 0, streaks: 0, totalPlays: 0 });
+  const [games, setGames] = useState([]);
 
   const API_URL = `${(import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/$/, '')}/api`;
-
-  // Mastery Logic
-  const mastery = useMemo(() => {
-    const points = stats.totalPoints || 0;
-    const level = Math.floor(points / 500) + 1;
-    const progress = (points % 500) / 5; // 0-100%
-    const titles = ['Novice', 'Apprentice', 'Specialist', 'Expert', 'Visionary', 'Legend'];
-    return {
-      level,
-      progress,
-      title: titles[Math.min(level - 1, titles.length - 1)]
-    };
-  }, [stats.totalPoints]);
-
-  const fetchLeaderboard = async (gameType) => {
-    try {
-      const res = await axios.get(`${API_URL}/games/leaderboard?gameType=${gameType}`);
-      setLeaderboard(res.data);
-    } catch (err) {
-      console.error('Error fetching leaderboard:', err);
-    }
-  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,259 +31,384 @@ const GameZone = () => {
           axios.get(`${API_URL}/games/stats`, { params: { sessionId } })
         ]);
 
-        setZoneData(zoneRes.data);
-        if (statsRes.data) setStats(statsRes.data);
-        fetchLeaderboard(leaderboardGame);
+        setGames(zoneRes.data.games.filter(g => g.enabled !== false));
+        if (statsRes.data) {
+          setStats({
+            totalPoints: statsRes.data.totalPoints || 0,
+            streaks: Object.values(statsRes.data.streaks || {}).reduce((a, b) => Math.max(a, b), 0),
+            totalPlays: statsRes.data.totalPlays || 0
+          });
+        }
       } catch (error) {
-        console.error('Error fetching game zone data:', error);
+        console.error('Error fetching dashboard data:', error);
       } finally {
         setLoading(false);
       }
     };
-
     fetchData();
-  }, [API_URL]);
+  }, []);
 
-  useEffect(() => {
-    if (activeTab === 'leaderboard') {
-      fetchLeaderboard(leaderboardGame);
-    }
-  }, [leaderboardGame, activeTab]);
-
-  if (loading) {
-    return (
-      <GameLayout title="INITIALIZING EXPERIENCE...">
-        <div className="experience-loader">
-          <div className="loader-ring"></div>
-          <p className="animate-pulse tracking-[0.3em]">LOADING CINEMATIC MODULES</p>
-        </div>
-      </GameLayout>
-    );
-  }
-
-  const activeGames = zoneData.games.filter(g => g.enabled !== false);
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { 
-      opacity: 1,
-      transition: { staggerChildren: 0.1 }
-    }
+  const GAME_META = {
+    tictactoe: { icon: <Grid size={48} />, color: '#ff4f9a', desc: 'Strategic Neural Alignment' },
+    '2048': { icon: <Puzzle size={48} />, color: '#ffab3d', desc: 'Numerical Fusion Protocol' },
+    spot_difference: { icon: <Search size={48} />, color: '#40e0d0', desc: 'Visual Acuity Calibration' },
+    default: { icon: <Sparkles size={48} />, color: '#ff4f9a', desc: 'Interactive Experience' }
   };
 
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: { y: 0, opacity: 1 }
-  };
+  if (loading) return (
+    <div className="flex items-center justify-center min-h-screen bg-[#050505]">
+       <motion.div 
+         animate={{ scale: [1, 1.1, 1], opacity: [0.3, 1, 0.3] }} 
+         transition={{ repeat: Infinity, duration: 2 }}
+         className="text-[10px] font-black uppercase tracking-[1em] text-[#ff4f9a]"
+       >
+         Synchronizing...
+       </motion.div>
+    </div>
+  );
 
   return (
-    <GameLayout title={zoneData.title}>
-      <div className="game-hub-container">
+    <div className={`game-zone-container ${isDarkMode ? 'dark' : 'light'}`}>
+      {/* Global Continuous Background - Matching Homepage Theme */}
+      <div className="fixed inset-0 z-[-1] will-change-transform" style={{ transform: 'translateZ(0)', backfaceVisibility: 'hidden' }}>
+        <LiquidMazeStatic 
+          color1="#ff5a96" 
+          color2="#ffb040" 
+          bgColor={isDarkMode ? "#0c0a09" : "#fff5f2"} 
+          density={0.2} 
+          speed={0.005} 
+        />
+      </div>
+
+      <div className="dashboard-container">
         
-        {/* AAA Mastery Header */}
-        <motion.div 
+
+        {/* Main Content Hub */}
+        <main className="dashboard-main">
+          {/* Cinematic Header */}
+          <motion.header 
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mastery-banner glass-luxury"
-        >
-            <div className="mastery-info">
-                <div className="level-badge">
-                    <Shield className="text-luxury-gold" size={24} />
-                    <span className="level-num">{mastery.level}</span>
-                </div>
-                <div className="mastery-text">
-                    <h3>{mastery.title}</h3>
-                    <p>MASTERY PROGRESS</p>
-                </div>
+            className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12"
+          >
+            <div>
+              <h1 className="text-7xl font-black uppercase tracking-tight mb-4">Game Hub</h1>
             </div>
-            <div className="mastery-progress-wrapper">
-                <div className="progress-track">
-                    <motion.div 
-                        initial={{ width: 0 }}
-                        animate={{ width: `${mastery.progress}%` }}
-                        transition={{ duration: 1.5, ease: "easeOut" }}
-                        className="progress-fill"
-                    />
-                </div>
-                <span className="progress-val">{Math.floor(mastery.progress)}%</span>
-            </div>
-            <Sparkles className="mastery-decor text-luxury-gold/20" size={60} />
-        </motion.div>
 
-        {/* Cinematic Stats Row */}
-        <motion.div 
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            className="hub-stats-row"
-        >
-          <motion.div variants={itemVariants} className="hub-stat-card glass-luxury glow-gold">
-            <div className="stat-icon-wrapper bg-gold-gradient">
-              <Zap className="stat-icon" size={18} />
+            {/* Horizontal Command Bar */}
+            <div className="command-bar-container">
+              <div className="command-pill">
+                 <SidebarItem 
+                   icon={<Sparkles size={20} />} 
+                   label="Book Quote" 
+                   onClick={() => navigate('/quote')}
+                   active={false}
+                   color="#ffab3d"
+                 />
+                 <div className="pill-divider" />
+                  <SidebarItem 
+                    icon={activeTab === 'leaderboard' ? <LayoutGrid size={20} /> : <Trophy size={20} />} 
+                    label={activeTab === 'leaderboard' ? "Back to Games" : "Leaderboard"} 
+                    onClick={() => setActiveTab(activeTab === 'leaderboard' ? 'experiences' : 'leaderboard')}
+                    active={activeTab === 'leaderboard'}
+                  />
+                 <button className="pill-nexus-btn" onClick={() => navigate('/')} title="Return to Nexus">
+                   <ArrowRight size={20} />
+                 </button>
+              </div>
             </div>
-            <div className="stat-info">
-              <span className="stat-label">TOTAL POINTS</span>
-              <span className="stat-value">{stats.totalPoints || 0}</span>
-            </div>
-          </motion.div>
+          </motion.header>
           
-          <motion.div variants={itemVariants} className="hub-stat-card glass-luxury glow-red">
-            <div className="stat-icon-wrapper bg-red-gradient">
-              <Star className="stat-icon" size={18} />
-            </div>
-            <div className="stat-info">
-              <span className="stat-label">DAILY STREAK</span>
-              <span className="stat-value">{Object.values(stats.streaks || {}).reduce((a,b) => Math.max(a,b), 0)} DAYS</span>
-            </div>
-          </motion.div>
 
-          <motion.div variants={itemVariants} className="hub-stat-card glass-luxury">
-            <div className="stat-icon-wrapper bg-stone-gradient">
-              <Clock className="stat-icon" size={18} />
-            </div>
-            <div className="stat-info">
-              <span className="stat-label">SESSIONS</span>
-              <span className="stat-value">{stats.totalPlays || 0}</span>
-            </div>
-          </motion.div>
-        </motion.div>
-
-        {/* Hub Navigation */}
-        <div className="hub-nav-cinematic">
-          <button 
-            className={`nav-btn-luxury ${activeTab === 'games' ? 'active' : ''}`}
-            onClick={() => setActiveTab('games')}
-          >
-            <div className="btn-glow"></div>
-            <LayoutGrid size={16} /> ALL GAMES
-          </button>
-          <button 
-            className={`nav-btn-luxury ${activeTab === 'leaderboard' ? 'active' : ''}`}
-            onClick={() => setActiveTab('leaderboard')}
-          >
-            <div className="btn-glow"></div>
-            <Trophy size={16} /> HALL OF FAME
-          </button>
-        </div>
-
+        {/* Experience Cards Grid */}
         <AnimatePresence mode="wait">
-          {activeTab === 'games' ? (
+          {activeTab === 'experiences' ? (
             <motion.div 
-                key="games-grid"
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-                exit="hidden"
-                className="game-grid-premium"
+              key="exp-grid"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="experience-grid"
             >
-              {activeGames.map((game, idx) => (
-                <motion.div 
-                  variants={itemVariants}
-                  key={game.id} 
-                  className="game-card-premium"
-                  onClick={() => navigate(`/games/${game.id}`)}
-                  whileHover={{ scale: 1.02, y: -5 }}
-                >
-                  <div className="card-image-panel">
-                    <img src={game.image} alt={game.title} />
-                    <div className="image-overlay"></div>
-                    <div className="game-icon-badge">{game.icon}</div>
-                  </div>
-                  <div className="card-details">
-                    <div className="title-row">
-                      <h3>{game.title}</h3>
-                      <span className="diff-badge">{game.difficulty || 'DYNAMIC'}</span>
-                    </div>
-                    <p>{game.description}</p>
-                    <button className="enter-btn">LAUNCH EXPERIENCE</button>
-                  </div>
-                </motion.div>
-              ))}
+                  {games.map((game, i) => (
+                    <ExperienceCard 
+                      key={game.id} 
+                      game={game} 
+                      meta={GAME_META[game.id] || GAME_META.default}
+                      index={i}
+                      onClick={() => navigate(`/games/${game.id}`)}
+                      isDarkMode={isDarkMode}
+                    />
+                  ))}
             </motion.div>
           ) : (
             <motion.div 
-                key="leaderboard-view"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="leaderboard-premium-view"
+              key="leaderboard"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
             >
-              <div className="leaderboard-branding">
-                <div className="branding-text text-left">
-                  <TrendingUp size={24} className="text-gold mb-2" />
-                  <h2>GLOBAL RANKINGS</h2>
-                  <p>The elite event masters of Man On Vision</p>
-                </div>
-                <div className="game-selector-pills">
-                  {[
-                    { id: 'spot_difference', label: 'SPOT THE DIFFERENCE' },
-                    { id: '2048', label: '2048 EVENT EDITION' },
-                    { id: 'tictactoe', label: 'TIC TAC TOE' }
-                  ].map(game => (
-                    <button 
-                      key={game.id}
-                      className={`selector-pill ${leaderboardGame === game.id ? 'active' : ''}`}
-                      onClick={() => setLeaderboardGame(game.id)}
-                    >
-                      {game.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="leaderboard-list-luxury glass">
-                {leaderboard.length > 0 ? (
-                  leaderboard.map((entry, index) => (
-                    <motion.div 
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.05 }}
-                        key={index} 
-                        className={`rank-row rank-${index + 1}`}
-                    >
-                      <div className="rank-pos">
-                        {index < 3 ? <Star size={14} className="star-icon" /> : null}
-                        #{index + 1}
-                      </div>
-                      <div className="player-meta">
-                        <div className="avatar-shield">
-                          {entry.guestName?.charAt(0) || entry.userId?.firstName?.charAt(0) || 'U'}
-                        </div>
-                        <span className="player-name">{entry.guestName || entry.userId?.firstName || 'Anonymous Member'}</span>
-                      </div>
-                      <div className="player-score">
-                        <span className="pts-val">{entry.score.toLocaleString()}</span>
-                        <span className="pts-label">POINTS</span>
-                      </div>
-                    </motion.div>
-                  ))
-                ) : (
-                  <div className="no-rankings">
-                    <Users size={48} className="opacity-20 mb-4" />
-                    <p>NO LEGENDS YET. WILL IT BE YOU?</p>
-                  </div>
-                )}
-              </div>
+              <LeaderboardView 
+                API_URL={API_URL} 
+                isDarkMode={isDarkMode} 
+                onBack={() => setActiveTab('experiences')}
+              />
             </motion.div>
           )}
-        </AnimatePresence>
+          </AnimatePresence>
 
+          {/* Bottom CTA Banner */}
+          <motion.footer 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-20 p-8 rounded-[40px] bg-gradient-to-r from-[rgba(255,79,154,0.05)] to-[rgba(255,171,61,0.05)] border border-[var(--card-border)] backdrop-blur-3xl flex flex-col md:flex-row items-center justify-between gap-6"
+          >
+            <div className="flex items-center gap-6">
+              <div className="w-12 h-12 rounded-2xl bg-[var(--gradient)] flex items-center justify-center shadow-[0_10px_20px_rgba(255,79,154,0.3)]">
+                <Sparkles className="text-white" size={24} />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold mb-1">Ready to Establish Production?</h3>
+                <p className="text-sm opacity-60">Enjoyed the experience? Secure your spot for a premium project now.</p>
+              </div>
+            </div>
+            <button 
+              onClick={() => navigate('/quote')}
+              className="cta-button px-8 py-4 rounded-2xl bg-[var(--gradient)] text-white font-bold text-sm uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-[0_15px_30px_rgba(255,79,154,0.2)]"
+            >
+              Book Production Quote
+            </button>
+          </motion.footer>
+        </main>
+      </div>
+    </div>
+  );
+};
+
+const SidebarItem = ({ icon, label, onClick, active, color }) => {
+  return (
+    <motion.div 
+      className={`sidebar-item ${active ? 'active' : ''}`}
+      onClick={onClick}
+      whileHover="hover"
+    >
+      <div className="item-icon" style={{ color: color || 'inherit' }}>
+        {icon}
+      </div>
+      <motion.span 
+        className="item-tooltip"
+        variants={{
+          hover: { opacity: 1, y: 10, scale: 1 },
+          initial: { opacity: 0, y: 0, scale: 0.8 }
+        }}
+        initial="initial"
+      >
+        {label}
+      </motion.span>
+      {active && (
         <motion.div 
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            className="hub-action-footer"
+          layoutId="sidebar-active"
+          className="active-indicator"
+        />
+      )}
+    </motion.div>
+  );
+};
+
+const MetricCard = ({ label, value, icon, delay }) => {
+  const canvasRef = useRef(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let animationFrame;
+    let offset = 0;
+
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.beginPath();
+      ctx.strokeStyle = '#ff4f9a';
+      ctx.lineWidth = 1;
+      ctx.globalAlpha = 0.3;
+      
+      for (let x = 0; x < canvas.width; x++) {
+        const y = canvas.height / 2 + Math.sin(x * 0.05 + offset) * 10;
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      offset += 0.05;
+      animationFrame = requestAnimationFrame(draw);
+    };
+    draw();
+    return () => cancelAnimationFrame(animationFrame);
+  }, []);
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay, duration: 0.6 }}
+      className="metric-card"
+    >
+      <div className="metric-icon-wrapper">
+        {icon}
+      </div>
+      <div className="metric-info">
+        <h4>{label}</h4>
+        <p>{value}</p>
+      </div>
+      <canvas ref={canvasRef} width="100" height="40" className="waveform-canvas" />
+    </motion.div>
+  );
+};
+
+const TicTacToeIcon = ({ isDarkMode }) => {
+  const iconColor = isDarkMode ? "currentColor" : "#000000";
+  return (
+    <svg width="80" height="80" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <line x1="35" y1="10" x2="35" y2="90" stroke={iconColor} strokeWidth="8" strokeLinecap="round" />
+      <line x1="65" y1="10" x2="65" y2="90" stroke={iconColor} strokeWidth="8" strokeLinecap="round" />
+      <line x1="10" y1="35" x2="90" y2="35" stroke={iconColor} strokeWidth="8" strokeLinecap="round" />
+      <line x1="10" y1="65" x2="90" y2="65" stroke={iconColor} strokeWidth="8" strokeLinecap="round" />
+      <path d="M12 12L28 28M28 12L12 28" stroke={iconColor} strokeWidth="8" strokeLinecap="round" />
+      <circle cx="50" cy="20" r="8" stroke={iconColor} strokeWidth="8" />
+      <circle cx="80" cy="20" r="8" stroke={iconColor} strokeWidth="8" />
+      <path d="M42 42L58 58M58 42L42 58" stroke={iconColor} strokeWidth="8" strokeLinecap="round" />
+      <path d="M12 72L28 88M28 72L12 88" stroke={iconColor} strokeWidth="8" strokeLinecap="round" />
+      <circle cx="80" cy="80" r="8" stroke={iconColor} strokeWidth="8" />
+    </svg>
+  );
+};
+
+const Game2048Icon = ({ isDarkMode }) => {
+  const iconColor = isDarkMode ? "currentColor" : "#000000";
+  return (
+    <svg width="80" height="80" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <text x="50%" y="42%" textAnchor="middle" fill={iconColor} fontSize="44" fontWeight="900" fontFamily="Inter, sans-serif" style={{ letterSpacing: '-2px' }}>20</text>
+      <text x="50%" y="85%" textAnchor="middle" fill={iconColor} fontSize="44" fontWeight="900" fontFamily="Inter, sans-serif" style={{ letterSpacing: '-2px' }}>48</text>
+    </svg>
+  );
+};
+
+const ExperienceCard = ({ game, meta, index, onClick, isDarkMode }) => {
+  let icon = meta.icon;
+  if (game.id === 'tictactoe') icon = <TicTacToeIcon isDarkMode={isDarkMode} />;
+  if (game.id === '2048') icon = <Game2048Icon isDarkMode={isDarkMode} />;
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const rotateX = useTransform(mouseY, [-100, 100], [10, -10]);
+  const rotateY = useTransform(mouseX, [-100, 100], [-10, 10]);
+
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    mouseX.set(x);
+    mouseY.set(y);
+  };
+
+  const handleMouseLeave = () => {
+    mouseX.set(0);
+    mouseY.set(0);
+  };
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.2 + index * 0.1, duration: 0.7 }}
+      whileHover={{ scale: 1.02 }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{ rotateX, rotateY, perspective: 1000 }}
+      className="exp-card"
+      onClick={onClick}
+    >
+      <div className="status-dot" />
+      <div className="exp-icon">
+        <motion.div 
+          animate={{ z: 50 }}
         >
-          <div className="footer-line"></div>
-          <p className="footer-tagline">Loved the experience? Let's make your event legendary.</p>
-          <button className="luxury-cta-btn" onClick={() => navigate('/quote')}>
-            <span>GET A QUOTE</span>
-            <div className="btn-shimmer"></div>
-          </button>
+          {icon}
         </motion.div>
       </div>
-    </GameLayout>
+      <h3 className="exp-title">{game.title}</h3>
+      <p className="exp-desc">{meta.desc}</p>
+      
+      <div className="exp-cta">
+        <ArrowRight size={24} />
+      </div>
+    </motion.div>
+  );
+};
+
+const LeaderboardView = ({ API_URL, isDarkMode, onBack }) => {
+  const [data, setData] = useState([]);
+  const [game, setGame] = useState('spot_difference');
+
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const res = await axios.get(`${API_URL}/games/leaderboard?gameType=${game}`);
+        setData(res.data);
+      } catch (e) { console.error(e); }
+    };
+    fetch();
+  }, [game, API_URL]);
+
+  return (
+    <div className={`${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-black/5 border-black/10'} backdrop-blur-3xl rounded-[40px] border overflow-hidden p-8 transition-colors`}>
+      <div className="flex justify-between items-center mb-8">
+        <div className="flex items-center gap-4">
+          <button 
+            onClick={onBack}
+            className={`w-10 h-10 rounded-full flex items-center justify-center border transition-all ${
+              isDarkMode ? 'border-white/10 hover:bg-white/10 text-white' : 'border-black/10 hover:bg-black/10 text-black'
+            }`}
+          >
+            <ArrowRight className="rotate-180" size={18} />
+          </button>
+          <h2 className="text-2xl font-bold italic tracking-tight">Hall of Legends</h2>
+        </div>
+        <div className="flex gap-2">
+          {['spot_difference', '2048', 'tictactoe'].map(g => (
+            <button 
+              key={g} 
+              onClick={() => setGame(g)}
+              className={`px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all ${
+                game === g 
+                  ? (isDarkMode ? 'bg-white/10 text-white' : 'bg-black/10 text-black') 
+                  : (isDarkMode ? 'text-white/40 hover:text-white' : 'text-black/40 hover:text-black')
+              }`}
+            >
+              {g.replace('_', ' ')}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="space-y-4">
+        {data.map((entry, i) => (
+          <div key={i} className={`flex items-center justify-between p-6 rounded-[24px] border transition-all ${
+            isDarkMode 
+              ? 'bg-white/[0.02] border-white/5 hover:bg-white/5' 
+              : 'bg-black/[0.02] border-black/5 hover:bg-black/5'
+          }`}>
+            <div className="flex items-center gap-6">
+              <span className={`text-xl font-black ${i === 0 ? 'text-[#ffab3d]' : (isDarkMode ? 'opacity-20' : 'opacity-10')}`}>{i + 1}</span>
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#ff4f9a] to-[#ffab3d] flex items-center justify-center font-bold text-white shadow-lg">
+                {entry.guestName?.charAt(0) || 'U'}
+              </div>
+              <span className="font-bold">{entry.guestName || 'Anonymous Legend'}</span>
+            </div>
+            <span className="text-xl font-bold text-[#ff4f9a]">{entry.score.toLocaleString()}</span>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 };
 
 export default GameZone;
-

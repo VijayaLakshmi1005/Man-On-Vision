@@ -54,12 +54,12 @@ const Navbar = () => {
 
   return (
     <>
-      {/* Theme Toggle Button (Square Drawn by User) */}
+      {/* Theme Toggle Button */}
       <button 
         onClick={toggleTheme}
-        className={`fixed top-8 right-24 z-[200] w-12 h-12 flex items-center justify-center backdrop-blur-md border transition-all duration-500 rounded-full shadow-sm ${
+        className={`fixed top-8 right-24 z-[500] w-12 h-12 flex items-center justify-center backdrop-blur-md border transition-all duration-500 rounded-full shadow-sm ${
           isDarkMode 
-          ? 'bg-orange-600/20 border-orange-600/30 text-orange-500 hover:bg-orange-600/40' 
+          ? 'bg-white/5 border-white/10 text-white hover:bg-white/10' 
           : 'bg-white/10 border-white/20 text-stone-900 hover:bg-stone-100'
         }`}
       >
@@ -86,10 +86,10 @@ const Navbar = () => {
         </AnimatePresence>
       </button>
 
-      {/* Hamburger Toggle (Only visible UI element) */}
+      {/* Hamburger Toggle */}
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className={`fixed top-8 right-8 z-[200] w-12 h-12 flex items-center justify-center backdrop-blur-md border rounded-full transition-all duration-500 shadow-sm ${
+        className={`fixed top-8 right-8 z-[500] w-12 h-12 flex items-center justify-center backdrop-blur-md border rounded-full transition-all duration-500 shadow-sm ${
           isDarkMode 
           ? 'bg-white/10 border-white/20 text-white hover:bg-white hover:text-stone-950' 
           : 'bg-white/10 border-white/20 text-stone-900 hover:bg-stone-900 hover:text-white'
@@ -123,7 +123,7 @@ const Navbar = () => {
         initial="closed"
         animate={isOpen ? "opened" : "closed"}
         variants={menuVariants}
-        className="fixed inset-0 z-[150] bg-stone-950 text-white flex flex-col items-center justify-center py-20 overflow-y-auto"
+        className="fixed inset-0 z-[450] bg-stone-950 text-white flex flex-col items-center justify-center py-20 overflow-y-auto"
       >
         <div className="flex flex-col items-center space-y-8 md:space-y-12">
           {navLinks.map((link, i) => (
@@ -137,7 +137,7 @@ const Navbar = () => {
                 <RouterLink
                   to={link.to}
                   onClick={() => setIsOpen(false)}
-                  className="text-4xl md:text-7xl font-serif italic tracking-tighter hover:text-orange-600 transition-colors block"
+                  className="text-4xl md:text-7xl font-serif italic tracking-tighter hover:text-[#ffb040] transition-colors block"
                 >
                   {link.name}
                 </RouterLink>
@@ -147,14 +147,14 @@ const Navbar = () => {
                   smooth={true}
                   duration={1000}
                   onClick={() => setIsOpen(false)}
-                  className="text-4xl md:text-7xl font-serif italic tracking-tighter hover:text-orange-600 transition-colors cursor-pointer block"
+                  className="text-4xl md:text-7xl font-serif italic tracking-tighter hover:text-[#ffb040] transition-colors cursor-pointer block"
                 >
                   {link.name}
                 </ScrollLink>
               ) : (
                 <button
                   onClick={() => handleNavClick(link.to)}
-                  className="text-4xl md:text-7xl font-serif italic tracking-tighter hover:text-orange-600 transition-colors block"
+                  className="text-4xl md:text-7xl font-serif italic tracking-tighter hover:text-[#ffb040] transition-colors block"
                 >
                   {link.name}
                 </button>
@@ -171,7 +171,7 @@ const Navbar = () => {
             <RouterLink 
                 to="/quote" 
                 onClick={() => setIsOpen(false)}
-                className="px-12 py-4 bg-orange-600 text-white rounded-full text-xs font-bold tracking-[0.2em] uppercase hover:bg-white hover:text-stone-950 transition-all"
+                className="px-12 py-4 bg-gradient-to-r from-[#ff5a96] to-[#ffb040] text-white rounded-full text-xs font-bold tracking-[0.2em] uppercase hover:scale-105 transition-all"
             >
                 Start Production
             </RouterLink>
@@ -182,11 +182,6 @@ const Navbar = () => {
                 <RouterLink to="/auth" onClick={() => setIsOpen(false)} className="text-[10px] uppercase tracking-widest opacity-50 hover:opacity-100">Portal Access</RouterLink>
             )}
           </motion.div>
-        </div>
-
-        {/* Decorative background text */}
-        <div className="absolute bottom-12 left-12 text-[10vw] font-serif font-black opacity-[0.02] select-none pointer-events-none">
-          VISION
         </div>
       </motion.div>
     </>

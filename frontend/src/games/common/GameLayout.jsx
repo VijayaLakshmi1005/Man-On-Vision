@@ -1,76 +1,70 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import LiquidMazeStatic from '../../components/common/LiquidMazeStatic';
+import { useTheme } from '../../context/ThemeContext';
+import { ArrowLeft, ExternalLink } from 'lucide-react';
+import { motion } from 'framer-motion';
 import './GameLayout.css';
 
 const GameLayout = ({ children, title }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [cursorPos, setCursorPos] = useState({ x: -100, y: -100 });
-  const [isTouch, setIsTouch] = useState(false);
+  const { isDarkMode } = useTheme();
 
   const handleExit = () => {
-    // If we are on the main Games Hub, go back to the Home Page
     if (location.pathname === '/games') {
       navigate('/');
     } else {
-      // If we are inside a specific game, go back to the Games Hub
       navigate('/games');
     }
   };
 
-  useEffect(() => {
-    const handleMove = (e) => {
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-      setCursorPos({ x: clientX, y: clientY });
-      if (e.touches) setIsTouch(true);
-    };
-
-    window.addEventListener('mousemove', handleMove);
-    window.addEventListener('touchmove', handleMove);
-    return () => {
-      window.removeEventListener('mousemove', handleMove);
-      window.removeEventListener('touchmove', handleMove);
-    };
-  }, []);
-
   return (
-    <div className="game-zone-container">
-      <div 
-        className="global-cursor" 
-        style={{ left: cursorPos.x, top: cursorPos.y }}
-      />
-      
-      <button className="back-button" onClick={handleExit}>
-        <span className="arrow">←</span>
-        <span className="text">EXIT GAME</span>
-      </button>
-
-
-      <div className="particles">
-
-        {[...Array(20)].map((_, i) => (
-          <div key={i} className="particle" style={{
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
-            animationDelay: `${Math.random() * 5}s`,
-            animationDuration: `${5 + Math.random() * 10}s`
-          }}></div>
-        ))}
-      </div>
-      
-      <div className="game-header">
-        <h1 className="glow-text">{title || 'GAME EXPERIENCE ZONE'}</h1>
-        <div className="accent-line"></div>
+    <div className={`game-zone-viewport ${isDarkMode ? 'dark' : 'light'}`}>
+      {/* Homepage Integrated Background */}
+      <div className="fixed inset-0 z-[-1]">
+        <LiquidMazeStatic 
+            color1="#ff5a96" 
+            color2="#ffb040" 
+            bgColor={isDarkMode ? "#0c0a09" : "#fff5f2"} 
+            density={0.15} 
+            speed={0.003} 
+        />
       </div>
 
-      <div className="game-content">
-        {children}
+      {/* Minimalist Navigation */}
+      <div className="layout-nav">
+        <button className="nav-exit-btn group" onClick={handleExit}>
+          <div className="icon-ring">
+            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+          </div>
+          <span className="nav-label">{location.pathname === '/games' ? 'RETURN HOME' : 'EXIT EXPERIENCE'}</span>
+        </button>
       </div>
 
-      <div className="game-footer">
-        <p>Loved the game? <a href="/contact" className="cta-link">Plan your event with us!</a></p>
-      </div>
+      <main className="game-main-content">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="content-header"
+        >
+          <h1 className="cinematic-title">{title || 'GAME EXPERIENCE ZONE'}</h1>
+          <div className="title-underline"></div>
+        </motion.div>
+
+        <div className="interactive-stage">
+          {children}
+        </div>
+      </main>
+
+      <footer className="experience-footer">
+        <div className="footer-glass">
+          <p className="footer-msg">Crafting Legendary Digital Experiences</p>
+          <button onClick={() => navigate('/quote')} className="footer-cta group">
+            ESTABLISH PRODUCTION <ExternalLink size={12} className="ml-2 group-hover:rotate-45 transition-transform" />
+          </button>
+        </div>
+      </footer>
     </div>
   );
 };

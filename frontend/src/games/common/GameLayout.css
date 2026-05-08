@@ -1,175 +1,109 @@
-.game-zone-container {
-  min-height: 100vh;
-  background: radial-gradient(circle at center, #1a0a0a 0%, #000000 100%);
-  color: #fff;
-  position: relative;
-  overflow: hidden;
-  padding: 40px 20px;
-  font-family: 'Outfit', sans-serif;
-  cursor: none !important; /* Hide default cursor to show custom one */
+.game-zone-viewport {
+  @apply min-h-screen w-full relative overflow-x-hidden flex flex-col;
+  background-color: transparent;
 }
 
-.global-cursor {
-  position: fixed;
-  width: 30px;
-  height: 30px;
-  border: 2px solid #d4af37;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 9999;
-  transform: translate(-50%, -50%);
-  box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: width 0.15s, height 0.15s;
+/* Minimalist Nav */
+.layout-nav {
+  @apply fixed top-6 left-6 z-[200];
 }
 
-.global-cursor::after {
-  content: '';
-  position: absolute;
-  width: 4px;
-  height: 4px;
-  background: #d4af37;
-  border-radius: 50%;
+.nav-exit-btn {
+  @apply flex items-center gap-4 px-4 py-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full text-white transition-all hover:bg-white/10;
 }
 
-.global-cursor::before {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border: 1px solid rgba(212, 175, 55, 0.2);
-  border-radius: 50%;
-  animation: pulse 2s infinite;
+.icon-ring {
+  @apply w-8 h-8 flex items-center justify-center bg-white/10 rounded-full;
 }
 
-@keyframes pulse {
-  0% { transform: scale(1); opacity: 1; }
-  100% { transform: scale(2.5); opacity: 0; }
+.nav-label {
+  @apply text-[10px] font-black uppercase tracking-[0.2em] opacity-60;
 }
 
-@media (max-width: 768px) {
-  .game-zone-container {
-    cursor: auto !important; /* Restore for mobile so OS handles it, but our div still follows */
-  }
+/* Main Content Structure */
+.game-main-content {
+  @apply flex-1 flex flex-col items-center pt-24 pb-32 px-6;
 }
 
-.back-button {
-  position: absolute;
-  top: 30px;
-  left: 30px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(212, 175, 55, 0.3);
-  color: #d4af37;
-  padding: 10px 20px;
-  border-radius: 30px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  z-index: 100;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(5px);
-  font-weight: bold;
-  letter-spacing: 1px;
-  font-size: 0.8rem;
+.cinematic-title {
+  @apply text-center text-white italic tracking-tighter mb-4;
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 6vw, 4.5rem);
 }
 
-.back-button:hover {
-  background: rgba(139, 0, 0, 0.4);
-  border-color: #d4af37;
-  transform: translateX(-5px);
-  box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+.game-layout-icon {
+  @apply w-12 h-12 md:w-20 md:h-20 flex items-center justify-center bg-white/10 rounded-2xl border border-white/20 overflow-hidden shadow-2xl backdrop-blur-md mb-4;
 }
 
-.back-button .arrow {
-  font-size: 1.2rem;
-  transition: transform 0.3s ease;
+.game-layout-icon img {
+  @apply w-full h-full object-contain p-2;
 }
 
-.back-button:hover .arrow {
-  transform: translateX(-3px);
+.title-underline {
+  @apply w-24 h-px bg-gradient-to-r from-transparent via-[#ff5a96] to-transparent mx-auto mb-12;
 }
 
-.particles {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 0;
+.interactive-stage {
+  @apply w-full max-w-[1400px] mx-auto;
 }
 
-.particle {
-  position: absolute;
-  width: 4px;
-  height: 4px;
-  background: #d4af37;
-  border-radius: 50%;
-  opacity: 0.3;
-  animation: float linear infinite;
+/* Experience Footer */
+.experience-footer {
+  @apply fixed bottom-8 left-0 w-full px-6 z-[200] pointer-events-none;
 }
 
-@keyframes float {
-  0% { transform: translateY(0) rotate(0deg); opacity: 0; }
-  50% { opacity: 0.6; }
-  100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+.footer-glass {
+  @apply max-w-2xl mx-auto flex flex-col md:flex-row items-center justify-between px-8 py-4 bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[32px] pointer-events-auto shadow-2xl;
 }
 
-.game-header {
-  text-align: center;
-  margin-bottom: 50px;
-  position: relative;
-  z-index: 1;
+.footer-msg {
+  @apply text-[9px] font-black uppercase tracking-[0.3em] text-white/40 mb-3 md:mb-0;
+}
+
+.footer-cta {
+  @apply flex items-center text-[10px] font-black uppercase tracking-[0.2em] text-[#ffb040] hover:text-white transition-colors;
+}
+
+/* Base Overrides for 'Zoomed' feel */
+:root {
+  --stage-max-width: 1400px;
+}
+
+/* Animations */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
 
 .glow-text {
-  font-size: 3rem;
-  letter-spacing: 4px;
-  color: #fff;
-  text-shadow: 0 0 10px rgba(212, 175, 55, 0.5), 0 0 20px rgba(139, 0, 0, 0.8);
-  margin-bottom: 10px;
-  text-transform: uppercase;
+  text-shadow: 0 0 30px rgba(255, 90, 150, 0.3);
 }
 
-.accent-line {
-  width: 150px;
-  height: 3px;
-  background: linear-gradient(90deg, transparent, #d4af37, transparent);
-  margin: 0 auto;
+/* Light Theme Support */
+.light .cinematic-title {
+  @apply text-black;
 }
 
-.game-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  position: relative;
-  z-index: 1;
+.light .nav-exit-btn {
+  @apply bg-black/5 border-black/10 text-black hover:bg-black/10;
 }
 
-.game-footer {
-  text-align: center;
-  margin-top: 60px;
-  padding: 20px;
-  border-top: 1px solid rgba(212, 175, 55, 0.1);
+.light .icon-ring {
+  @apply bg-black/10;
 }
 
-.cta-link {
-  color: #d4af37;
-  text-decoration: none;
-  font-weight: bold;
-  border-bottom: 2px solid transparent;
-  transition: all 0.3s ease;
+.light .footer-glass {
+  @apply bg-white/60 border-black/10;
 }
 
-.cta-link:hover {
-  border-color: #d4af37;
-  text-shadow: 0 0 10px rgba(212, 175, 55, 0.8);
+.light .footer-msg {
+  @apply text-black/60;
 }
 
-@media (max-width: 768px) {
-  .glow-text {
-    font-size: 1.8rem;
-  }
+.light .footer-cta {
+  @apply text-[#ff5a96] hover:text-black;
+}
+
+.light .title-underline {
+  @apply bg-black/10;
 }

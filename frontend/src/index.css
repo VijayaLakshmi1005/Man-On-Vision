@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Outfit:wght@100;200;300;400;500;600;700;800;900&display=swap');
+/* Force Build Refresh - V2 */
 
 @tailwind base;
 @tailwind components;
@@ -23,38 +24,47 @@
   }
 }
 
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
 :root {
-  --luxury-beige: #F5F5DC;
-  --luxury-cream: #FFFDD0;
-  --luxury-gold: #D4AF37;
-  --luxury-lavender: #E6E6FA;
-  --luxury-text-main: #1A1A1A;
-  --luxury-text-muted: #666666;
-  --glass-bg: rgba(255, 255, 255, 0.1);
-  --glass-border: rgba(255, 255, 255, 0.3);
-  --soft-shadow: 0 8px 30px rgba(0, 0, 0, 0.08); /* Updated premium shadow */
+  --luxury-pink: #ff5a96;
+  --luxury-orange: #ffb040;
+  --luxury-gold: #ffb040; /* Aliasing gold to orange to match theme without breaking old refs */
+  --luxury-bg: #0c0a09;
+  --luxury-text-main: #FFFFFF;
+  --luxury-text-muted: #A1A1AA;
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --soft-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
 }
 
 @layer base {
   body {
-    @apply antialiased text-stone-900;
+    @apply antialiased text-white leading-relaxed;
     font-family: var(--font-sans);
-    background-color: var(--luxury-beige);
-    overscroll-behavior-y: none; /* Prevent pull-to-refresh on mobile */
+    background-color: var(--luxury-bg);
+    overscroll-behavior-y: none;
     -webkit-overflow-scrolling: touch;
+    font-size: 16px; /* Base size reset */
   }
 
   html {
     overscroll-behavior-y: none;
-    scroll-behavior: auto !important; /* Lenis handles smoothing */
+    scroll-behavior: smooth;
   }
-
-
-
   
   h1, h2, h3, h4, h5, h6 {
-    @apply tracking-tight text-stone-800;
+    @apply tracking-tight text-white;
     font-family: var(--font-serif);
+    font-weight: 500;
   }
 }
 
@@ -92,6 +102,14 @@
   box-shadow: var(--soft-shadow);
   padding: 24px; /* Reduced for compactness */
   transition: all 0.3s ease;
+}
+
+.glass-luxury {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
 .hover-lift:hover {
@@ -150,7 +168,7 @@
 
 /* Global Form Visibility Fix */
 input, textarea, select {
-  @apply text-stone-900 !important;
+  @apply text-stone-900;
 }
 
 input::placeholder, textarea::placeholder {
