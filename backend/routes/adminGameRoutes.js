@@ -33,4 +33,10 @@ router.delete('/images/:id', adminGameController.deleteGameImage);
 router.post('/settings', adminGameController.updateGameSettings);
 router.post('/upload', upload.single('file'), adminGameController.uploadAsset);
 
+// Kannada Rapid Fire
+router.get('/questions', adminGameController.getQuestions);
+router.post('/questions', adminGameController.createQuestion);
+router.put('/questions/:id', adminGameController.updateQuestion);
+router.delete('/questions/:id', adminGameController.deleteQuestion);
+
 module.exports = router;

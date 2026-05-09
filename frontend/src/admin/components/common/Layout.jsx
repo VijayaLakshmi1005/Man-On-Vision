@@ -10,7 +10,7 @@ import PageTransition from "../../../components/common/PageTransition";
 export default function Layout() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isFocusMode, setIsFocusMode] = useState(false);
-    
+
     // Header Scroll Visibility Logic (Matches Topbar)
     const [isVisible, setIsVisible] = useState(true);
     const lastScrollY = useRef(0);
@@ -21,7 +21,7 @@ export default function Layout() {
             if (!ticking) {
                 window.requestAnimationFrame(() => {
                     const currentScrollY = window.scrollY;
-                    
+
                     if (currentScrollY < 10) {
                         setIsVisible(true);
                     } else if (currentScrollY > lastScrollY.current) {
@@ -29,7 +29,7 @@ export default function Layout() {
                     } else if (currentScrollY < lastScrollY.current - 5) {
                         setIsVisible(true);
                     }
-                    
+
                     lastScrollY.current = currentScrollY;
                     ticking = false;
                 });
@@ -52,7 +52,7 @@ export default function Layout() {
     }), []);
 
     return (
-        <div 
+        <div
             className="flex min-h-screen font-sans selection:bg-mutedbrown/20 relative"
             style={backgroundStyle}
         >

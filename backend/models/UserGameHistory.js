@@ -19,6 +19,8 @@ const UserGameHistorySchema = new mongoose.Schema({
     tictactoe: { type: Number, default: 0 },
     game2048: { type: Number, default: 0 },
     spot_difference: { type: Number, default: 0 },
+    kannada_rapid_fire: { type: Number, default: 0 },
+    hidden_object: { type: Number, default: 0 },
     lastPlayed: Date
   },
   totalPoints: { type: Number, default: 0 },

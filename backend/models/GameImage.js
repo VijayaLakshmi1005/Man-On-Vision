@@ -8,7 +8,7 @@ const GameImageSchema = new mongoose.Schema({
   gameType: {
     type: String,
     required: true,
-    enum: ['spot_difference']
+    enum: ['spot_difference', 'hidden_object']
   },
   difficulty: {
     type: String,

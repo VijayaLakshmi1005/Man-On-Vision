@@ -23,6 +23,7 @@ const Profile = lazy(() => import('./pages/client/Profile'));
 import ClientHeader from './components/client/Header';
 import ClientFooter from './components/client/Footer';
 import ClientSidebar from './components/client/Sidebar';
+import MobileNav from './components/client/MobileNav';
 
 // Admin components
 import AdminLayout from './admin/components/common/Layout';
@@ -42,12 +43,16 @@ const GameZone = lazy(() => import('./games/GameZone'));
 const TicTacToe = lazy(() => import('./games/TicTacToe/TicTacToe'));
 const Game2048 = lazy(() => import('./games/Game2048/Game2048'));
 const SpotDifference = lazy(() => import('./games/SpotDifference/SpotDifference'));
+const KannadaRapidFire = lazy(() => import('./games/KannadaRapidFire/KannadaRapidFire'));
+const HiddenObject = lazy(() => import('./games/HiddenObject/HiddenObject'));
 
 // Admin Game Management
 const AdminGameDashboard = lazy(() => import('./admin/pages/games/AdminGameDashboard'));
 const AdminTicTacToeManager = lazy(() => import('./admin/pages/games/TicTacToeManager'));
 const Admin2048Manager = lazy(() => import('./admin/pages/games/Game2048Manager'));
 const AdminSpotDifferenceManager = lazy(() => import('./admin/pages/games/SpotDifferenceManager'));
+const AdminRapidFireManager = lazy(() => import('./admin/pages/games/RapidFireManager'));
+const AdminHiddenObjectManager = lazy(() => import('./admin/pages/games/HiddenObjectManager'));
 const AdminPageManager = lazy(() => import('./admin/pages/games/AdminPageManager'));
 
 
@@ -87,13 +92,13 @@ const PortalLayout = () => {
         <ClientSidebar onClose={() => setIsSidebarOpen(false)} />
       </div>
 
-      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
+      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto relative">
         <div className="lg:hidden">
           <ClientHeader toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
         </div>
 
-        <main className="flex-1 w-full max-w-[1200px] px-4 md:px-6 lg:px-8 py-6 lg:py-8 space-y-8 lg:space-y-12 pt-24 lg:pt-8 mx-auto">
-          <div className="mb-8 flex justify-between items-center relative z-50">
+        <main className="flex-1 w-full max-w-[1200px] px-4 md:px-6 lg:px-8 py-6 lg:py-8 space-y-8 lg:space-y-12 pt-20 lg:pt-8 pb-32 lg:pb-12 mx-auto">
+          <div className="mb-4 flex justify-between items-center relative z-50">
             <Breadcrumbs />
 
             <div className="hidden sm:flex items-center gap-4">
@@ -126,6 +131,8 @@ const PortalLayout = () => {
             <ClientFooter />
           </div>
         </main>
+        
+        <MobileNav />
       </div>
     </div>
   );
@@ -175,6 +182,8 @@ function App() {
                   <Route path="games/tictactoe" element={<AdminTicTacToeManager />} />
                   <Route path="games/2048" element={<Admin2048Manager />} />
                   <Route path="games/spot_difference" element={<AdminSpotDifferenceManager />} />
+                  <Route path="games/kannada_rapid_fire" element={<AdminRapidFireManager />} />
+                  <Route path="games/hidden_object" element={<AdminHiddenObjectManager />} />
                   <Route path="games/page-settings" element={<AdminPageManager />} />
 
                 </Route>
@@ -185,6 +194,8 @@ function App() {
               <Route path="/games/tictactoe" element={<TicTacToe />} />
               <Route path="/games/2048" element={<Game2048 />} />
               <Route path="/games/spot_difference" element={<SpotDifference />} />
+              <Route path="/games/kannada_rapid_fire" element={<KannadaRapidFire />} />
+              <Route path="/games/hidden_object" element={<HiddenObject />} />
               <Route path="*" element={<AuthPage />} />
 
             </Routes>

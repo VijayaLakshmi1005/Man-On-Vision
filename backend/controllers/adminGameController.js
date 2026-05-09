@@ -1,5 +1,6 @@
 const GameImage = require('../models/GameImage');
 const GameSetting = require('../models/GameSetting');
+const RapidFireQuestion = require('../models/RapidFireQuestion');
 
 exports.createGameImage = async (req, res) => {
   try {
@@ -66,3 +67,49 @@ exports.uploadAsset = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// Kannada Rapid Fire Questions
+exports.getQuestions = async (req, res) => {
+  try {
+    const { category, difficulty } = req.query;
+    const filter = {};
+    if (category) filter.category = category;
+    if (difficulty) filter.difficulty = difficulty;
+    
+    const questions = await RapidFireQuestion.find(filter).sort({ createdAt: -1 });
+    res.status(200).json(questions);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.createQuestion = async (req, res) => {
+  try {
+    const question = new RapidFireQuestion(req.body);
+    await question.save();
+    res.status(201).json(question);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.updateQuestion = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const question = await RapidFireQuestion.findByIdAndUpdate(id, req.body, { new: true });
+    res.status(200).json(question);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.deleteQuestion = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await RapidFireQuestion.findByIdAndDelete(id);
+    res.status(200).json({ message: 'Question deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+

@@ -9,6 +9,17 @@
   :root {
     --font-serif: 'Cormorant Garamond', serif;
     --font-sans: 'Outfit', sans-serif;
+    
+    /* Fluid Typography System */
+    --text-xs: clamp(0.7rem, 0.65rem + 0.2vw, 0.8rem);
+    --text-sm: clamp(0.8rem, 0.75rem + 0.25vw, 0.9rem);
+    --text-base: clamp(0.9rem, 0.85rem + 0.3vw, 1rem);
+    --text-lg: clamp(1rem, 0.95rem + 0.4vw, 1.2rem);
+    --text-xl: clamp(1.2rem, 1.1rem + 0.6vw, 1.5rem);
+    --text-2xl: clamp(1.5rem, 1.35rem + 0.8vw, 2rem);
+    --text-3xl: clamp(2rem, 1.8rem + 1vw, 2.5rem);
+    --text-4xl: clamp(2.5rem, 2.2rem + 1.5vw, 3.5rem);
+    --text-huge: clamp(3.5rem, 3rem + 4vw, 6rem);
   }
   
   .font-serif {
@@ -48,17 +59,19 @@
 
 @layer base {
   body {
-    @apply antialiased text-white leading-relaxed;
+    @apply antialiased text-white leading-[1.6];
     font-family: var(--font-sans);
     background-color: var(--luxury-bg);
     overscroll-behavior-y: none;
     -webkit-overflow-scrolling: touch;
-    font-size: 16px; /* Base size reset */
+    font-size: var(--text-base);
+    min-height: -webkit-fill-available;
   }
 
   html {
     overscroll-behavior-y: none;
     scroll-behavior: smooth;
+    height: -webkit-fill-available;
   }
   
   h1, h2, h3, h4, h5, h6 {
@@ -95,13 +108,13 @@
 
 .glass-card {
   background: var(--glass-bg);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--glass-border);
-  border-radius: 20px; /* Standardize at 20px */
+  border-radius: 16px; 
   box-shadow: var(--soft-shadow);
-  padding: 24px; /* Reduced for compactness */
-  transition: all 0.3s ease;
+  padding: clamp(16px, 4vw, 24px);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .glass-luxury {
@@ -126,7 +139,7 @@
 }
 
 .luxury-gradient-bg {
-  background: linear-gradient(135deg, #F9F7F4 0%, #EBE7E0 100%);
+  background: linear-gradient(135deg, #0c0a09 0%, #1a1a1a 100%);
   background-attachment: fixed;
 }
 

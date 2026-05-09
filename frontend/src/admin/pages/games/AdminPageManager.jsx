@@ -13,7 +13,9 @@ const AdminPageManager = () => {
     games: [
       { id: 'tictactoe', title: 'Tic Tac Toe', description: 'Classic camera vs lights battle. Beat our advanced AI!', icon: '🎮', image: 'https://images.unsplash.com/photo-1611996575749-79a3a250f948', enabled: true },
       { id: '2048', title: '2048 Event Edition', description: 'Merge tiles to create the ultimate event setup.', icon: '🔢', image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f', enabled: true },
-      { id: 'spot_difference', title: 'Spot The Difference', description: 'Find subtle changes in stunning event photography.', icon: '🔍', image: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622', enabled: true }
+      { id: 'spot_difference', title: 'Spot The Difference', description: 'Find subtle changes in stunning event photography.', icon: '🔍', image: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622', enabled: true },
+      { id: 'kannada_rapid_fire', title: 'Kannada Rapid Fire', description: 'Test your knowledge on Kannada culture and cinema!', icon: '⚡', image: 'https://images.unsplash.com/photo-1512149177596-f817c7ef5d4c', enabled: true },
+      { id: 'hidden_object', title: 'Hidden Object', description: 'Can you find all the event equipment hidden in the scene?', icon: '🕵️', image: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30', enabled: true }
     ]
   });
   const [loading, setLoading] = useState(false);
@@ -26,7 +28,24 @@ const AdminPageManager = () => {
     try {
       const res = await axios.get(`${API_URL}/games/zone`);
       if (res.data) {
-        setSettings(res.data);
+        const fetchedSettings = res.data;
+        const defaultGames = [
+          { id: 'tictactoe', title: 'Tic Tac Toe', description: 'Classic camera vs lights battle. Beat our advanced AI!', icon: '🎮', image: 'https://images.unsplash.com/photo-1611996575749-79a3a250f948', enabled: true },
+          { id: '2048', title: '2048 Event Edition', description: 'Merge tiles to create the ultimate event setup.', icon: '🔢', image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f', enabled: true },
+          { id: 'spot_difference', title: 'Spot The Difference', description: 'Find subtle changes in stunning event photography.', icon: '🔍', image: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622', enabled: true },
+          { id: 'kannada_rapid_fire', title: 'Kannada Rapid Fire', description: 'Test your knowledge on Kannada culture and cinema!', icon: '⚡', image: 'https://images.unsplash.com/photo-1512149177596-f817c7ef5d4c', enabled: true },
+          { id: 'hidden_object', title: 'Hidden Object', description: 'Can you find all the event equipment hidden in the scene?', icon: '🕵️', image: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30', enabled: true }
+        ];
+
+        // Merge logic: keep existing settings but add new games if they don't exist
+        const mergedGames = [...fetchedSettings.games];
+        defaultGames.forEach(defGame => {
+          if (!mergedGames.find(g => g.id === defGame.id)) {
+            mergedGames.push(defGame);
+          }
+        });
+
+        setSettings({ ...fetchedSettings, games: mergedGames });
       }
     } catch (err) {
       console.error('Error fetching zone settings:', err);

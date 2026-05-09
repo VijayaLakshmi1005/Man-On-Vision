@@ -13,7 +13,7 @@ const ScoreSchema = new mongoose.Schema({
   gameType: {
     type: String,
     required: true,
-    enum: ['tictactoe', '2048', 'spot_difference', 'object_match']
+    enum: ['tictactoe', '2048', 'spot_difference', 'kannada_rapid_fire', 'hidden_object']
   },
   score: {
     type: Number,

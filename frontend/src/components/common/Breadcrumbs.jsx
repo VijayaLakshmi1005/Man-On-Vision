@@ -23,15 +23,15 @@ const Breadcrumbs = () => {
   };
 
   return (
-    <nav className="flex mb-4 overflow-x-auto whitespace-nowrap py-3 px-1" aria-label="Breadcrumb">
-      <ol className="inline-flex items-center space-x-2 md:space-x-3 bg-white/10 backdrop-blur-xl px-6 py-2.5 rounded-[20px] border border-white/20 shadow-[0_4px_15px_rgba(0,0,0,0.03)]">
+    <nav className="flex mb-4 overflow-x-auto no-scrollbar whitespace-nowrap py-1" aria-label="Breadcrumb">
+      <ol className="inline-flex items-center gap-1.5 md:gap-3 bg-stone-100/50 backdrop-blur-xl px-4 py-1.5 rounded-full border border-stone-200/50 shadow-sm">
         <li className="inline-flex items-center">
           <Link
             to="/"
-            className="inline-flex items-center text-[13px] font-medium tracking-tight text-[#8a8a8a] hover:text-[#2d2d2d] transition-all duration-300"
+            className="flex items-center text-[10px] md:text-xs font-bold uppercase tracking-widest text-stone-500 hover:text-stone-900 transition-all duration-300"
           >
-            <Home className="w-4 h-4 mr-2 opacity-60" />
-            Home
+            <Home className="w-3 h-3 mr-1.5 opacity-60" />
+            <span className="hidden xs:inline">Home</span>
           </Link>
         </li>
         {pathnames.map((value, index) => {
@@ -39,22 +39,20 @@ const Breadcrumbs = () => {
           const to = `/${pathnames.slice(0, index + 1).join('/')}`;
 
           return (
-            <li key={to} className="animate-in fade-in slide-in-from-left-2 duration-500" style={{ animationDelay: `${index * 100}ms` }}>
-              <div className="flex items-center">
-                <ChevronRight className="w-4 h-4 text-[#8a8a8a] opacity-40 mx-1" />
-                {last ? (
-                  <span className="ml-1 text-[13px] font-medium text-[#2d2d2d] bg-black/[0.04] px-2.5 py-1 rounded-[10px]">
-                    {getBreadcrumbName(value)}
-                  </span>
-                ) : (
-                  <Link
-                    to={to}
-                    className="ml-1 text-[13px] font-medium text-[#8a8a8a] hover:text-[#2d2d2d] transition-all duration-300 px-2 py-1 rounded-[10px] hover:bg-black/[0.02]"
-                  >
-                    {getBreadcrumbName(value)}
-                  </Link>
-                )}
-              </div>
+            <li key={to} className="flex items-center animate-in fade-in slide-in-from-left-2 duration-500" style={{ animationDelay: `${index * 80}ms` }}>
+              <ChevronRight className="w-3 h-3 text-stone-300 mx-0.5" />
+              {last ? (
+                <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-stone-900 px-2 py-0.5 rounded-lg bg-stone-100 max-w-[120px] truncate">
+                  {getBreadcrumbName(value)}
+                </span>
+              ) : (
+                <Link
+                  to={to}
+                  className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-stone-500 hover:text-stone-900 transition-all duration-300 px-1 max-w-[100px] truncate"
+                >
+                  {getBreadcrumbName(value)}
+                </Link>
+              )}
             </li>
           );
         })}

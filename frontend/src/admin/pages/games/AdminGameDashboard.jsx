@@ -8,7 +8,9 @@ const gameModules = [
   { id: 'page-settings', name: 'Zone Appearance', icon: '🎨', color: '#d4af37', label: 'INTERFACE', description: 'Titles, Backgrounds & Game Visibility' },
   { id: 'tictactoe', name: 'Tic Tac Toe', icon: '🎥', color: '#8b0000', label: 'LOGIC', description: 'Manage AI & Player Icons' },
   { id: '2048', name: '2048 Game', icon: '🔢', color: '#ba6a5d', label: 'ALGORITHM', description: 'Manage Tile Labels & Speed' },
-  { id: 'spot_difference', name: 'Spot Master', icon: '🔍', color: '#1a1a1a', label: 'PRECISION', description: 'Manage Image Sets & Markers' }
+  { id: 'spot_difference', name: 'Spot Master', icon: '🔍', color: '#1a1a1a', label: 'PRECISION', description: 'Manage Image Sets & Markers' },
+  { id: 'kannada_rapid_fire', name: 'Rapid Fire', icon: '⚡', color: '#ff4f9a', label: 'KNOWLEDGE', description: 'Manage Kannada Quiz & Streaks' },
+  { id: 'hidden_object', name: 'Hidden Object', icon: '🕵️', color: '#ffab3d', label: 'DISCOVERY', description: 'Map Production Equipment Scenes' }
 ];
 
 const AdminGameDashboard = () => {

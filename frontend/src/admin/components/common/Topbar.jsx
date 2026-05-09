@@ -276,7 +276,7 @@ const Topbar = memo(function Topbar({ onMenuClick, isVisibleProp }) {
 
                         <div className="flex gap-1 md:gap-4 md:border-l border-[#e6e3df] pl-1 md:pl-4">
                             <button
-                                onClick={() => window.open('https://www.instagram.com/man.on.vision?utm_source=qr&igsh=aGRxMjNqdDN6cHox', '_blank')}
+                                onClick={() => window.open('https://www.instagram.com/man.on.vision', '_blank')}
                                 className="text-warmgray hover:text-charcoal transition-all p-2.5 bg-black/5 hover:bg-ivory rounded-full shrink-0 hover:-translate-y-0.5 flex items-center justify-center"
                                 title="Visit Man On Vision Instagram"
                             >

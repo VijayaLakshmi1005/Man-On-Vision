@@ -2,6 +2,7 @@ const GameImage = require('../models/GameImage');
 const GameSetting = require('../models/GameSetting');
 const UserGameHistory = require('../models/UserGameHistory');
 const Score = require('../models/Score');
+const RapidFireQuestion = require('../models/RapidFireQuestion');
 
 exports.getRandomGameData = async (req, res) => {
   try {
@@ -9,6 +10,10 @@ exports.getRandomGameData = async (req, res) => {
     console.log(`[GAME] Fetching data for ${gameType} | All: ${all} | Session: ${sessionId}`);
 
     if (all === 'true') {
+      if (gameType === 'kannada_rapid_fire') {
+        const questions = await RapidFireQuestion.find().sort({ createdAt: -1 });
+        return res.status(200).json(questions);
+      }
       const allContent = await GameImage.find({ gameType, isActive: true }).sort({ createdAt: -1 });
       return res.status(200).json(allContent);
     }
@@ -39,26 +44,40 @@ exports.getRandomGameData = async (req, res) => {
       }
     }
 
-    // Fetch new content
-    let content = await GameImage.aggregate([
-      { $match: { gameType, _id: { $nin: playedIds }, isActive: true, difficulty: suggestedDifficulty } },
-      { $sample: { size: 1 } }
-    ]);
+    // Fetch new content based on game type
+    let content = [];
+    if (gameType === 'kannada_rapid_fire') {
+      const fetchSize = parseInt(req.query.limit) || 1;
+      
+      if (all === 'true') {
+        const allQuestions = await RapidFireQuestion.find().sort({ createdAt: -1 });
+        return res.status(200).json(allQuestions);
+      }
 
-    // If no content with suggested difficulty, try any difficulty that hasn't been played
-    if (content.length === 0) {
+      content = await RapidFireQuestion.aggregate([
+        { $match: { isActive: true } },
+        { $sample: { size: fetchSize } }
+      ]);
+    } else {
+      // spot_difference or hidden_object
       content = await GameImage.aggregate([
-        { $match: { gameType, _id: { $nin: playedIds }, isActive: true } },
-        { $sample: { size: 1 } }
-       ]);
-    }
-
-    // If still no content (everything played), reset history for this game and reshuffle
-    if (content.length === 0) {
-      content = await GameImage.aggregate([
-        { $match: { gameType, isActive: true } },
+        { $match: { gameType, _id: { $nin: playedIds }, isActive: true, difficulty: suggestedDifficulty } },
         { $sample: { size: 1 } }
       ]);
+
+      if (content.length === 0) {
+        content = await GameImage.aggregate([
+          { $match: { gameType, _id: { $nin: playedIds }, isActive: true } },
+          { $sample: { size: 1 } }
+         ]);
+      }
+
+      if (content.length === 0) {
+        content = await GameImage.aggregate([
+          { $match: { gameType, isActive: true } },
+          { $sample: { size: 1 } }
+        ]);
+      }
     }
 
     const responseData = content[0] ? { ...content[0], suggestedDifficulty } : null;
@@ -105,9 +124,16 @@ exports.submitScore = async (req, res) => {
     // Update Difficulty History
     history.difficultyHistory.push({ gameType, difficulty });
 
-    // Update Streaks (Simple version: increment if win/good score)
+    // Update Streaks
     const isWin = score > 0;
-    const streakKey = gameType === 'tictactoe' ? 'tictactoe' : (gameType === '2048' ? 'game2048' : 'spot_difference');
+    const streakMap = {
+      tictactoe: 'tictactoe',
+      '2048': 'game2048',
+      spot_difference: 'spot_difference',
+      kannada_rapid_fire: 'kannada_rapid_fire',
+      hidden_object: 'hidden_object'
+    };
+    const streakKey = streakMap[gameType] || 'spot_difference';
     
     if (isWin) {
       history.streaks[streakKey] = (history.streaks[streakKey] || 0) + 1;
@@ -185,10 +211,40 @@ exports.getGameZoneData = async (req, res) => {
         icon: '🔍',
         image: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=800',
         enabled: true
+      },
+      {
+        id: 'kannada_rapid_fire',
+        title: 'Kannada Rapid Fire',
+        description: 'Test your knowledge on Kannada culture and cinema!',
+        icon: '⚡',
+        image: 'https://images.unsplash.com/photo-1512149177596-f817c7ef5d4c?auto=format&fit=crop&q=80&w=800',
+        enabled: true
+      },
+      {
+        id: 'hidden_object',
+        title: 'Hidden Object',
+        description: 'Can you find all the event equipment hidden in the scene?',
+        icon: '🕵️',
+        image: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&q=80&w=800',
+        enabled: true
       }
     ];
 
-    const settings = pageSettings?.settings || { games: defaultGames, title: "Game Experience Zone" };
+    let settings = pageSettings?.settings || { games: defaultGames, title: "Game Experience Zone" };
+
+    // RESILIENCE: If settings exist but are missing new games, merge them
+    if (pageSettings && pageSettings.settings && pageSettings.settings.games) {
+      const existingIds = new Set(pageSettings.settings.games.map(g => g.id));
+      const newGamesToAdd = defaultGames.filter(dg => !existingIds.has(dg.id));
+      
+      if (newGamesToAdd.length > 0) {
+        settings = {
+          ...pageSettings.settings,
+          games: [...pageSettings.settings.games, ...newGamesToAdd]
+        };
+      }
+    }
+
     res.status(200).json(settings);
   } catch (error) {
     res.status(500).json({ message: error.message });
