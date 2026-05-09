@@ -10,7 +10,7 @@ import GameLayout from '../common/GameLayout';
 import GuestNameModal from '../common/GuestNameModal';
 import { useSwipe } from '../common/useSwipe';
 import { useSound } from '../common/useSound';
-import { API_URL } from '../../utils/api';
+import { API_URL, resolveImageUrl } from '../../../utils/api';
 import { useAuth } from '../../context/AuthContext';
 import './HiddenObject.css';
 
@@ -245,7 +245,7 @@ const HiddenObject = () => {
                 >
                   <div className="card-image">
                     <img 
-                      src={currentLevel.imageUrl?.startsWith('http') ? currentLevel.imageUrl : `${API_URL.replace('/api', '')}${currentLevel.imageUrl}`} 
+                      src={resolveImageUrl(currentLevel.imageUrl)} 
                       alt={currentLevel.title} 
                     />
                     <div className={`difficulty-badge ${currentLevel.difficulty}`}>{currentLevel.difficulty}</div>
@@ -305,7 +305,7 @@ const HiddenObject = () => {
                 onClick={handleObjectClick}
               >
                 <img 
-                  src={currentLevel.imageUrl?.startsWith('http') ? currentLevel.imageUrl : `${API_URL.replace('/api', '')}${currentLevel.imageUrl}`} 
+                  src={resolveImageUrl(currentLevel.imageUrl)} 
                   alt={currentLevel.title} 
                   draggable="false" 
                 />
