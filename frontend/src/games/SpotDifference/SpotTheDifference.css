@@ -198,14 +198,23 @@
 }
 
 @media (max-width: 768px) {
-  .std-hud-minimal { @apply top-20 w-[90%] px-6; }
-  .hud-value { @apply text-base; }
-  .browser-card-premium { @apply aspect-square rounded-[32px]; }
-  .card-info-overlay { @apply p-8; }
-  .std-engine-stage { @apply gap-6; }
+  .std-hud-minimal { @apply top-20 w-[90%] px-4 py-3; }
+  .hud-value { @apply text-sm; }
+  .browser-card-premium { @apply aspect-square rounded-[24px]; }
+  .card-info-overlay { @apply p-6; }
+  .std-engine-stage { @apply gap-4; }
+  .browser-header h2 { font-size: 2rem !important; }
 }
 
 /* Light Theme Support */
+.light .browser-header h2 {
+  @apply text-black;
+}
+
+.light .browser-header p {
+  @apply text-black/60;
+}
+
 .light .browser-badge {
   @apply bg-black/5 border-black/10;
 }
@@ -215,7 +224,7 @@
 }
 
 .light .std-hud-minimal {
-  @apply bg-white/80 border-black/10;
+  @apply bg-white/90 border-black/10;
 }
 
 .light .hud-value {
@@ -244,14 +253,6 @@
 
 .light .control-btn {
   @apply border-black/10 text-black/40 hover:text-black hover:bg-black/5;
-}
-
-.light .browser-header h2 {
-  @apply text-black;
-}
-
-.light .browser-header p {
-  @apply text-black/60;
 }
 
 /* Enhanced Mobile Responsiveness */

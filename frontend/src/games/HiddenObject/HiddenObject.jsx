@@ -229,8 +229,8 @@ const HiddenObject = () => {
         {gameState === 'browser' && levels.length > 0 && (
           <div className="ho-browser">
             <div className="browser-header">
-              <h2 className="text-6xl font-black uppercase tracking-tighter mb-4">Select Scene</h2>
-              <p className="text-white/40 uppercase tracking-[0.4em] text-[10px]">Cinematic Production Environments</p>
+              <h2 className="browser-title-main">Select Scene</h2>
+              <p className="browser-subtitle">Cinematic Production Environments</p>
             </div>
             
             <div className="browser-cards">
@@ -244,7 +244,10 @@ const HiddenObject = () => {
                   onClick={startLevel}
                 >
                   <div className="card-image">
-                    <img src={currentLevel.imageUrl} alt={currentLevel.title} />
+                    <img 
+                      src={currentLevel.imageUrl?.startsWith('http') ? currentLevel.imageUrl : `${API_URL.replace('/api', '')}${currentLevel.imageUrl}`} 
+                      alt={currentLevel.title} 
+                    />
                     <div className={`difficulty-badge ${currentLevel.difficulty}`}>{currentLevel.difficulty}</div>
                   </div>
                   <div className="card-content">
@@ -301,7 +304,11 @@ const HiddenObject = () => {
                 transition={{ type: 'spring', damping: 25, stiffness: 200 }}
                 onClick={handleObjectClick}
               >
-                <img src={currentLevel.imageUrl} alt="Scene" draggable="false" />
+                <img 
+                  src={currentLevel.imageUrl?.startsWith('http') ? currentLevel.imageUrl : `${API_URL.replace('/api', '')}${currentLevel.imageUrl}`} 
+                  alt={currentLevel.title} 
+                  draggable="false" 
+                />
                 
                 {currentLevel.objects.map((obj, idx) => (
                   foundIndices.includes(idx) && (

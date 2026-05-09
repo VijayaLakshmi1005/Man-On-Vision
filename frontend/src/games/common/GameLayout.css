@@ -28,7 +28,7 @@
 
 /* Main Content Structure */
 .game-main-content {
-  @apply flex-1 flex flex-col items-center pt-20 pb-40 px-4;
+  @apply flex-1 flex flex-col items-center pt-16 pb-24 px-4;
 }
 
 @media (min-width: 768px) {
@@ -38,9 +38,9 @@
 }
 
 .cinematic-title {
-  @apply text-center text-white italic tracking-tighter mb-4;
+  @apply text-center text-white italic tracking-tighter mb-2;
   font-family: var(--font-serif);
-  font-size: clamp(2rem, 6vw, 4.5rem);
+  font-size: clamp(1.5rem, 5vw, 3rem);
 }
 
 .game-layout-icon {
@@ -52,7 +52,7 @@
 }
 
 .title-underline {
-  @apply w-24 h-px bg-gradient-to-r from-transparent via-[#ff5a96] to-transparent mx-auto mb-12;
+  @apply w-16 h-px bg-gradient-to-r from-transparent via-[#ff5a96] to-transparent mx-auto mb-8;
 }
 
 .interactive-stage {
@@ -118,4 +118,25 @@
 
 .light .title-underline {
   @apply bg-black/10;
+}
+/* Shared Game Browser Typography */
+.browser-title-main {
+  @apply text-3xl md:text-5xl font-black uppercase tracking-tighter mb-4 text-white;
+}
+
+.browser-subtitle {
+  @apply text-[9px] md:text-[10px] font-black uppercase tracking-[0.4em] text-white/40;
+}
+
+.light .browser-title-main {
+  color: #000000 !important;
+}
+
+.light .browser-subtitle {
+  color: rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Force global text color for light theme game content */
+.light .game-main-content {
+  color: #000000;
 }

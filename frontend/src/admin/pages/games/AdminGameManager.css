@@ -436,3 +436,9 @@
     position: static;
   }
 }
+/* Scene Analysis Styles */
+.ho-scanline { position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: linear-gradient(to bottom, rgba(212, 175, 55, 0), #d4af37, rgba(212, 175, 55, 0)); box-shadow: 0 0 20px #d4af37; z-index: 200; animation: scanning 2s linear infinite; pointer-events: none; }
+@keyframes scanning { 0% { top: 0%; } 100% { top: 100%; } }
+.mapping-container.analyzing { cursor: wait; }
+.mapping-container.analyzing img { opacity: 0.6; filter: grayscale(1) contrast(1.2); transition: all 0.5s; }
+.status.analyzing { color: #d4af37; font-weight: 900; letter-spacing: 0.1em; }

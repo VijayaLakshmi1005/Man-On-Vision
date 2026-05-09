@@ -230,8 +230,8 @@ const SpotTheDifference = () => {
               >
                 LEVEL SELECTOR
               </motion.div>
-              <h2 className="font-serif text-4xl md:text-6xl text-white mb-4">Choose Your Protocol</h2>
-              <p className="text-stone-400 text-[10px] font-black uppercase tracking-[0.4em]">Slide to explore Visual Intelligence Challenges</p>
+              <h2 className="browser-title-main">Choose Your Protocol</h2>
+              <p className="browser-subtitle">Slide to explore Visual Intelligence Challenges</p>
             </div>
             
             <div className="browser-main-view">
@@ -246,7 +246,10 @@ const SpotTheDifference = () => {
                   onClick={startLevel}
                 >
                   <div className="card-media-wrapper">
-                    <img src={currentLevel.imageUrl} alt={currentLevel.title} />
+                    <img 
+                      src={currentLevel.imageUrl?.startsWith('http') ? currentLevel.imageUrl : `${API_URL.replace('/api', '')}${currentLevel.imageUrl}`} 
+                      alt={currentLevel.title} 
+                    />
                     <div className={`card-difficulty-tag ${currentLevel.difficulty}`}>{currentLevel.difficulty}</div>
                   </div>
                   <div className="card-info-overlay">
@@ -277,7 +280,10 @@ const SpotTheDifference = () => {
                   className={`rail-item ${i === currentLevelIdx ? 'active' : ''}`}
                   onClick={() => { setCurrentLevelIdx(i); playSound('move'); }}
                 >
-                  <img src={level.imageUrl} alt={level.title} />
+                  <img 
+                    src={level.imageUrl?.startsWith('http') ? level.imageUrl : `${API_URL.replace('/api', '')}${level.imageUrl}`} 
+                    alt={level.title} 
+                  />
                   <div className="rail-item-overlay" />
                 </div>
               ))}
@@ -297,11 +303,21 @@ const SpotTheDifference = () => {
           <div className="std-engine-stage">
             <div className="dual-image-grid">
               <div className="image-canvas-wrapper">
-                <img src={currentLevel.imageUrl} alt="Original" draggable="false" />
+                <img 
+                  src={currentLevel.imageUrl?.startsWith('http') ? currentLevel.imageUrl : `${API_URL.replace('/api', '')}${currentLevel.imageUrl}`} 
+                  alt="Original" 
+                  draggable="false" 
+                />
                 <div className="image-role-tag">ORIGINAL REFERENCE</div>
               </div>
               <div className="image-canvas-wrapper interactive" onClick={handleSpot}>
-                <img src={currentLevel.secondImageUrl || currentLevel.imageUrl} alt="Modified" draggable="false" />
+                <img 
+                  src={(currentLevel.secondImageUrl || currentLevel.imageUrl)?.startsWith('http') 
+                    ? (currentLevel.secondImageUrl || currentLevel.imageUrl) 
+                    : `${API_URL.replace('/api', '')}${currentLevel.secondImageUrl || currentLevel.imageUrl}`} 
+                  alt="Modified" 
+                  draggable="false" 
+                />
                 <div className="image-role-tag">MODIFIED TARGET</div>
                 
                 {currentLevel.differences.map((diff, idx) => (

@@ -208,7 +208,11 @@ const SpotDifferenceManager = () => {
           {images.map(img => (
             <div key={img._id} className="game-card bg-white rounded-[32px] overflow-hidden border border-stone-50 shadow-[0_10px_40px_rgba(0,0,0,0.04)] group cursor-pointer transition-all hover:shadow-[0_20px_60px_rgba(0,0,0,0.08)] hover:-translate-y-2" onClick={() => startEdit(img)}>
               <div className="relative h-56 bg-stone-100">
-                <img src={img.imageUrl} alt={img.title} className="w-full h-full object-cover" />
+                <img 
+                  src={img.imageUrl?.startsWith('http') ? img.imageUrl : `${API_URL.replace('/api', '')}${img.imageUrl}`} 
+                  alt={img.title} 
+                  className="w-full h-full object-cover" 
+                />
                 <div className={`absolute top-5 right-5 px-4 py-1.5 rounded-full text-[8px] font-black uppercase tracking-widest ${img.difficulty === 'hard' ? 'bg-stone-900 text-white' : 'bg-white text-stone-900 shadow-lg'}`}>
                   {img.difficulty}
                 </div>
@@ -339,18 +343,25 @@ const SpotDifferenceManager = () => {
                     <div className="space-y-6 pt-8 border-t border-stone-100">
                       <div className="space-y-2.5">
                         <label className="text-[9px] font-black uppercase tracking-[2px] text-stone-500 ml-2">Source Asset (Original)</label>
-                        <div className="flex gap-3">
-                          <input 
-                            type="text" 
-                            value={formData.imageUrl} 
-                            onChange={e => setFormData({...formData, imageUrl: e.target.value})}
-                            className="flex-1 px-6 py-4 bg-stone-50 border border-stone-100 rounded-[24px] outline-none focus:border-stone-200 transition-all text-[12px] text-stone-600"
-                            placeholder="Image URL..."
-                          />
-                          <label className="w-14 h-14 bg-stone-100 flex items-center justify-center rounded-2xl cursor-pointer hover:bg-stone-200 transition-all text-stone-400">
-                            <ImageIcon size={18} strokeWidth={1.5} />
-                            <input type="file" hidden onChange={e => handleFileUpload(e.target.files[0], 'imageUrl')} />
-                          </label>
+                        <div className="preview-media-box">
+                          {formData.imageUrl ? (
+                            <div className="relative group">
+                              <img 
+                                src={formData.imageUrl?.startsWith('http') ? formData.imageUrl : `${API_URL.replace('/api', '')}${formData.imageUrl}`} 
+                                alt="Source" 
+                                className="w-full h-[220px] object-cover rounded-3xl" 
+                              />
+                              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-3xl flex items-center justify-center">
+                                 <button type="button" onClick={() => setFormData({...formData, imageUrl: ''})} className="px-4 py-2 bg-white text-black text-[9px] font-black uppercase tracking-widest rounded-full">Change Protocol</button>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="relative h-[220px] border-2 border-dashed border-stone-200 rounded-[32px] flex flex-col items-center justify-center gap-4 hover:border-[#e3ae97] transition-colors cursor-pointer bg-stone-50/50">
+                              <ImageIcon className="text-stone-300" size={32} />
+                              <span className="text-[9px] font-black text-stone-400 uppercase tracking-widest">Upload Source Scene</span>
+                              <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" onChange={(e) => handleFileUpload(e.target.files[0], 'imageUrl')} />
+                            </div>
+                          )}
                         </div>
                       </div>
 
@@ -438,7 +449,13 @@ const SpotDifferenceManager = () => {
                       <div className={`grid grid-cols-1 xl:grid-cols-2 gap-10 items-center justify-items-center w-full`}>
                         <div className="w-full max-w-5xl">
                           <div className="relative rounded-[40px] overflow-hidden shadow-2xl border border-white group">
-                            <img src={formData.imageUrl} alt="Source" ref={imageRef} className="w-full h-auto block" draggable="false" />
+                            <img 
+                              src={formData.imageUrl?.startsWith('http') ? formData.imageUrl : `${API_URL.replace('/api', '')}${formData.imageUrl}`} 
+                              alt="Source" 
+                              ref={imageRef} 
+                              className="w-full h-auto block" 
+                              draggable="false" 
+                            />
                             <div className="absolute top-6 left-6 px-4 py-1.5 bg-black/40 backdrop-blur-md rounded-full text-[9px] font-black text-white uppercase tracking-widest z-30">Original Protocol</div>
                             
                             {formData.differences.map((diff, i) => (

@@ -29,9 +29,22 @@ const HiddenObjectManager = () => {
   const [isMapping, setIsMapping] = useState(false);
   const imageRef = useRef(null);
 
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+
   useEffect(() => {
     fetchImages();
   }, []);
+
+  useEffect(() => {
+    if (formData.imageUrl && !editingId) {
+      triggerAnalysis();
+    }
+  }, [formData.imageUrl]);
+
+  const triggerAnalysis = () => {
+    setIsAnalyzing(true);
+    setTimeout(() => setIsAnalyzing(false), 2000); // 2s Analysis simulation
+  };
 
   const fetchImages = async () => {
     try {
@@ -213,7 +226,10 @@ const HiddenObjectManager = () => {
                    <label>Base Image</label>
                    {formData.imageUrl ? (
                      <div className="image-preview-box">
-                       <img src={formData.imageUrl} alt="Preview" />
+                       <img 
+                         src={formData.imageUrl?.startsWith('http') ? formData.imageUrl : `${API_URL.replace('/api', '')}${formData.imageUrl}`} 
+                         alt="Preview" 
+                       />
                        <button type="button" className="change-img-btn" onClick={() => setFormData({...formData, imageUrl: ''})}>
                          Change Scene
                        </button>
@@ -253,7 +269,9 @@ const HiddenObjectManager = () => {
               <div className="mapping-canvas-area">
                  <div className="mapping-toolbar">
                     <div className="mapping-status">
-                      {isMapping ? (
+                      {isAnalyzing ? (
+                        <span className="status analyzing animate-pulse">ANALYZING SCENE... DETECTING DEPTH</span>
+                      ) : isMapping ? (
                         <span className="status active">CLICK ON IMAGE TO PLACE MARKER</span>
                       ) : (
                         <span className="status">DEFINE OBJECTS BELOW</span>
@@ -265,16 +283,18 @@ const HiddenObjectManager = () => {
                          placeholder="Object Name..." 
                          value={currentMapping.name}
                          onChange={(e) => setCurrentMapping({...currentMapping, name: e.target.value})}
+                         disabled={isAnalyzing}
                        />
                        <button 
                          type="button" 
                          className={`tool-btn ${isMapping ? 'active' : ''}`}
                          onClick={() => setIsMapping(!isMapping)}
+                         disabled={isAnalyzing}
                        >
                          <Target size={18} />
                          {currentMapping.x > 0 ? 'Reposition' : 'Place Marker'}
                        </button>
-                       {currentMapping.x > 0 && (
+                       {currentMapping.x > 0 && !isAnalyzing && (
                          <button type="button" className="confirm-btn" onClick={addPoint}>
                            <Check size={18} />
                          </button>
@@ -284,30 +304,32 @@ const HiddenObjectManager = () => {
 
                  <div className="canvas-wrapper">
                     {formData.imageUrl ? (
-                      <div className="mapping-container" onClick={handleImageClick}>
-                        <img 
-                          ref={imageRef}
-                          src={formData.imageUrl} 
-                          alt="Mapping Canvas" 
-                          draggable="false"
-                        />
-                        
-                        {/* Existing Objects */}
-                        {formData.objects.map((obj, i) => (
-                          <div key={i} className="marker existing" style={{ left: `${obj.x}%`, top: `${obj.y}%` }}>
-                            <div className="dot" />
-                            <span className="label">{obj.name}</span>
-                          </div>
-                        ))}
+                       <div className={`mapping-container ${isAnalyzing ? 'analyzing' : ''}`} onClick={!isAnalyzing ? handleImageClick : undefined}>
+                         <img 
+                           ref={imageRef}
+                           src={formData.imageUrl?.startsWith('http') ? formData.imageUrl : `${API_URL.replace('/api', '')}${formData.imageUrl}`} 
+                           alt="Mapping Canvas" 
+                           draggable="false" 
+                         />
+                         
+                         {isAnalyzing && <div className="ho-scanline" />}
+                         
+                         {/* Existing Objects */}
+                         {!isAnalyzing && formData.objects.map((obj, i) => (
+                           <div key={i} className="marker existing" style={{ left: `${obj.x}%`, top: `${obj.y}%` }}>
+                             <div className="dot" />
+                             <span className="label">{obj.name}</span>
+                           </div>
+                         ))}
 
-                        {/* Current Mapping */}
-                        {currentMapping.x > 0 && (
-                          <div className="marker current" style={{ left: `${currentMapping.x}%`, top: `${currentMapping.y}%` }}>
-                            <div className="dot animate-pulse" />
-                            <span className="label">New Object</span>
-                          </div>
-                        )}
-                      </div>
+                         {/* Current Mapping */}
+                         {!isAnalyzing && currentMapping.x > 0 && (
+                           <div className="marker current" style={{ left: `${currentMapping.x}%`, top: `${currentMapping.y}%` }}>
+                             <div className="dot animate-pulse" />
+                             <span className="label">New Object</span>
+                           </div>
+                         )}
+                       </div>
                     ) : (
                       <div className="canvas-empty">
                          <ImageIcon size={64} opacity={0.1} />
@@ -325,7 +347,10 @@ const HiddenObjectManager = () => {
         {images.map(img => (
           <div key={img._id} className="scene-card-admin glass">
             <div className="scene-thumb">
-              <img src={img.imageUrl} alt={img.title} />
+              <img 
+                src={img.imageUrl?.startsWith('http') ? img.imageUrl : `${API_URL.replace('/api', '')}${img.imageUrl}`} 
+                alt={img.title} 
+              />
               <div className="scene-overlay-actions">
                 <button onClick={() => handleEdit(img)}><Edit2 size={18} /></button>
                 <button onClick={() => handleDelete(img._id)}><Trash2 size={18} /></button>
