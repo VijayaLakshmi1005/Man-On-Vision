@@ -285,7 +285,7 @@ const Game2048 = () => {
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                 >
-                  <h2 className="font-serif italic text-4xl text-white mb-6">
+                  <h2 className="result-title font-serif italic">
                     {won ? 'VISIONARY SUCCESS!' : 'EVENT CONCLUDED'}
                   </h2>
                   <p className="text-white/40 text-xs uppercase tracking-widest mb-8">

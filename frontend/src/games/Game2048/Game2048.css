@@ -61,15 +61,11 @@
 
 /* Overlay */
 .g2048-overlay-cinematic {
-  @apply absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm rounded-[48px];
+  @apply absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm rounded-[40px] md:rounded-[48px];
 }
 
 .overlay-content-2048 {
-  @apply text-center p-12;
-}
-
-.overlay-content-2048 h2 {
-  @apply text-4xl font-serif italic text-white mb-6 tracking-tighter;
+  @apply text-center p-6 md:p-12 w-full;
 }
 
 /* Mobile Fixes */

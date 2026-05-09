@@ -37,9 +37,17 @@
   @apply absolute top-8 right-8 px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border;
 }
 
-.card-difficulty-tag.easy { @apply bg-green-500/10 text-green-500 border-green-500/20; }
-.card-difficulty-tag.medium { @apply bg-[#ffb040]/10 text-[#ffb040] border-[#ffb040]/20; }
-.card-difficulty-tag.hard { @apply bg-red-500/10 text-red-500 border-red-500/20; }
+.card-difficulty-tag.easy {
+  @apply bg-green-500/10 text-green-500 border-green-500/20;
+}
+
+.card-difficulty-tag.medium {
+  @apply bg-[#ffb040]/10 text-[#ffb040] border-[#ffb040]/20;
+}
+
+.card-difficulty-tag.hard {
+  @apply bg-red-500/10 text-red-500 border-red-500/20;
+}
 
 .card-info-overlay {
   @apply absolute inset-0 p-12 flex flex-col justify-end bg-gradient-to-t from-black via-transparent to-transparent;
@@ -52,7 +60,9 @@
   scrollbar-width: none;
 }
 
-.level-selection-rail::-webkit-scrollbar { display: none; }
+.level-selection-rail::-webkit-scrollbar {
+  display: none;
+}
 
 .rail-item {
   @apply flex-shrink-0 w-40 aspect-video rounded-2xl overflow-hidden cursor-pointer border-2 border-transparent transition-all duration-500 relative;
@@ -81,8 +91,7 @@
 }
 
 .image-canvas-wrapper {
-  @apply relative rounded-[32px] overflow-hidden border border-white/10 shadow-2xl bg-black;
-  aspect-ratio: 16/10;
+  @apply relative rounded-[32px] overflow-hidden border border-white/10 shadow-2xl bg-black w-full h-full;
 }
 
 .image-canvas-wrapper.interactive {
@@ -116,13 +125,25 @@
 
 /* Game Elements */
 .spot-marker {
-  @apply absolute w-10 h-10 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-[#22c55e] shadow-[0_0_20px_rgba(34,197,94,0.6)];
+  @apply absolute w-12 h-12 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-[#22c55e] shadow-[0_0_20px_rgba(34,197,94,0.6)];
+  background: radial-gradient(circle, rgba(34, 197, 94, 0.2) 0%, transparent 70%);
   animation: spotAppear 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
+.marker-inner-green {
+  @apply w-full h-full rounded-full border border-[#22c55e]/30 animate-pulse;
+}
+
 @keyframes spotAppear {
-  0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
-  100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  0% {
+    transform: translate(-50%, -50%) scale(0.5);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
 }
 
 .ripple-error {
@@ -198,12 +219,36 @@
 }
 
 @media (max-width: 768px) {
-  .std-hud-minimal { @apply top-20 w-[90%] px-4 py-3; }
-  .hud-value { @apply text-sm; }
-  .browser-card-premium { @apply aspect-square rounded-[24px]; }
-  .card-info-overlay { @apply p-6; }
-  .std-engine-stage { @apply gap-4; }
-  .browser-header h2 { font-size: 2rem !important; }
+  .std-hud-minimal {
+    @apply top-20 w-[90%] px-4 py-3;
+  }
+
+  .hud-value {
+    @apply text-sm;
+  }
+
+  .browser-card-premium {
+    @apply aspect-square rounded-[24px];
+  }
+
+  .image-canvas-wrapper {
+    @apply rounded-[24px];
+    aspect-ratio: auto;
+    height: auto;
+    min-height: 300px;
+  }
+
+  .card-info-overlay {
+    @apply p-6;
+  }
+
+  .std-engine-stage {
+    @apply gap-4;
+  }
+
+  .browser-header h2 {
+    font-size: 2rem !important;
+  }
 }
 
 /* Light Theme Support */
@@ -260,30 +305,38 @@
   .std-arena {
     gap: 1.5rem;
   }
+
   .browser-header {
     margin-bottom: 2.5rem;
   }
+
   .browser-header h2 {
     font-size: 2.25rem;
   }
+
   .browser-badge {
     padding: 0.5rem 1rem;
     margin-bottom: 1rem;
   }
+
   .browser-card-premium {
     border-radius: 24px;
     aspect-ratio: 1;
   }
+
   .card-info-overlay {
     padding: 1.5rem;
   }
+
   .level-selection-rail {
     gap: 1rem;
     padding-bottom: 1.5rem;
   }
+
   .rail-item {
     width: 130px;
   }
+
   .std-hud-minimal {
     top: auto;
     bottom: 2rem;
@@ -292,12 +345,15 @@
     padding: 0.75rem 1.25rem;
     border-radius: 24px;
   }
+
   .dual-image-grid {
     gap: 1rem;
   }
+
   .image-canvas-wrapper {
     border-radius: 20px;
   }
+
   .std-engine-stage {
     gap: 1.5rem;
   }

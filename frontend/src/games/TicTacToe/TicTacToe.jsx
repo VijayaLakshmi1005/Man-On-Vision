@@ -263,9 +263,9 @@ const TicTacToe = () => {
 
         {winner && (
           <div className="ttt-overlay-cinematic">
-            <div className="overlay-card glass">
-              <h2>{winner === 'draw' ? "STALEMATE" : winner === 'X' ? "VICTORY!" : "DEFEAT"}</h2>
-              <button className="btn-primary" onClick={resetGame}>REMATCH</button>
+            <div className="overlay-card glass-luxury">
+              <h2 className="result-title">{winner === 'draw' ? "STALEMATE" : winner === 'X' ? "VICTORY!" : "DEFEAT"}</h2>
+              <button className="btn-primary-glow" onClick={resetGame}>REMATCH</button>
             </div>
           </div>
         )}

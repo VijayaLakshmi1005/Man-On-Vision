@@ -121,11 +121,22 @@
 }
 /* Shared Game Browser Typography */
 .browser-title-main {
-  @apply text-3xl md:text-5xl font-black uppercase tracking-tighter mb-4 text-white;
+  font-size: clamp(1.5rem, 8vw, 3.5rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  tracking: -0.05em;
+  margin-bottom: 1rem;
+  line-height: 1;
+  text-align: center;
 }
 
 .browser-subtitle {
-  @apply text-[9px] md:text-[10px] font-black uppercase tracking-[0.4em] text-white/40;
+  font-size: clamp(7px, 2vw, 10px);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.4em;
+  opacity: 0.4;
+  text-align: center;
 }
 
 .light .browser-title-main {
@@ -139,4 +150,32 @@
 /* Force global text color for light theme game content */
 .light .game-main-content {
   color: #000000;
+}
+
+/* Fluid Result Typography */
+.result-title {
+  font-size: clamp(1.75rem, 8vw, 3rem);
+  font-weight: 900;
+  margin-bottom: 0.5rem;
+  line-height: 1;
+  text-align: center;
+  color: white;
+}
+
+.result-subtitle {
+  font-size: clamp(8px, 2vw, 12px);
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  opacity: 0.5;
+  margin-bottom: 2rem;
+  text-align: center;
+  color: white;
+}
+
+.light .result-title {
+  color: #000000 !important;
+}
+
+.light .result-subtitle {
+  color: rgba(0, 0, 0, 0.6) !important;
 }

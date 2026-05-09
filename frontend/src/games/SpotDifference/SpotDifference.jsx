@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   X, Search, ShieldCheck, Heart, AlertCircle, 
   Trophy, Clock, Zap, ChevronRight, ChevronLeft,
-  MousePointer2, Sparkles
+  MousePointer2, Sparkles, ZoomIn, ZoomOut, RotateCcw, Play
 } from 'lucide-react';
 import axios from 'axios';
 import GameLayout from '../common/GameLayout';
@@ -12,9 +12,10 @@ import { useSwipe } from '../common/useSwipe';
 import { useSound } from '../common/useSound';
 import { API_URL, resolveImageUrl } from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
+import { useGestureEngine } from '../common/useGestureEngine';
 import './SpotTheDifference.css';
 
-const SpotTheDifference = () => {
+const SpotDifference = () => {
   const { user } = useAuth();
   const [levels, setLevels] = useState([]);
   const [currentLevelIdx, setCurrentLevelIdx] = useState(0);
@@ -25,16 +26,24 @@ const SpotTheDifference = () => {
   const [foundIndices, setFoundIndices] = useState([]);
   const [timeLeft, setTimeLeft] = useState(120);
   const [score, setScore] = useState(0);
-  const [lives, setLives] = useState(3);
   const [combo, setCombo] = useState(0);
-  const [errors, setErrors] = useState([]); 
+  const [clicks, setClicks] = useState([]); 
   const [hints, setHints] = useState(3);
   
+  const imageRef = useRef(null);
   const timerRef = useRef(null);
   const lastClickTime = useRef(0);
   const { playSound } = useSound();
 
   const currentLevel = levels[currentLevelIdx];
+
+  const { zoom, pan, handlers, setZoom, setPan } = useGestureEngine({
+    onTap: (coords) => handleSpot(coords),
+    minZoom: 1,
+    maxZoom: 4,
+    disablePinch: true,
+    disableDrag: true // Stationary marking mode for precision
+  });
 
   const fetchLevels = useCallback(async () => {
     try {
@@ -84,7 +93,6 @@ const SpotTheDifference = () => {
     setFoundIndices([]);
     setTimeLeft(currentLevel.difficulty === 'hard' ? 90 : 120);
     setScore(0);
-    setLives(3);
     setCombo(0);
     setGameState('playing');
     playSound('start');
@@ -96,66 +104,68 @@ const SpotTheDifference = () => {
     startLevel();
   };
 
-  const saveScore = async (finalScore) => {
-    try {
-      const sessionId = localStorage.getItem('game_session_id');
-      await axios.post(`${API_URL}/games/score`, {
-        sessionId,
-        gameType: 'spot_difference',
-        score: finalScore,
-        difficulty: currentLevel.difficulty,
-        timeTaken: (currentLevel.difficulty === 'hard' ? 90 : 120) - timeLeft,
-        contentId: currentLevel._id
-      });
-    } catch (err) {
-      console.error('Score save error', err);
+  const [aspectRatio, setAspectRatio] = useState(1.6); // Default 16:10
+
+  const handleImageLoad = (e) => {
+    const { naturalWidth, naturalHeight } = e.target;
+    if (naturalWidth && naturalHeight) {
+      setAspectRatio(naturalWidth / naturalHeight);
     }
   };
 
-  const handleSpot = (e) => {
-    if (gameState !== 'playing' || lives <= 0) return;
+  const handleSpot = ({ x: clientX, y: clientY }) => {
+    if (gameState !== 'playing' || !imageRef.current) return;
 
     const now = Date.now();
     if (now - lastClickTime.current < 200) return;
     lastClickTime.current = now;
 
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    const img = imageRef.current;
+    const rect = img.getBoundingClientRect();
+    
+    const rx = clientX - rect.left;
+    const ry = clientY - rect.top;
+
+    if (rx < 0 || rx > rect.width || ry < 0 || ry > rect.height) return;
+
+    // Use percentages if admin mapped using percentages
+    const relativeX = (rx / rect.width) * 100;
+    const relativeY = (ry / rect.height) * 100;
 
     const diffIdx = currentLevel.differences.findIndex((diff, idx) => {
       if (foundIndices.includes(idx)) return false;
-      const dist = Math.sqrt(Math.pow(x - diff.x, 2) + Math.pow(y - diff.y, 2));
-      return dist <= (diff.radius || 4);
+      
+      const dx = relativeX - diff.x;
+      const dy = relativeY - diff.y;
+      
+      // Radius conversion from px to relative if needed, but here we assume diff.radius is a reasonable hit area
+      // If Admin used 40px radius, on a 1000px image that's 4%.
+      const threshold = 4; // 4% hit area radius
+
+      return Math.sqrt(dx * dx + dy * dy) <= threshold;
     });
+
+    const clickId = Date.now();
+    setClicks(prev => [...prev, { id: clickId, x: relativeX, y: relativeY, success: diffIdx !== -1 }]);
+    setTimeout(() => {
+      setClicks(prev => prev.filter(c => c.id !== clickId));
+    }, 1000);
 
     if (diffIdx !== -1) {
       const newFound = [...foundIndices, diffIdx];
       setFoundIndices(newFound);
       const comboBonus = combo * 10;
-      const newScore = score + 100 + comboBonus;
-      setScore(newScore);
+      setScore(prev => prev + 100 + comboBonus);
       setCombo(prev => prev + 1);
       playSound('success');
       
       if (newFound.length === currentLevel.differences.length) {
         setGameState('finished');
         playSound('victory');
-        saveScore(newScore);
       }
     } else {
-      setLives(prev => prev - 1);
       setCombo(0);
       playSound('error');
-      
-      const newErr = { id: Date.now(), x: e.clientX, y: e.clientY };
-      setErrors(prev => [...prev, newErr]);
-      setTimeout(() => setErrors(prev => prev.filter(err => err.id !== newErr.id)), 800);
-
-      if (lives <= 1) {
-        setGameState('finished');
-        saveScore(score);
-      }
     }
   };
 
@@ -163,17 +173,10 @@ const SpotTheDifference = () => {
     if (hints <= 0 || gameState !== 'playing') return;
     const remainingIdx = currentLevel.differences.findIndex((_, i) => !foundIndices.includes(i));
     if (remainingIdx !== -1) {
-      const newFound = [...foundIndices, remainingIdx];
-      setFoundIndices(newFound);
+      setFoundIndices(prev => [...prev, remainingIdx]);
       setHints(prev => prev - 1);
       setScore(prev => Math.max(0, prev - 50));
       playSound('hint');
-      
-      if (newFound.length === currentLevel.differences.length) {
-        setGameState('finished');
-        playSound('victory');
-        saveScore(score);
-      }
     }
   };
 
@@ -210,11 +213,6 @@ const SpotTheDifference = () => {
                    <Search size={14} className="text-[#ffb040]" />
                    <span className="text-xs font-bold">{hints}</span>
                 </button>
-                <div className="flex gap-1 ml-4">
-                  {[...Array(3)].map((_, i) => (
-                    <Heart key={i} size={14} fill={i < lives ? "#ff5a96" : "transparent"} color={i < lives ? "#ff5a96" : "white"} opacity={i < lives ? 1 : 0.2} />
-                  ))}
-                </div>
               </div>
             </motion.div>
           )}
@@ -223,13 +221,7 @@ const SpotTheDifference = () => {
         {gameState === 'browser' && levels.length > 0 && (
           <div className="std-browser">
             <div className="browser-header">
-              <motion.div 
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="browser-badge"
-              >
-                LEVEL SELECTOR
-              </motion.div>
+              <div className="browser-badge">LEVEL SELECTOR</div>
               <h2 className="browser-title-main">Choose Your Protocol</h2>
               <p className="browser-subtitle">Slide to explore Visual Intelligence Challenges</p>
             </div>
@@ -241,7 +233,6 @@ const SpotTheDifference = () => {
                   initial={{ x: 300, opacity: 0, scale: 0.9 }}
                   animate={{ x: 0, opacity: 1, scale: 1 }}
                   exit={{ x: -300, opacity: 0, scale: 0.9 }}
-                  transition={{ type: 'spring', damping: 25, stiffness: 200 }}
                   className="browser-card-premium group"
                   onClick={startLevel}
                 >
@@ -258,14 +249,8 @@ const SpotTheDifference = () => {
                         <span className="text-[10px] font-black text-[#ffb040] uppercase tracking-[0.3em] mb-2 block">EXPERIENCE {currentLevelIdx + 1}</span>
                         <h3 className="text-3xl font-serif italic text-white">{currentLevel.title}</h3>
                       </div>
-                      <div className="flex gap-4">
-                         <div className="flex flex-col items-end">
-                            <span className="text-[8px] font-black text-white/30 uppercase tracking-widest">TARGETS</span>
-                            <span className="text-lg font-serif italic text-white">{currentLevel.differences.length}</span>
-                         </div>
-                         <div className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center">
-                            <Play size={20} fill="white" />
-                         </div>
+                      <div className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center">
+                        <Play size={20} fill="white" />
                       </div>
                     </div>
                   </div>
@@ -278,13 +263,9 @@ const SpotTheDifference = () => {
                 <div 
                   key={level._id}
                   className={`rail-item ${i === currentLevelIdx ? 'active' : ''}`}
-                  onClick={() => { setCurrentLevelIdx(i); playSound('move'); }}
+                  onClick={() => setCurrentLevelIdx(i)}
                 >
-                  <img 
-                    src={resolveImageUrl(level.imageUrl)} 
-                    alt={level.title} 
-                  />
-                  <div className="rail-item-overlay" />
+                  <img src={resolveImageUrl(level.imageUrl)} alt={level.title} />
                 </div>
               ))}
             </div>
@@ -301,34 +282,100 @@ const SpotTheDifference = () => {
 
         {gameState === 'playing' && (
           <div className="std-engine-stage">
-            <div className="dual-image-grid">
-              <div className="image-canvas-wrapper">
-                <img 
-                  src={resolveImageUrl(currentLevel.imageUrl)} 
-                  alt="Original" 
-                  draggable="false" 
-                />
-                <div className="image-role-tag">ORIGINAL REFERENCE</div>
+            <div 
+              className="dual-image-viewport" 
+              style={{ 
+                touchAction: 'none', 
+                overflow: 'hidden', 
+                background: '#1a1a1a',
+                borderRadius: '40px',
+                aspectRatio: `auto`,
+                height: 'auto',
+                maxHeight: '75vh'
+              }}
+              {...handlers}
+            >
+              <div 
+                className="dual-image-grid" 
+                style={{ 
+                  width: '100%', 
+                  height: '100%'
+                }}
+              >
+                <motion.div 
+                  className="image-canvas-wrapper"
+                  animate={{ scale: zoom, x: pan.x, y: pan.y }}
+                  transition={{ type: 'spring', damping: 25, stiffness: 200, mass: 0.5 }}
+                >
+                  <img 
+                    src={resolveImageUrl(currentLevel.imageUrl)} 
+                    onLoad={handleImageLoad}
+                    alt="Original" 
+                    draggable="false" 
+                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                  />
+                  <div className="image-role-tag">REFERENCE</div>
+                </motion.div>
+
+                <motion.div 
+                  className="image-canvas-wrapper interactive"
+                  animate={{ scale: zoom, x: pan.x, y: pan.y }}
+                  transition={{ type: 'spring', damping: 25, stiffness: 200, mass: 0.5 }}
+                >
+                  <img 
+                    ref={imageRef}
+                    src={resolveImageUrl(currentLevel.secondImageUrl || currentLevel.imageUrl)} 
+                    alt="Modified" 
+                    draggable="false" 
+                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                  />
+                  <div className="image-role-tag">TARGET</div>
+                  
+                  {currentLevel.differences.map((diff, idx) => (
+                    foundIndices.includes(idx) && (
+                      <motion.div 
+                        key={idx}
+                        initial={{ scale: 3, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        className="spot-marker"
+                        style={{ 
+                          left: `${diff.x}%`, 
+                          top: `${diff.y}%`,
+                          position: 'absolute',
+                          transform: 'translate(-50%, -50%)',
+                          zIndex: 50
+                        }}
+                      >
+                        <div className="marker-inner-green" />
+                      </motion.div>
+                    )
+                  ))}
+
+                  <AnimatePresence>
+                    {clicks.map(click => (
+                      <motion.div
+                        key={click.id}
+                        initial={{ scale: 0, opacity: 1 }}
+                        animate={{ scale: 2, opacity: 0 }}
+                        exit={{ opacity: 0 }}
+                        className={`click-ripple ${click.success ? 'success' : 'error'}`}
+                        style={{ left: `${click.x}%`, top: `${click.y}%` }}
+                      />
+                    ))}
+                  </AnimatePresence>
+                </motion.div>
               </div>
-              <div className="image-canvas-wrapper interactive" onClick={handleSpot}>
-                <img 
-                  src={resolveImageUrl(currentLevel.secondImageUrl || currentLevel.imageUrl)} 
-                  alt="Modified" 
-                  draggable="false" 
-                />
-                <div className="image-role-tag">MODIFIED TARGET</div>
-                
-                {currentLevel.differences.map((diff, idx) => (
-                  foundIndices.includes(idx) && (
-                    <motion.div 
-                      key={idx}
-                      initial={{ scale: 3, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      className="spot-marker"
-                      style={{ left: `${diff.x}%`, top: `${diff.y}%` }}
-                    />
-                  )
-                ))}
+
+              <div className="std-zoom-overlay absolute bottom-8 right-8 flex flex-col gap-3">
+                <button type="button" className="zoom-btn" onClick={() => setZoom(Math.min(zoom + 0.5, 4))}>
+                  <ZoomIn size={18} />
+                </button>
+                <button type="button" className="zoom-btn" onClick={() => setZoom(Math.max(zoom - 0.5, 1))}>
+                  <ZoomOut size={18} />
+                </button>
+                <button type="button" className="zoom-btn reset" onClick={() => { setZoom(1); setPan({ x: 0, y: 0 }); }}>
+                  <RotateCcw size={16} />
+                </button>
               </div>
             </div>
 
@@ -336,7 +383,7 @@ const SpotTheDifference = () => {
               <div className="std-progress-bar">
                 <div className="progress-fill" style={{ width: `${(foundIndices.length / currentLevel.differences.length) * 100}%` }} />
               </div>
-              <p className="progress-text-minimal">CALIBRATION STATUS: {foundIndices.length} / {currentLevel.differences.length} ANOMALIES DETECTED</p>
+              <p className="progress-text-minimal">ANOMALIES DETECTED: {foundIndices.length} / {currentLevel.differences.length}</p>
             </div>
           </div>
         )}
@@ -348,15 +395,9 @@ const SpotTheDifference = () => {
               animate={{ opacity: 1 }}
               className="std-browser-overlay"
             >
-              <motion.div 
-                initial={{ scale: 0.9, y: 20 }}
-                animate={{ scale: 1, y: 0 }}
-                className="overlay-content-premium glass-luxury"
-              >
+              <div className="overlay-content-premium glass-luxury">
                 <Trophy size={64} className="text-[#ffb040] mb-6 mx-auto" />
-                <h2 className="text-4xl font-serif italic text-white mb-2">{foundIndices.length === currentLevel.differences.length ? 'PURITY ACHIEVED' : 'ANALYSIS TERMINATED'}</h2>
-                <p className="text-white/40 uppercase tracking-[0.3em] text-[10px] mb-8">Mastery Evaluation Complete</p>
-                
+                <h2 className="result-title font-serif italic">{foundIndices.length === currentLevel.differences.length ? 'PURITY ACHIEVED' : 'ANALYSIS TERMINATED'}</h2>
                 <div className="final-score-row">
                   <div className="score-block">
                     <span>POINTS</span>
@@ -367,25 +408,11 @@ const SpotTheDifference = () => {
                     <strong>{foundIndices.length}</strong>
                   </div>
                 </div>
-
                 <button className="start-challenge-btn w-full" onClick={() => setGameState('browser')}>CONTINUE RESEARCH</button>
-              </motion.div>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
-
-        {errors.map(err => (
-          <motion.div 
-            key={err.id}
-            initial={{ scale: 0.5, opacity: 1 }}
-            animate={{ scale: 2, opacity: 0 }}
-            className="ripple-error"
-            style={{ left: err.x, top: err.y }}
-          >
-            <X size={40} className="text-red-500" />
-          </motion.div>
-        ))}
-
       </div>
       <GuestNameModal 
         isOpen={showNameModal} 
@@ -395,8 +422,4 @@ const SpotTheDifference = () => {
   );
 };
 
-const Play = ({ size, fill }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-);
-
-export default SpotTheDifference;
+export default SpotDifference;
