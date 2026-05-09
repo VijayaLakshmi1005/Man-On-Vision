@@ -6,6 +6,7 @@ import { useSound } from '../common/useSound';
 import { API_URL } from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
+import LoadingScreen from '../../components/common/LoadingScreen';
 import './TicTacToe.css';
 
 const TicTacToe = () => {
@@ -19,7 +20,7 @@ const TicTacToe = () => {
   const [difficulty, setDifficulty] = useState('medium');
   const [score, setScore] = useState({ user: 0, ai: 0, draws: 0 });
   const [icons, setIcons] = useState({ user: '🎥', ai: '💡' });
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [guestName, setGuestName] = useState(localStorage.getItem('guest_name') || '');
   const [showNameModal, setShowNameModal] = useState(false);
 
@@ -33,6 +34,8 @@ const TicTacToe = () => {
         }
       } catch (err) {
         console.error('Error fetching TicTacToe settings:', err);
+      } finally {
+        setLoading(false);
       }
     };
     fetchSettings();
@@ -212,6 +215,8 @@ const TicTacToe = () => {
       setShowNameModal(true);
     }
   }, [user, guestName]);
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <GameLayout title="TIC TAC TOE">

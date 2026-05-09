@@ -11,6 +11,7 @@ import GuestNameModal from '../common/GuestNameModal';
 import { useSound } from '../common/useSound';
 import { API_URL } from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
+import LoadingScreen from '../../components/common/LoadingScreen';
 import './KannadaRapidFire.css';
 
 const KannadaRapidFire = () => {
@@ -200,6 +201,8 @@ const KannadaRapidFire = () => {
   };
 
   const t = labels[language];
+
+  if (loading && gameState === 'landing') return <LoadingScreen />;
 
   return (
     <GameLayout title="KANNADA RAPID FIRE">

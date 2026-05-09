@@ -8,6 +8,7 @@ import { useSwipe } from '../common/useSwipe';
 import { API_URL } from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
+import LoadingScreen from '../../components/common/LoadingScreen';
 import './Game2048.css';
 
 /**
@@ -25,6 +26,7 @@ const Game2048 = () => {
   const [guestName, setGuestName] = useState(localStorage.getItem('guest_name') || '');
   const [showNameModal, setShowNameModal] = useState(false);
   const [isMoving, setIsMoving] = useState(false);
+  const [loading, setLoading] = useState(true);
   
   const moveLock = useRef(false);
   const { playSound } = useSound();
@@ -44,6 +46,8 @@ const Game2048 = () => {
         }
       } catch (err) {
         console.error('Error fetching 2048 settings:', err);
+      } finally {
+        setLoading(false);
       }
     };
     fetchSettings();
@@ -230,6 +234,8 @@ const Game2048 = () => {
     velocityThreshold: 0.2,
     enabled: !gameOver && !won
   });
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <GameLayout title="2048 EVENT EDITION">

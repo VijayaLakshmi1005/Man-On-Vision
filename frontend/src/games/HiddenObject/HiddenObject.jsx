@@ -12,6 +12,7 @@ import { useSwipe } from '../common/useSwipe';
 import { useSound } from '../common/useSound';
 import { useGestureEngine } from '../common/useGestureEngine';
 import { API_URL, resolveImageUrl } from '../../utils/api';
+import LoadingScreen from '../../components/common/LoadingScreen';
 import { useAuth } from '../../context/AuthContext';
 import LoadingScreen from '../../components/common/LoadingScreen';
 import './HiddenObject.css';
