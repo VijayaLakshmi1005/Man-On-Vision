@@ -10,7 +10,7 @@ import GameLayout from '../common/GameLayout';
 import GuestNameModal from '../common/GuestNameModal';
 import { useSwipe } from '../common/useSwipe';
 import { useSound } from '../common/useSound';
-import { API_URL, resolveImageUrl } from '../../../utils/api';
+import { API_URL, resolveImageUrl } from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
 import './SpotTheDifference.css';
 
