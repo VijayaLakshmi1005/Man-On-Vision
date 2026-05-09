@@ -9,6 +9,9 @@ import ProtectedRoute from './components/ProtectedRoute';
 import { useTheme } from './context/ThemeContext';
 import Breadcrumbs from './components/common/Breadcrumbs';
 import PageTransition from './components/common/PageTransition';
+import LoadingScreen from './components/common/LoadingScreen';
+import ScrollToTop from './components/common/ScrollToTop';
+import MainLayout from './components/common/MainLayout';
 
 // Lazy load the main components
 const HomePage = lazy(() => import('./pages/HomePage/HomePage'));
@@ -122,7 +125,7 @@ const PortalLayout = () => {
           </div>
 
           <PageTransition>
-            <Suspense fallback={<div className="flex h-screen w-full items-center justify-center text-xl opacity-50 font-serif">Loading Portal...</div>}>
+            <Suspense fallback={<LoadingScreen />}>
               <Outlet />
             </Suspense>
           </PageTransition>
@@ -141,6 +144,7 @@ const PortalLayout = () => {
 function App() {
   const location = useLocation();
   const { isDarkMode } = useTheme();
+  const [siteLoading, setSiteLoading] = useState(true);
 
   return (
     <LenisProvider>
@@ -149,58 +153,71 @@ function App() {
         ? 'text-white selection:bg-orange-600/30 selection:text-white' 
         : 'text-stone-900 selection:bg-stone-200'
       }`}>
+        <ScrollToTop />
+        <AnimatePresence mode="wait">
+          {siteLoading && <LoadingScreen key="site-loader" onFinished={() => setSiteLoading(false)} />}
+        </AnimatePresence>
+
         <Toaster position="top-right" />
-        <Suspense fallback={<div className="flex h-screen w-full items-center justify-center text-xl font-serif">MAN ON VISION</div>}>
-          <AnimatePresence mode="wait">
-            <Routes location={location} key={location.pathname}>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/auth" element={<AuthPage />} />
-              <Route path="/quote" element={<GetQuote />} />
-              
-              <Route element={<ProtectedRoute allowedRoles={['client']} />}>
-                <Route path="/portal" element={<PortalLayout />}>
-                  <Route index element={<ClientDashboard />} />
-                  <Route path="gallery" element={<ClientGallery />} />
-                  <Route path="chats" element={<Chats />} />
-                  <Route path="profile" element={<Profile />} />
+        
+        {!siteLoading && (
+          <Suspense fallback={<LoadingScreen />}>
+            <AnimatePresence mode="wait">
+              <Routes location={location} key={location.pathname}>
+                <Route element={<MainLayout />}>
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/auth" element={<AuthPage />} />
+                  <Route path="/quote" element={<GetQuote />} />
                 </Route>
-              </Route>
-
-              <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
-                <Route path="/admin" element={<AdminLayout />}>
-                  <Route index element={<AdminDashboard />} />
-                  <Route path="crm" element={<AdminCRM />} />
-                  <Route path="gallery" element={<AdminSmartGallery />} />
-                  <Route index path="gallery/:id" element={<AdminClientEvents />} />
-                  <Route path="gallery/event/:eventId" element={<AdminDriveGalleryDetail />} />
-                  <Route path="finance" element={<AdminFinance />} />
-                  <Route path="calendar" element={<AdminCalendarPage />} />
-                  <Route path="activity-log" element={<AdminActivityLog />} />
-                  <Route path="chats" element={<AdminChats />} />
-                  <Route path="users" element={<AdminUserManagement />} />
-                  <Route path="games" element={<AdminGameDashboard />} />
-                  <Route path="games/tictactoe" element={<AdminTicTacToeManager />} />
-                  <Route path="games/2048" element={<Admin2048Manager />} />
-                  <Route path="games/spot_difference" element={<AdminSpotDifferenceManager />} />
-                  <Route path="games/kannada_rapid_fire" element={<AdminRapidFireManager />} />
-                  <Route path="games/hidden_object" element={<AdminHiddenObjectManager />} />
-                  <Route path="games/page-settings" element={<AdminPageManager />} />
-
+                
+                <Route element={<ProtectedRoute allowedRoles={['client']} />}>
+                  <Route path="/portal" element={<PortalLayout />}>
+                    <Route index element={<ClientDashboard />} />
+                    <Route path="gallery" element={<ClientGallery />} />
+                    <Route path="chats" element={<Chats />} />
+                    <Route path="profile" element={<Profile />} />
+                  </Route>
                 </Route>
-              </Route>
 
-              {/* Game Experience Zone Routes */}
-              <Route path="/games" element={<GameZone />} />
-              <Route path="/games/tictactoe" element={<TicTacToe />} />
-              <Route path="/games/2048" element={<Game2048 />} />
-              <Route path="/games/spot_difference" element={<SpotDifference />} />
-              <Route path="/games/kannada_rapid_fire" element={<KannadaRapidFire />} />
-              <Route path="/games/hidden_object" element={<HiddenObject />} />
-              <Route path="*" element={<AuthPage />} />
+                <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
+                  <Route path="/admin" element={<AdminLayout />}>
+                    <Route index element={<AdminDashboard />} />
+                    <Route path="crm" element={<AdminCRM />} />
+                    <Route path="gallery" element={<AdminSmartGallery />} />
+                    <Route index path="gallery/:id" element={<AdminClientEvents />} />
+                    <Route path="gallery/event/:eventId" element={<AdminDriveGalleryDetail />} />
+                    <Route path="finance" element={<AdminFinance />} />
+                    <Route path="calendar" element={<AdminCalendarPage />} />
+                    <Route path="activity-log" element={<AdminActivityLog />} />
+                    <Route path="chats" element={<AdminChats />} />
+                    <Route path="users" element={<AdminUserManagement />} />
+                    <Route path="games" element={<AdminGameDashboard />} />
+                    <Route path="games/tictactoe" element={<AdminTicTacToeManager />} />
+                    <Route path="games/2048" element={<Admin2048Manager />} />
+                    <Route path="games/spot_difference" element={<AdminSpotDifferenceManager />} />
+                    <Route path="games/kannada_rapid_fire" element={<AdminRapidFireManager />} />
+                    <Route path="games/hidden_object" element={<AdminHiddenObjectManager />} />
+                    <Route path="games/page-settings" element={<AdminPageManager />} />
 
-            </Routes>
-          </AnimatePresence>
-        </Suspense>
+                  </Route>
+                </Route>
+
+                {/* Game Experience Zone Routes */}
+                <Route element={<MainLayout />}>
+                  <Route path="/games" element={<GameZone />} />
+                  <Route path="/games/tictactoe" element={<TicTacToe />} />
+                  <Route path="/games/2048" element={<Game2048 />} />
+                  <Route path="/games/spot_difference" element={<SpotDifference />} />
+                  <Route path="/games/kannada_rapid_fire" element={<KannadaRapidFire />} />
+                  <Route path="/games/hidden_object" element={<HiddenObject />} />
+                </Route>
+                
+                <Route path="*" element={<AuthPage />} />
+
+              </Routes>
+            </AnimatePresence>
+          </Suspense>
+        )}
       </div>
     </LenisProvider>
   );

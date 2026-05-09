@@ -1,8 +1,12 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, createContext, useContext } from 'react';
 import Lenis from 'lenis';
 import 'lenis/dist/lenis.css';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+const LenisContext = createContext(null);
+
+export const useLenis = () => useContext(LenisContext);
 
 const LenisProvider = ({ children }) => {
   const lenisRef = useRef();
@@ -37,7 +41,11 @@ const LenisProvider = ({ children }) => {
     };
   }, []);
 
-  return children;
+  return (
+    <LenisContext.Provider value={lenisRef.current}>
+      {children}
+    </LenisContext.Provider>
+  );
 };
 
 export default LenisProvider;

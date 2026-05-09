@@ -13,6 +13,7 @@ import { useSound } from '../common/useSound';
 import { useGestureEngine } from '../common/useGestureEngine';
 import { API_URL, resolveImageUrl } from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
+import LoadingScreen from '../../components/common/LoadingScreen';
 import './HiddenObject.css';
 
 const HiddenObject = () => {
@@ -198,11 +199,7 @@ const HiddenObject = () => {
     }
   };
 
-  if (loading) return (
-    <GameLayout title="HIDDEN OBJECT">
-      <div className="ho-loader"><Sparkles className="animate-spin text-[#ffb040]" size={48} /></div>
-    </GameLayout>
-  );
+  if (loading) return <LoadingScreen />;
 
   return (
     <GameLayout title="HIDDEN OBJECT – EVENT EDITION">

@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import LiquidMazeStatic from '../components/common/LiquidMazeStatic';
+import LoadingScreen from '../components/common/LoadingScreen';
 import './GameZone.css';
 
 const GameZone = () => {
@@ -57,17 +58,7 @@ const GameZone = () => {
     default: { icon: <Sparkles size={48} />, color: '#ff4f9a', desc: 'Interactive Experience' }
   };
 
-  if (loading) return (
-    <div className="flex items-center justify-center min-h-screen bg-[#050505]">
-      <motion.div
-        animate={{ scale: [1, 1.1, 1], opacity: [0.3, 1, 0.3] }}
-        transition={{ repeat: Infinity, duration: 2 }}
-        className="text-[10px] font-black uppercase tracking-[1em] text-[#ff4f9a]"
-      >
-        Synchronizing...
-      </motion.div>
-    </div>
-  );
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className={`game-zone-container ${isDarkMode ? 'dark' : 'light'}`}>
@@ -89,8 +80,8 @@ const GameZone = () => {
         <main className="dashboard-main px-4 md:px-8 pt-20 md:pt-12 pb-32 md:pb-12">
           {/* Cinematic Header */}
           <motion.header 
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12"
           >
             <div>
@@ -128,9 +119,9 @@ const GameZone = () => {
             {activeTab === 'experiences' ? (
               <motion.div
                 key="exp-grid"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8"
               >
                 {games.map((game, i) => (
@@ -147,9 +138,9 @@ const GameZone = () => {
             ) : (
               <motion.div
                 key="leaderboard"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
               >
                 <LeaderboardView
                   API_URL={API_URL}
@@ -162,8 +153,8 @@ const GameZone = () => {
 
           {/* Bottom CTA Banner */}
           <motion.footer
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             className="mt-20 p-8 rounded-[40px] bg-gradient-to-r from-[rgba(255,79,154,0.05)] to-[rgba(255,171,61,0.05)] border border-[var(--card-border)] backdrop-blur-3xl flex flex-col md:flex-row items-center justify-between gap-6"
           >
             <div className="flex items-center gap-6">

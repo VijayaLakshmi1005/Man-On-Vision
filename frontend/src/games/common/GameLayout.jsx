@@ -44,8 +44,8 @@ const GameLayout = ({ children, title }) => {
 
       <main className="game-main-content">
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           className="content-header"
         >
           <h1 className="cinematic-title">{title || 'GAME EXPERIENCE ZONE'}</h1>

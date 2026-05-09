@@ -13,6 +13,7 @@ import { useSound } from '../common/useSound';
 import { API_URL, resolveImageUrl } from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
 import { useGestureEngine } from '../common/useGestureEngine';
+import LoadingScreen from '../../components/common/LoadingScreen';
 import './SpotTheDifference.css';
 
 const SpotDifference = () => {
@@ -180,11 +181,7 @@ const SpotDifference = () => {
     }
   };
 
-  if (loading) return (
-    <GameLayout title="LOADING GALLERY...">
-      <div className="std-loader"><Sparkles className="animate-spin text-[#ffb040]" size={48} /></div>
-    </GameLayout>
-  );
+  if (loading) return <LoadingScreen />;
 
   return (
     <GameLayout title="SPOT THE DIFFERENCE">
