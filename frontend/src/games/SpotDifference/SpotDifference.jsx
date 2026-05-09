@@ -234,11 +234,14 @@ const SpotDifference = () => {
                   onClick={startLevel}
                 >
                   <div className="card-media-wrapper">
-                    <img 
-                      src={resolveImageUrl(currentLevel.imageUrl)} 
-                      alt={currentLevel.title} 
-                    />
-                    <div className={`card-difficulty-tag ${currentLevel.difficulty}`}>{currentLevel.difficulty}</div>
+                    {currentLevel?.imageUrl && (
+                      <img 
+                        src={resolveImageUrl(currentLevel.imageUrl)} 
+                        alt={currentLevel.title} 
+                        onError={(e) => console.error(`[IMAGE_FAIL] SpotDiff Browser: ${currentLevel.imageUrl}`, e)}
+                      />
+                    )}
+                    <div className={`card-difficulty-tag ${currentLevel?.difficulty || 'medium'}`}>{currentLevel?.difficulty}</div>
                   </div>
                   <div className="card-info-overlay">
                     <div className="flex justify-between items-end">
@@ -304,28 +307,34 @@ const SpotDifference = () => {
                   animate={{ scale: zoom, x: pan.x, y: pan.y }}
                   transition={{ type: 'spring', damping: 25, stiffness: 200, mass: 0.5 }}
                 >
-                  <img 
-                    src={resolveImageUrl(currentLevel.imageUrl)} 
-                    onLoad={handleImageLoad}
-                    alt="Original" 
-                    draggable="false" 
-                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                  />
+                  {currentLevel?.imageUrl && (
+                    <img 
+                      src={resolveImageUrl(currentLevel.imageUrl)} 
+                      onLoad={handleImageLoad}
+                      onError={(e) => console.error(`[IMAGE_FAIL] SpotDiff Ref: ${currentLevel.imageUrl}`, e)}
+                      alt="Original" 
+                      draggable="false" 
+                      style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                    />
+                  )}
                   <div className="image-role-tag">REFERENCE</div>
                 </motion.div>
-
+ 
                 <motion.div 
                   className="image-canvas-wrapper interactive"
                   animate={{ scale: zoom, x: pan.x, y: pan.y }}
                   transition={{ type: 'spring', damping: 25, stiffness: 200, mass: 0.5 }}
                 >
-                  <img 
-                    ref={imageRef}
-                    src={resolveImageUrl(currentLevel.secondImageUrl || currentLevel.imageUrl)} 
-                    alt="Modified" 
-                    draggable="false" 
-                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                  />
+                  {currentLevel?.imageUrl && (
+                    <img 
+                      ref={imageRef}
+                      src={resolveImageUrl(currentLevel.secondImageUrl || currentLevel.imageUrl)} 
+                      onError={(e) => console.error(`[IMAGE_FAIL] SpotDiff Target: ${currentLevel.secondImageUrl || currentLevel.imageUrl}`, e)}
+                      alt="Modified" 
+                      draggable="false" 
+                      style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                    />
+                  )}
                   <div className="image-role-tag">TARGET</div>
                   
                   {currentLevel.differences.map((diff, idx) => (

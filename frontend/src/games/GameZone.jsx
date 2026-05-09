@@ -11,6 +11,7 @@ import {
 import { useTheme } from '../context/ThemeContext';
 import LiquidMazeStatic from '../components/common/LiquidMazeStatic';
 import LoadingScreen from '../components/common/LoadingScreen';
+import { API_URL } from '../utils/api';
 import './GameZone.css';
 
 const GameZone = () => {
@@ -20,8 +21,6 @@ const GameZone = () => {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({ totalPoints: 0, streaks: 0, totalPlays: 0 });
   const [games, setGames] = useState([]);
-
-  const API_URL = `${(import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/$/, '')}/api`;
 
   useEffect(() => {
     const fetchData = async () => {

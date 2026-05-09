@@ -8,7 +8,7 @@ import {
 import axios from 'axios';
 import './CollectionBrowser.css';
 
-const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/$/, '') + '/api';
+import { API_URL, resolveImageUrl } from '../../utils/api';
 
 export default function CollectionBrowser({ onSelectLevel }) {
   const [collections, setCollections] = useState([]);
@@ -127,7 +127,7 @@ export default function CollectionBrowser({ onSelectLevel }) {
                 onClick={() => onSelectLevel(level)}
               >
                 <div className="card-media">
-                  <img src={level.imageUrl} alt={level.title} loading="lazy" />
+                  <img src={resolveImageUrl(level.imageUrl)} alt={level.title} loading="lazy" />
                   <div className="media-overlay">
                     <div className="play-hint">
                       <Play fill="white" size={32} />

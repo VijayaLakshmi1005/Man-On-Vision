@@ -247,8 +247,14 @@ const HiddenObject = () => {
                onClick={startLevel}
              >
                 <div className="card-image">
-                   <img src={resolveImageUrl(currentLevel.imageUrl)} alt={currentLevel.title} />
-                   <div className={`difficulty-badge ${currentLevel.difficulty}`}>{currentLevel.difficulty}</div>
+                   {currentLevel?.imageUrl && (
+                     <img 
+                       src={resolveImageUrl(currentLevel.imageUrl)} 
+                       alt={currentLevel.title} 
+                       onError={(e) => console.error(`[IMAGE_FAIL] Browser View: ${currentLevel.imageUrl}`, e)}
+                     />
+                   )}
+                   <div className={`difficulty-badge ${currentLevel?.difficulty || 'medium'}`}>{currentLevel?.difficulty}</div>
                    <div className="card-content absolute bottom-0 left-0 right-0 p-10 bg-gradient-to-t from-black to-transparent">
                       <div className="flex justify-between items-end">
                          <div>
@@ -291,13 +297,16 @@ const HiddenObject = () => {
                 animate={{ scale: zoom, x: pan.x, y: pan.y }}
                 transition={{ type: 'spring', damping: 25, stiffness: 200 }}
               >
-                <img 
-                  ref={imageRef}
-                  src={resolveImageUrl(currentLevel.imageUrl)} 
-                  onLoad={handleImageLoad}
-                  alt="Scene" 
-                  draggable="false" 
-                />
+                {currentLevel?.imageUrl && (
+                  <img 
+                    ref={imageRef}
+                    src={resolveImageUrl(currentLevel.imageUrl)} 
+                    onLoad={handleImageLoad}
+                    onError={(e) => console.error(`[IMAGE_FAIL] Game Stage: ${currentLevel.imageUrl}`, e)}
+                    alt="Scene" 
+                    draggable="false" 
+                  />
+                )}
 
                 {currentLevel.objects.map((obj, idx) => (
                   foundIndices.includes(idx) && (

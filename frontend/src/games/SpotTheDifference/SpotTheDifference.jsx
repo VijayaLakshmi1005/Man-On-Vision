@@ -9,7 +9,7 @@ import { io } from 'socket.io-client';
 import axios from 'axios';
 import './SpotTheDifference.css';
 
-const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/$/, '');
+import { API_URL, resolveImageUrl } from '../../utils/api';
 
 export default function SpotTheDifference({ level, onExit }) {
   const [gameState, setGameState] = useState('loading'); // 'loading', 'ready', 'playing', 'finished'
@@ -188,13 +188,13 @@ export default function SpotTheDifference({ level, onExit }) {
           
           {/* Original Image */}
           <div className="image-pane">
-            <img src={level.imageUrl} alt="Original" draggable="false" />
+            <img src={resolveImageUrl(level.imageUrl)} alt="Original" draggable="false" />
             <div className="pane-label">ORIGINAL</div>
           </div>
 
           {/* Target Image (Differences here) */}
           <div className="image-pane clickable" onClick={handleSpot}>
-            <img src={level.secondImageUrl || level.imageUrl} alt="Modified" draggable="false" />
+            <img src={resolveImageUrl(level.secondImageUrl || level.imageUrl)} alt="Modified" draggable="false" />
             <div className="pane-label">MODIFIED</div>
             
             {/* Found Differences Markers */}
