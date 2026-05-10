@@ -1,51 +1,55 @@
+import React, { useState, useRef, useEffect } from 'react';
 import { useTheme } from '../../../context/ThemeContext';
+import CircularGallery from '../../../components/common/CircularGallery/CircularGallery';
 
 const SectionShowcase = () => {
     const { isDarkMode } = useTheme();
+    const sectionRef = useRef(null);
+
+    const items = [
+        { image: '/assets/gallery/last_frame.png', text: 'The Last Frame' },
+        { image: '/assets/gallery/neon_nights.png', text: 'Neon Nights' },
+        { image: '/assets/gallery/legacy.png', text: 'Legacy' },
+        { image: '/assets/gallery/digital_zen.png', text: 'Digital Zen' },
+        { image: '/assets/gallery/visionary.png', text: 'Visionary' }
+    ];
+
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
     
     return (
-        <section id="gallery" className={`scroll-section h-screen w-full overflow-hidden relative transition-colors duration-1000 bg-transparent`}>
-            {/* Global background used */}
-            
-            <div className="absolute top-12 left-6 md:top-20 md:left-20 z-10">
-                <h2 className={`text-3xl md:text-6xl font-serif tracking-tighter italic transition-colors duration-1000 ${isDarkMode ? 'text-white' : 'text-stone-950'}`}>Global Showcase</h2>
-                <p className="text-orange-600 tracking-[0.5em] text-[10px] uppercase font-bold mt-4">Scroll down to explore horizontally</p>
+        <section 
+            id="gallery" 
+            ref={sectionRef}
+            className={`scroll-section h-screen w-full overflow-hidden relative transition-colors duration-1000 bg-transparent`}
+        >
+            <div className="absolute top-4 left-4 md:top-6 md:left-8 z-10 pointer-events-none">
+                <h2 className={`text-xl md:text-5xl font-serif tracking-tighter italic transition-colors duration-1000 ${isDarkMode ? 'text-white' : 'text-stone-950'}`}>Global Showcase</h2>
+                <div className="h-[1px] md:h-[2px] w-6 md:w-16 bg-orange-600 mt-1 md:mt-4 mb-1 md:mb-4"></div>
+                <p className="text-orange-600 tracking-[0.1em] md:tracking-[0.5em] text-[5px] md:text-[10px] uppercase font-bold opacity-80">
+                    {isMobile ? 'Scroll to explore' : 'Scroll to explore our vision'}
+                </p>
             </div>
 
-            <div 
-                id="horizontal-scroll-content" 
-                className="h-full flex items-center gap-6 md:gap-12 px-[5vw] md:px-[10vw] min-w-max"
-            >
-                {[
-                    { title: "The Last Frame", category: "Cinematic" },
-                    { title: "Neon Nights", category: "Music Video" },
-                    { title: "Legacy", category: "Documentary" },
-                    { title: "Digital Zen", category: "Immersive" },
-                    { title: "Visionary", category: "Short Film" }
-                ].map((item, i) => (
-                    <div 
-                        key={i} 
-                        className={`w-[80vw] md:w-[35vw] aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden relative group cursor-pointer border transition-colors duration-1000 ${
-                            isDarkMode ? 'bg-stone-900 border-white/5' : 'bg-stone-100 border-stone-200'
-                        }`}
-                    >
-                        {/* Placeholder for images */}
-                        <div className={`absolute inset-0 transition-transform duration-700 group-hover:scale-110 ${
-                            isDarkMode ? 'bg-gradient-to-br from-stone-700 to-stone-900' : 'bg-gradient-to-br from-stone-200 to-stone-300'
-                        }`} />
-                        <div className={`absolute inset-0 group-hover:bg-black/20 transition-all ${
-                            isDarkMode ? 'bg-black/40' : 'bg-white/10'
-                        }`} />
-                        
-                        <div className="absolute bottom-6 left-6 md:bottom-10 md:left-10">
-                            <span className="text-orange-600 font-bold text-[8px] md:text-[10px] uppercase tracking-widest mb-1 md:mb-2 block">{item.category}</span>
-                            <h3 className={`text-xl md:text-3xl font-serif transition-colors duration-1000 ${isDarkMode ? 'text-white' : 'text-stone-900'}`}>{item.title}</h3>
-                        </div>
-                    </div>
-                ))}
+            <div className="w-full h-full relative">
+                <CircularGallery 
+                    items={items} 
+                    bend={isMobile ? 1.5 : 3} 
+                    textColor={isDarkMode ? "#ffffff" : "#000000"} 
+                    borderRadius={isMobile ? 0.03 : 0.05} 
+                    font={isMobile ? "bold 14px Outfit" : "bold 24px Outfit"}
+                    scrollEase={0.08}
+                />
             </div>
         </section>
     );
 };
 
 export default SectionShowcase;
+
+

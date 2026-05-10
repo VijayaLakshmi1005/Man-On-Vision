@@ -92,16 +92,19 @@ const useGSAPAnimations = (rootRef) => {
             const sections = gsap.utils.toArray('.scroll-section');
 
             sections.forEach((section, index) => {
+                // Skip about (no animation)
                 if (section.id === 'about') return;
 
+                // Ensure gallery stays on top of following sections while pinning
+                const isGallery = section.id === 'gallery';
                 gsap.set(section, {
-                    zIndex: index + 10,
-                    position: 'relative'
+                    zIndex: isGallery ? 50 : index + 10,
+                    position: 'relative',
+                    backgroundColor: 'transparent'
                 });
 
                 // --- SECTION FADE SCRUB ---
                 const isLastSection = index === sections.length - 1;
-                const isGallery = section.id === 'gallery';
 
                 gsap.set(section, { opacity: 1 });
 
@@ -145,43 +148,20 @@ const useGSAPAnimations = (rootRef) => {
                 }
 
                 // --- PINNING LOGIC ---
-                if (isGallery) {
-                    const content = section.querySelector('#horizontal-scroll-content');
-                    if (content) {
-                        const getScrollAmount = () => -(content.scrollWidth - window.innerWidth);
-
-                        gsap.to(content, {
-                            x: getScrollAmount,
-                            ease: "none",
-                            scrollTrigger: {
-                                trigger: section,
-                                start: "top top",
-                                end: () => isMobile ? `+=${content.scrollWidth * 1.2}` : `+=${content.scrollWidth * 1.5}`,
-                                scrub: isMobile ? 0.8 : 1,
-                                pin: true,
-                                pinSpacing: true,
-                                invalidateOnRefresh: true,
-                                fastScrollEnd: true,
-                                preventOverlaps: true,
-                                onLeave: () => gsap.to(section, { opacity: 0, duration: 0.5 }),
-                                onEnterBack: () => gsap.to(section, { opacity: 1, duration: 0.5 })
-                            }
-                        });
-                    }
-                } else {
-                    // STANDARD SECTION PINNING
-                    ScrollTrigger.create({
-                        trigger: section,
-                        start: "top top",
-                        end: isMobile ? "+=80%" : "+=100%", // Restored for impact
-                        pin: true,
-                        pinSpacing: true,
-                        scrub: true,
-                        invalidateOnRefresh: true,
-                        fastScrollEnd: true,
-                        preventOverlaps: true
-                    });
-                }
+                // Standard section pinning for all sections
+                const pinEnd = section.id === 'gallery' ? "+=400%" : (isMobile ? "+=80%" : "+=100%");
+                
+                ScrollTrigger.create({
+                    trigger: section,
+                    start: "top top",
+                    end: pinEnd, 
+                    pin: true,
+                    pinSpacing: true,
+                    scrub: true,
+                    invalidateOnRefresh: true,
+                    fastScrollEnd: true,
+                    preventOverlaps: true
+                });
             });
 
         }, rootRef.current);
