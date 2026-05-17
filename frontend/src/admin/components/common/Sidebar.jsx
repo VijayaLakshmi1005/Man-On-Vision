@@ -89,7 +89,7 @@ const Sidebar = function Sidebar({ onClose }) {
 
 
   return (
-    <div className="w-[280px] lg:w-64 h-full bg-[#fdfbf7] lg:bg-white/55 lg:backdrop-blur-[14px] rounded-none lg:rounded-[24px] border-r border-[#e6e3df] lg:border-white/40 px-6 py-10 flex flex-col shadow-2xl lg:shadow-[0_4px_15px_rgba(0,0,0,0.03)] relative z-50">
+    <div className="w-[280px] lg:w-64 h-full bg-[#fdfbf7] lg:bg-white/55 lg:backdrop-blur-[14px] rounded-none lg:rounded-[24px] border-r border-[#e6e3df] lg:border-white/40 px-6 py-10 flex flex-col shadow-2xl lg:shadow-[0_4px_15px_rgba(0,0,0,0.03)] relative z-50 overflow-y-auto custom-scrollbar" data-lenis-prevent>
       <div className="flex justify-between items-center mb-12 px-2">
         <Link to="/" className="flex flex-col gap-0 group transition-transform hover:scale-[1.02]">
           <img

@@ -79,7 +79,7 @@ export default function ClientSidebar({ onClose }) {
 
 
   return (
-    <div className="w-[280px] lg:w-[260px] h-full lg:h-[calc(100vh-40px)] m-0 lg:m-5 lg:ml-8 lg:mt-6 relative z-50 flex flex-col bg-white rounded-none lg:rounded-[32px] border-r lg:border border-black/[0.03] shadow-2xl lg:shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden py-10 px-6 animate-in slide-in-from-left-4 duration-700">
+    <div className="w-[280px] lg:w-[260px] h-full lg:h-[calc(100vh-40px)] m-0 lg:m-5 lg:ml-8 lg:mt-6 relative z-50 flex flex-col bg-white rounded-none lg:rounded-[32px] border-r lg:border border-black/[0.03] shadow-2xl lg:shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-y-auto custom-scrollbar py-10 px-6 animate-in slide-in-from-left-4 duration-700" data-lenis-prevent>
 
       <div className="mb-14 px-2 flex justify-between items-center text-center mx-auto">
         <Link to="/portal" className="flex flex-col gap-0 group items-center">
