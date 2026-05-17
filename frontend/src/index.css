@@ -62,14 +62,12 @@
     @apply antialiased text-white leading-[1.6];
     font-family: var(--font-sans);
     background-color: var(--luxury-bg);
-    overscroll-behavior-y: none;
     -webkit-overflow-scrolling: touch;
     font-size: var(--text-base);
     min-height: -webkit-fill-available;
   }
 
   html {
-    overscroll-behavior-y: none;
     scroll-behavior: smooth;
     height: -webkit-fill-available;
   }

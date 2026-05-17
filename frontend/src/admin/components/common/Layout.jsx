@@ -5,13 +5,15 @@ import Topbar from "./Topbar";
 import { Menu, X } from "lucide-react";
 import Breadcrumbs from "../../../components/common/Breadcrumbs";
 import PageTransition from "../../../components/common/PageTransition";
+import { useLenis } from "../../../components/common/LenisProvider";
 
 
 export default function Layout() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isFocusMode, setIsFocusMode] = useState(false);
+    const lenis = useLenis();
 
-    // Header Scroll Visibility Logic (Matches Topbar)
+    // Header Scroll Visibility Logic (Works with Lenis)
     const [isVisible, setIsVisible] = useState(true);
     const lastScrollY = useRef(0);
 
@@ -20,7 +22,7 @@ export default function Layout() {
         const handleScroll = () => {
             if (!ticking) {
                 window.requestAnimationFrame(() => {
-                    const currentScrollY = window.scrollY;
+                    const currentScrollY = lenis ? lenis.scroll : window.scrollY;
 
                     if (currentScrollY < 10) {
                         setIsVisible(true);
@@ -36,9 +38,16 @@ export default function Layout() {
                 ticking = true;
             }
         };
-        window.addEventListener("scroll", handleScroll, { passive: true });
-        return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
+        const scrollTarget = lenis || window;
+        scrollTarget.on ? scrollTarget.on('scroll', handleScroll) : window.addEventListener("scroll", handleScroll, { passive: true });
+        return () => {
+            if (scrollTarget.off) {
+                scrollTarget.off('scroll', handleScroll);
+            } else {
+                window.removeEventListener("scroll", handleScroll);
+            }
+        };
+    }, [lenis]);
 
     const backgroundStyle = useMemo(() => ({
         background: `

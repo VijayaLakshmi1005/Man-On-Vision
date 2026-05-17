@@ -15,7 +15,7 @@ const HomePage = () => {
     useGSAPAnimations(mainRef);
 
     return (
-        <main ref={mainRef} className={`relative w-full overflow-x-hidden transition-colors duration-1000 bg-transparent`}>
+        <main ref={mainRef} className={`relative w-full transition-colors duration-1000 bg-transparent`}>
             {/* Global Continuous Background - Using the '2nd Background' preferred by user */}
             <div className="fixed inset-0 z-[-1] will-change-transform" style={{ transform: 'translateZ(0)', backfaceVisibility: 'hidden' }}>
                 <LiquidMazeStatic 

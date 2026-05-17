@@ -27,14 +27,16 @@ export default function ClientSidebar({ onClose }) {
   const unreadCount = useSelector(state => state.chat.clientUnreadCount);
   const socketRef = useRef(null);
 
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const userId = user?.id || user?._id;
 
   const handleLogout = () => {
     if (window.confirm("Are you sure you want to sign out safely?")) {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      navigate("/");
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+        socketRef.current = null;
+      }
+      logout();
     }
   };
 

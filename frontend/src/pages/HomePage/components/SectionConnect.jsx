@@ -1,6 +1,10 @@
+import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../../../context/ThemeContext';
+import { useAuth } from '../../../context/AuthContext';
 
 const SectionConnect = () => {
+    const navigate = useNavigate();
+    const { user } = useAuth();
     const { isDarkMode } = useTheme();
     
     return (
@@ -12,19 +16,25 @@ const SectionConnect = () => {
                     Let's <span className="text-orange-600">Create.</span>
                 </h2>
                 <div className="animate-item flex flex-col md:flex-row gap-4 md:gap-8 items-center justify-center">
-                    <button className={`w-full md:w-auto px-10 md:px-16 py-4 md:py-6 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest transition-all duration-500 shadow-xl ${
-                        isDarkMode 
-                        ? 'bg-white text-stone-950 hover:bg-orange-600 hover:text-white' 
-                        : 'bg-stone-950 text-white hover:bg-orange-600'
-                    }`}>
+                    <button
+                        onClick={() => navigate('/quote')}
+                        className={`w-full md:w-auto px-10 md:px-16 py-4 md:py-6 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest transition-all duration-500 shadow-xl cursor-pointer ${
+                            isDarkMode 
+                            ? 'bg-white text-stone-950 hover:bg-orange-600 hover:text-white' 
+                            : 'bg-stone-950 text-white hover:bg-orange-600'
+                        }`}
+                    >
                         Start Production
                     </button>
-                    <button className={`w-full md:w-auto px-10 md:px-16 py-4 md:py-6 border rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest transition-all duration-500 ${
-                        isDarkMode 
-                        ? 'border-white/20 text-white hover:bg-white hover:text-stone-950' 
-                        : 'border-stone-200 text-stone-600 hover:border-stone-900 hover:text-stone-900'
-                    }`}>
-                        Access Portal
+                    <button
+                        onClick={() => navigate(user ? '/portal' : '/auth')}
+                        className={`w-full md:w-auto px-10 md:px-16 py-4 md:py-6 border rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest transition-all duration-500 cursor-pointer ${
+                            isDarkMode 
+                            ? 'border-white/20 text-white hover:bg-white hover:text-stone-950' 
+                            : 'border-stone-200 text-stone-600 hover:border-stone-900 hover:text-stone-900'
+                        }`}
+                    >
+                        {user ? 'Go to Portal' : 'Access Portal'}
                     </button>
                 </div>
             </div>

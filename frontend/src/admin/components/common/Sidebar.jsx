@@ -26,7 +26,7 @@ import toast from "react-hot-toast";
 const API_URL = import.meta.env.VITE_API_URL || "";
 
 const Sidebar = function Sidebar({ onClose }) {
-  const { user: authUser, token: authContextToken } = useAuth();
+  const { user: authUser, token: authContextToken, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -147,7 +147,7 @@ const Sidebar = function Sidebar({ onClose }) {
       </nav>
 
       <div className="mt-auto px-2 mb-4">
-        <button onClick={() => { if (window.confirm("Log out?")) { localStorage.removeItem("token"); localStorage.removeItem("user"); navigate("/"); } }} className="w-full flex items-center gap-3 px-4 py-3 rounded-[14px] text-[11px] font-medium uppercase tracking-widest transition-all duration-200 text-[#5f5f5f] hover:bg-red-50 hover:text-red-500 group">
+        <button onClick={() => { if (window.confirm("Log out?")) { if (socketRef.current) { socketRef.current.disconnect(); socketRef.current = null; } logout(); } }} className="w-full flex items-center gap-3 px-4 py-3 rounded-[14px] text-[11px] font-medium uppercase tracking-widest transition-all duration-200 text-[#5f5f5f] hover:bg-red-50 hover:text-red-500 group">
           <LogOut size={18} strokeWidth={1.5} className="opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all" />
           Log Out
         </button>

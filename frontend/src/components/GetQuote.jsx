@@ -64,32 +64,37 @@ const GetQuote = () => {
     const [loading, setLoading] = useState(false);
     const [serviceCategories, setServiceCategories] = useState([]);
     const [allServices, setAllServices] = useState([]);
+    const [isMounted, setIsMounted] = useState(true);
 
     useEffect(() => {
+        setIsMounted(true);
         const fetchServices = async () => {
             try {
                 const res = await axios.get(`${API_URL}/api/services`);
-                setAllServices(res.data);
+                if (isMounted) {
+                    setAllServices(res.data);
 
-                // Group by category
-                const groups = {};
-                res.data.forEach(s => {
-                    if (!groups[s.category]) groups[s.category] = [];
-                    groups[s.category].push(s);
-                });
+                    // Group by category
+                    const groups = {};
+                    res.data.forEach(s => {
+                        if (!groups[s.category]) groups[s.category] = [];
+                        groups[s.category].push(s);
+                    });
 
-                const formattedCategories = Object.keys(groups).map(catName => ({
-                    name: catName,
-                    icon: CATEGORY_ICONS[catName] || <CheckCircle size={18} />,
-                    services: groups[catName]
-                }));
+                    const formattedCategories = Object.keys(groups).map(catName => ({
+                        name: catName,
+                        icon: CATEGORY_ICONS[catName] || <CheckCircle size={18} />,
+                        services: groups[catName]
+                    }));
 
-                setServiceCategories(formattedCategories);
+                    setServiceCategories(formattedCategories);
+                }
             } catch (err) {
                 console.error("Failed to load services", err);
             }
         };
         fetchServices();
+        return () => setIsMounted(false);
     }, []);
 
     const handleChange = (e) => {
@@ -119,6 +124,20 @@ const GetQuote = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (loading) return;
+
+        if (!formData.firstName.trim() || !formData.lastName.trim()) {
+            toast.error("Please enter your full name.");
+            return;
+        }
+        if (!formData.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+            toast.error("Please enter a valid email address.");
+            return;
+        }
+        if (!formData.phone.trim()) {
+            toast.error("Please enter your phone number.");
+            return;
+        }
         if (!formData.eventType) {
             toast.error("Please select an event type.");
             return;
@@ -140,13 +159,17 @@ const GetQuote = () => {
             };
 
             await axios.post(`${API_URL}/api/leads/public`, payload);
-            setIsSubmitted(true);
+            if (isMounted) {
+                setIsSubmitted(true);
+            }
             toast.success("Booking request submitted successfully!");
         } catch (err) {
             console.error(err);
             toast.error("Failed to submit request. Please try again.");
         } finally {
-            setLoading(false);
+            if (isMounted) {
+                setLoading(false);
+            }
         }
     };
 
@@ -188,14 +211,13 @@ const GetQuote = () => {
                     <h1 className="text-4xl md:text-5xl font-light uppercase tracking-[4px] text-stone-800">Book Your Event</h1>
                 </div>
 
-                <div className="flex flex-col xl:flex-row gap-8">
+                <form onSubmit={handleSubmit} className="flex flex-col xl:flex-row gap-8">
                     {/* Main Booking Form */}
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         className="flex-1 bg-white rounded-3xl p-8 lg:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-stone-100"
                     >
-                        <form onSubmit={handleSubmit} className="space-y-12">
                             
                             {/* Personal Details */}
                             <div>
@@ -314,8 +336,7 @@ const GetQuote = () => {
                                 ></textarea>
                             </div>
 
-                        </form>
-                    </motion.div>
+                        </motion.div>
 
                     {/* Booking Summary Sidebar */}
                     <div className="xl:w-[400px] shrink-0">
@@ -375,8 +396,8 @@ const GetQuote = () => {
                                 <p className="text-[10px] text-stone-500 mt-2 text-right">Prices are estimated. Final quote may vary.</p>
                             </div>
 
-                            <button 
-                                onClick={handleSubmit}
+                            <button
+                                type="submit"
                                 disabled={loading}
                                 className="w-full bg-[#D4AF37] hover:bg-[#C5A028] text-stone-900 font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-colors disabled:opacity-70 uppercase tracking-widest text-xs"
                             >
@@ -384,7 +405,7 @@ const GetQuote = () => {
                             </button>
                         </div>
                     </div>
-                </div>
+                </form>
 
             </div>
         </div>
