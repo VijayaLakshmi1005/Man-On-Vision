@@ -103,7 +103,7 @@ const HiddenObject = () => {
       await axios.post(`${API_URL}/games/score`, {
         sessionId,
         userId: user?._id,
-        guestName,
+        guestName: user ? `${user.firstName} ${user.lastName}`.trim() : guestName,
         gameType: 'hidden_object',
         score,
         difficulty: currentLevel.difficulty,

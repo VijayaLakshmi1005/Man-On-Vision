@@ -4,7 +4,7 @@ require('dotenv').config({ path: './backend/.env' });
 
 async function checkQuestions() {
   try {
-    await mongoose.connect(process.env.MONGODB_URI);
+    await mongoose.connect(process.env.MONGO_URI || process.env.MONGODB_URI);
     console.log('Connected to DB');
     const count = await RapidFireQuestion.countDocuments();
     const questions = await RapidFireQuestion.find();

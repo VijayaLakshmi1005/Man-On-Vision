@@ -157,7 +157,7 @@ const KannadaRapidFire = () => {
     try {
       await axios.post(`${API_URL}/games/score`, {
         userId: user?._id,
-        guestName: guestName || 'Guest',
+        guestName: user ? `${user.firstName} ${user.lastName}`.trim() : (guestName || 'Guest'),
         gameType: 'kannada_rapid_fire',
         score,
       });

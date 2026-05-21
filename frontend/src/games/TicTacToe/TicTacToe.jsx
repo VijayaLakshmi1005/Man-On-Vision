@@ -129,7 +129,7 @@ const TicTacToe = () => {
       await axios.post(`${API_URL}/games/score`, {
         sessionId,
         userId: user?._id,
-        guestName: user ? user.firstName : guestName,
+        guestName: user ? `${user.firstName} ${user.lastName}`.trim() : guestName,
         gameType: 'tictactoe',
         score: finalScore,
         accuracy: res === 'X' ? 100 : res === 'draw' ? 50 : 0,

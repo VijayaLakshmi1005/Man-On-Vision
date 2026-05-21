@@ -17,7 +17,7 @@ const getSheetContext = (req) => {
     };
 };
 
-router.get('/', async (req, res) => {
+router.get('/', auth, async (req, res) => {
     try {
         const { spreadsheetId } = getSheetContext(req);
         const data = await GoogleSheetsService.getTasks(spreadsheetId);
@@ -31,7 +31,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.put('/cell', async (req, res) => {
+router.put('/cell', auth, async (req, res) => {
     const { rowId, colIndex, value } = req.body;
     const { spreadsheetId, preferredSheetName } = getSheetContext(req);
     try {
@@ -51,7 +51,7 @@ router.put('/cell', async (req, res) => {
     }
 });
 
-router.put('/batch-update', async (req, res) => {
+router.put('/batch-update', auth, async (req, res) => {
     const { updates } = req.body;
     const { spreadsheetId, preferredSheetName } = getSheetContext(req);
     try {
@@ -73,7 +73,7 @@ router.put('/batch-update', async (req, res) => {
     }
 });
 
-router.post('/row', async (req, res) => {
+router.post('/row', auth, async (req, res) => {
     const { values } = req.body;
     const { spreadsheetId, preferredSheetName } = getSheetContext(req);
     try {
@@ -88,7 +88,7 @@ router.post('/row', async (req, res) => {
     }
 });
 
-router.post('/column', async (req, res) => {
+router.post('/column', auth, async (req, res) => {
     const { headerName } = req.body;
     const { spreadsheetId, preferredSheetName } = getSheetContext(req);
     try {
@@ -103,7 +103,7 @@ router.post('/column', async (req, res) => {
     }
 });
 
-router.delete('/row/:rowId', async (req, res) => {
+router.delete('/row/:rowId', auth, async (req, res) => {
     const { rowId } = req.params;
     const { spreadsheetId, preferredSheetName } = getSheetContext(req);
     try {

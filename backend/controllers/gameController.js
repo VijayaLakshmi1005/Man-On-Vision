@@ -161,10 +161,21 @@ exports.submitScore = async (req, res) => {
 exports.getLeaderboard = async (req, res) => {
   try {
     const { gameType } = req.query;
-    const leaderboard = await Score.find({ gameType })
-      .populate('userId', 'name')
+    const scores = await Score.find({ gameType })
+      .populate('userId', 'firstName lastName')
       .sort({ score: -1, timeTaken: 1 })
       .limit(10);
+
+    const leaderboard = scores.map(entry => {
+      const doc = entry.toObject();
+      if (doc.userId) {
+        const fullName = `${doc.userId.firstName || ''} ${doc.userId.lastName || ''}`.trim();
+        if (fullName) {
+          doc.guestName = fullName;
+        }
+      }
+      return doc;
+    });
 
     res.status(200).json(leaderboard);
   } catch (error) {

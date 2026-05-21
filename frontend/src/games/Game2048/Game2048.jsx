@@ -106,7 +106,7 @@ const Game2048 = () => {
       await axios.post(`${API_URL}/games/score`, {
         sessionId,
         userId: user?._id,
-        guestName: user ? user.firstName : guestName,
+        guestName: user ? `${user.firstName} ${user.lastName}`.trim() : guestName,
         gameType: '2048',
         score: finalScore,
         accuracy: won ? 100 : 80,

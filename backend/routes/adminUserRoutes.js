@@ -7,13 +7,24 @@ const auth = require('../middleware/auth');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 
-const ENCRYPTION_KEY = process.env.VAULT_SECRET || 'SecureVaultKey32'; // Must be 32 chars
+const VAULT_SECRET = process.env.VAULT_SECRET || 'SecureVaultKey32'; 
 const IV_LENGTH = 16;
+
+// Derive ENCRYPTION_KEY safely:
+// If key is exactly 32 bytes, use it directly as Buffer for backward compatibility.
+// Otherwise, dynamically hash using SHA-256 to ensure a robust 32-byte key that never crashes.
+let ENCRYPTION_KEY;
+const keyBuffer = Buffer.from(VAULT_SECRET, 'utf8');
+if (keyBuffer.length === 32) {
+    ENCRYPTION_KEY = keyBuffer;
+} else {
+    ENCRYPTION_KEY = crypto.createHash('sha256').update(VAULT_SECRET).digest();
+}
 
 // Utility functions for encryption
 function encrypt(text) {
     const iv = crypto.randomBytes(IV_LENGTH);
-    const cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(ENCRYPTION_KEY), iv);
+    const cipher = crypto.createCipheriv('aes-256-cbc', ENCRYPTION_KEY, iv);
     let encrypted = cipher.update(text);
     encrypted = Buffer.concat([encrypted, cipher.final()]);
     return { iv: iv.toString('hex'), encryptedData: encrypted.toString('hex') };
@@ -22,7 +33,7 @@ function encrypt(text) {
 function decrypt(text, iv) {
     const ivBuffer = Buffer.from(iv, 'hex');
     const encryptedText = Buffer.from(text, 'hex');
-    const decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(ENCRYPTION_KEY), ivBuffer);
+    const decipher = crypto.createDecipheriv('aes-256-cbc', ENCRYPTION_KEY, ivBuffer);
     let decrypted = decipher.update(encryptedText);
     decrypted = Buffer.concat([decrypted, decipher.final()]);
     return decrypted.toString();

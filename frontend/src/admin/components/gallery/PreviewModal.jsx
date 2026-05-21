@@ -4,6 +4,8 @@ import { X, Download, Maximize2, Trash2, Heart } from "lucide-react";
 import toast from "react-hot-toast";
 
 export default function PreviewModal({ item, onClose, onDelete }) {
+  const [isLoaded, setIsLoaded] = useState(false);
+
   if (!item) return null;
 
   const isVideo = item.mimeType?.includes("video/");
@@ -16,8 +18,6 @@ export default function PreviewModal({ item, onClose, onDelete }) {
   // Low-res placeholder for immediate display
   const placeholderUrl = item.thumbnailLink || proxyUrl;
   const downloadUrl = item.webContentLink || item.webViewLink || previewUrl;
-
-  const [isLoaded, setIsLoaded] = useState(false);
 
   const handleDownload = () => {
     window.open(downloadUrl, "_blank");

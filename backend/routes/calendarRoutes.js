@@ -139,27 +139,6 @@ router.post('/', auth, async (req, res) => {
 // Update event
 router.patch('/:id', auth, async (req, res) => {
     try {
-        const { start, end } = req.body;
-
-        if (start || end) {
-            const currentEvent = await Event.findById(req.params.id);
-            const newStart = start ? new Date(start) : currentEvent.start;
-            const newEnd = end ? new Date(end) : currentEvent.end;
-
-            const overlapping = await Event.findOne({
-                _id: { $ne: req.params.id },
-                start: { $lt: newEnd },
-                end: { $gt: newStart }
-            });
-
-            if (overlapping) {
-                return res.status(400).json({ 
-                    message: "Scheduling Conflict: Update would overlap with another event.",
-                    conflictingEvent: overlapping.title
-                });
-            }
-        }
-
         const event = await Event.findByIdAndUpdate(req.params.id, req.body, { new: true });
 
         // Trigger Google Calendar Sync (Awaited for real status)

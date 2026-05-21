@@ -73,6 +73,34 @@ const SpotDifference = () => {
     return () => clearInterval(timerRef.current);
   }, [gameState, timeLeft]);
 
+  useEffect(() => {
+    if (gameState === 'finished') {
+      const saveScore = async () => {
+        try {
+          const sessionId = localStorage.getItem('game_session_id') || Math.random().toString(36).substring(7);
+          localStorage.setItem('game_session_id', sessionId);
+          
+          if (guestName) localStorage.setItem('guest_name', guestName);
+          
+          await axios.post(`${API_URL}/games/score`, {
+            sessionId,
+            userId: user?._id,
+            guestName: user ? `${user.firstName} ${user.lastName}`.trim() : guestName,
+            gameType: 'spot_difference',
+            score: score,
+            accuracy: currentLevel ? (foundIndices.length === currentLevel.differences.length ? 100 : Math.round((foundIndices.length / currentLevel.differences.length) * 100)) : 100,
+            difficulty: currentLevel?.difficulty || 'medium',
+            timeTaken: ((currentLevel?.difficulty === 'hard' ? 90 : 120) - timeLeft),
+            contentId: currentLevel?._id
+          });
+        } catch (err) {
+          console.error('Error saving score:', err);
+        }
+      };
+      saveScore();
+    }
+  }, [gameState]);
+
   const handleSwipe = useCallback((dir) => {
     if (gameState !== 'browser') return;
     if (dir === 'left' && currentLevelIdx < levels.length - 1) {
