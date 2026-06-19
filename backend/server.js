@@ -440,7 +440,19 @@ app.use('/api/services', serviceRoutes);
 app.use('/api/games', require('./routes/gameRoutes'));
 app.use('/api/admin/games', require('./routes/adminGameRoutes'));
 
+// --- Apollo GraphQL Server Configuration ---
+const { ApolloServer } = require('@apollo/server');
+const { expressMiddleware } = require('@apollo/server/express4');
+const typeDefs = require('./graphql/schema');
+const resolvers = require('./graphql/resolvers');
 
+async function startApolloServer() {
+    const apolloServer = new ApolloServer({ typeDefs, resolvers });
+    await apolloServer.start();
+    app.use('/graphql', express.json(), expressMiddleware(apolloServer));
+    console.log('🔮 GraphQL API running at /graphql');
+}
+startApolloServer().catch(err => console.error("Apollo Server Error:", err));
 
 // --- Standalone API Configuration ---
 // Root route for initial verification

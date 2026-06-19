@@ -1,43 +1,47 @@
-import React, { useRef } from 'react';
-import HeroSection from './components/HeroSection';
-import SectionIntro from './components/SectionIntro';
-import ScrollWrapper from './components/ScrollWrapper';
-import Navbar from '../../components/Navbar';
-import LiquidMazeStatic from '../../components/common/LiquidMazeStatic';
-import { useTheme } from '../../context/ThemeContext';
-import useGSAPAnimations from './hooks/useGSAPAnimations';
+import React, { useRef, useEffect, useState } from 'react';
+import gsap from 'gsap';
+import { motion } from 'framer-motion';
+import Navbar from './components/Navbar';
+import NewHeroSection from './components/NewHeroSection';
+import NextSection from './components/NextSection';
+import WorkProfileSection from './components/WorkProfileSection';
+import FourthSection from './components/FourthSection';
+import ContactSection from './components/ContactSection';
 
 const HomePage = () => {
     const mainRef = useRef(null);
-    const { isDarkMode } = useTheme();
+    const [stickyState, setStickyState] = useState({ x: 208, y: 1761, w: 268, isSaved: false });
+    const [isClient, setIsClient] = useState(false);
 
-    // Apply GSAP animations to the entire page
-    useGSAPAnimations(mainRef);
+    useEffect(() => {
+        setIsClient(true);
+        // Initial setup for the background fade-in
+        gsap.to(mainRef.current, {
+            opacity: 1,
+            duration: 1,
+            ease: 'power2.inOut',
+        });
+    }, []);
 
     return (
-        <main ref={mainRef} className={`relative w-full transition-colors duration-1000 bg-transparent`}>
-            {/* Global Continuous Background - Using the '2nd Background' preferred by user */}
-            <div className="fixed inset-0 z-[-1] will-change-transform" style={{ transform: 'translateZ(0)', backfaceVisibility: 'hidden' }}>
-                <LiquidMazeStatic 
-                    color1="#ff5a96" 
-                    color2="#ffb040" 
-                    bgColor={isDarkMode ? "#0c0a09" : "#fff5f2"} 
-                    density={0.2} 
-                    speed={0.005} 
-                />
-            </div>
-
+        <main 
+            ref={mainRef} 
+            className="relative w-full min-h-screen opacity-0"
+            style={{ backgroundColor: '#d6b899' }}
+        >
+            {/* Universal Navbar */}
             <Navbar />
 
-            {/* The Integrated Intro Flow (Hero + First Story Section) */}
-            <div id="intro-container" className="relative w-full overflow-hidden">
-                <HeroSection />
-                <div id="flow-section" className="absolute inset-0 opacity-0 pointer-events-none will-change-[transform,opacity]">
-                    <SectionIntro />
-                </div>
-            </div>
 
-            <ScrollWrapper />
+
+            {/* Content Container fully responsive */}
+            <div className="relative z-10 w-full h-full flex flex-col">
+                <NewHeroSection />
+                <NextSection />
+                <WorkProfileSection />
+                <FourthSection />
+                <ContactSection />
+            </div>
         </main>
     );
 };

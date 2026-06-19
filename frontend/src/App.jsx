@@ -12,6 +12,7 @@ import PageTransition from './components/common/PageTransition';
 import LoadingScreen from './components/common/LoadingScreen';
 import ScrollToTop from './components/common/ScrollToTop';
 import MainLayout from './components/common/MainLayout';
+import { usePreloadData } from './hooks/usePreloadData';
 
 // Lazy load the main components
 const HomePage = lazy(() => import('./pages/HomePage/HomePage'));
@@ -145,6 +146,7 @@ function App() {
   const location = useLocation();
   const { isDarkMode } = useTheme();
   const [siteLoading, setSiteLoading] = useState(true);
+  const { isReady } = usePreloadData();
 
   return (
     <LenisProvider>
@@ -155,7 +157,7 @@ function App() {
       }`}>
         <ScrollToTop />
         <AnimatePresence mode="wait">
-          {siteLoading && <LoadingScreen key="site-loader" onFinished={() => setSiteLoading(false)} />}
+          {siteLoading && <LoadingScreen key="site-loader" isLoading={!isReady} onFinished={() => setSiteLoading(false)} />}
         </AnimatePresence>
 
         <Toaster position="top-right" />

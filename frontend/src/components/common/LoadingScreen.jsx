@@ -4,25 +4,30 @@ import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 const LoadingScreen = ({ 
     onFinished, 
-    isLoading = true,
+    isLoading = false,
 }) => {
     const [isInternalComplete, setIsInternalComplete] = useState(false);
+    const [timerFinished, setTimerFinished] = useState(false);
 
     useEffect(() => {
-        if (!isLoading) return;
-
         // Simple timer for the loading animation experience
         const timer = setTimeout(() => {
-            setIsInternalComplete(true);
-            if (onFinished) onFinished();
+            setTimerFinished(true);
         }, 2500);
 
         return () => clearTimeout(timer);
-    }, [onFinished, isLoading]);
+    }, []);
+
+    useEffect(() => {
+        if (timerFinished && !isLoading) {
+            setIsInternalComplete(true);
+            if (onFinished) onFinished();
+        }
+    }, [timerFinished, isLoading, onFinished]);
 
     return (
         <AnimatePresence>
-            {(isLoading && !isInternalComplete) && (
+            {(!isInternalComplete) && (
                 <motion.div
                     initial={{ opacity: 1 }}
                     animate={{ opacity: 1 }}
