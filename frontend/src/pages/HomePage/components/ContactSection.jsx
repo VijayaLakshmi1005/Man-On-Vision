@@ -1,23 +1,6 @@
 import React from 'react';
-import { useQuery } from '@apollo/client/react';
-import { GET_CONTACT_SECTION } from '../../../graphql/queries';
 
 const ContactSection = () => {
-  const { data, loading, error } = useQuery(GET_CONTACT_SECTION);
-
-  const contactData = data?.contact || {
-    title: "LET'S CREATE",
-    email: "HELLO@MANONVISION.COM",
-    instagram: "#",
-    linkedin: "#",
-    youtube: "#"
-  };
-
-  // Helper to color the last word pink if title has multiple words
-  const titleWords = (contactData.title || "LET'S CREATE").split(' ');
-  const lastWord = titleWords.pop();
-  const firstWords = titleWords.join(' ');
-
   // SVG for the old-fashioned film tape with REAL transparent holes using an SVG mask and TORN edges
   const filmTapeSvg = `url("data:image/svg+xml;utf8,<svg width='60' height='120' xmlns='http://www.w3.org/2000/svg'><defs><filter id='torn'><feTurbulence type='fractalNoise' baseFrequency='0.15' numOctaves='3' result='noise' stitchTiles='stitch'/><feDisplacementMap in='SourceGraphic' in2='noise' scale='5' xChannelSelector='R' yChannelSelector='G'/></filter><mask id='holes'><rect width='60' height='120' fill='white' filter='url(%23torn)'/><rect x='15' y='8' width='30' height='16' rx='3' fill='black' filter='url(%23torn)'/><rect x='15' y='96' width='30' height='16' rx='3' fill='black' filter='url(%23torn)'/></mask></defs><rect width='60' height='120' fill='%23050505' mask='url(%23holes)'/></svg>")`;
 
@@ -105,14 +88,14 @@ const ContactSection = () => {
       <div className="relative z-20 flex flex-col items-center justify-center max-w-4xl w-[90%] text-center">
         
         <h2 className="font-['Bebas_Neue'] text-[70px] md:text-[120px] text-white leading-[0.85] mb-6 tracking-wider [-webkit-text-stroke:_1px_#000] [text-shadow:_0_4px_30px_#000,_0_0_80px_#000]">
-          {firstWords} <span className="text-[#F53171] [-webkit-text-stroke:_1px_#000]">{lastWord}</span>
+          LET'S <span className="text-[#F53171] [-webkit-text-stroke:_1px_#000]">CREATE</span>
         </h2>
         
 
         {/* Classy, Minimal Link with Animated Underline */}
-        <a href={`mailto:${contactData.email || "hello@manonvision.com"}`} className="group relative inline-flex items-center gap-3 text-[#111111] font-['Inter'] font-bold tracking-[0.2em] text-sm md:text-lg transition-colors [text-shadow:_0_0_15px_rgba(255,255,255,0.8),_0_0_30px_rgba(255,255,255,0.6)] mt-2">
+        <a href="mailto:hello@manonvision.com" className="group relative inline-flex items-center gap-3 text-[#111111] font-['Inter'] font-bold tracking-[0.2em] text-sm md:text-lg transition-colors [text-shadow:_0_0_15px_rgba(255,255,255,0.8),_0_0_30px_rgba(255,255,255,0.6)] mt-2">
           <span className="relative pb-1">
-            {(contactData.email || "hello@manonvision.com").toUpperCase()}
+            HELLO@MANONVISION.COM
             {/* Minimal Underline that expands on hover */}
             <span className="absolute left-0 bottom-0 w-full h-[2px] bg-[#F53171] transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out" />
           </span>
@@ -121,11 +104,11 @@ const ContactSection = () => {
 
         {/* Social Links in White */}
         <div className="flex flex-wrap items-center justify-center gap-6 mt-16 font-['Inter'] font-bold text-[10px] md:text-xs tracking-[0.2em] md:tracking-[0.3em] text-white [text-shadow:_0_2px_8px_#000,_0_0_20px_#000]">
-          <a href={contactData.instagram || "#"} className="hover:text-[#F53171] hover:-translate-y-1 transition-all">INSTAGRAM</a>
+          <a href="#" className="hover:text-[#F53171] hover:-translate-y-1 transition-all">INSTAGRAM</a>
           <span className="opacity-50 text-white">|</span>
-          <a href={contactData.linkedin || "#"} className="hover:text-[#F53171] hover:-translate-y-1 transition-all">LINKEDIN</a>
+          <a href="#" className="hover:text-[#F53171] hover:-translate-y-1 transition-all">LINKEDIN</a>
           <span className="opacity-50 text-white">|</span>
-          <a href={contactData.youtube || "#"} className="hover:text-[#F53171] hover:-translate-y-1 transition-all">YOUTUBE</a>
+          <a href="#" className="hover:text-[#F53171] hover:-translate-y-1 transition-all">YOUTUBE</a>
         </div>
 
       </div>

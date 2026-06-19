@@ -29,6 +29,7 @@ const HomePage = () => {
             className="relative w-full min-h-screen opacity-0"
             style={{ backgroundColor: '#d6b899' }}
         >
+
             {/* Universal Navbar */}
             <Navbar />
 

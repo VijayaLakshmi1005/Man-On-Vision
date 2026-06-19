@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useQuery } from '@apollo/client/react';
-import { GET_PROJECTS } from '../../../graphql/queries';
 
-const fallbackProjects = [
+const projects = [
   { id: 1, title: 'THE FALLEN', sub: 'CONCEPT ART', image: '/assets/gallery/digital_zen.png' },
   { id: 2, title: 'CRIMSON TIDE', sub: 'CINEMATOGRAPHY', image: '/assets/gallery/last_frame.png' },
   { id: 3, title: 'VOID WALKER', sub: '3D RENDER', image: '/assets/gallery/legacy.png' },
@@ -16,10 +14,7 @@ const fallbackProjects = [
 ];
 
 const CinematicCarouselSection = () => {
-  const { data, loading, error } = useQuery(GET_PROJECTS);
-  const projects = data?.projects && data.projects.length > 0 ? data.projects : fallbackProjects;
-
-  const [activeIndex, setActiveIndex] = useState(Math.floor(projects.length / 2)); // Start at the middle item
+  const [activeIndex, setActiveIndex] = useState(4); // Start at the middle item
 
   const handleNext = () => setActiveIndex((prev) => (prev + 1) % projects.length);
   const handlePrev = () => setActiveIndex((prev) => (prev - 1 + projects.length) % projects.length);
@@ -140,7 +135,7 @@ const CinematicCarouselSection = () => {
                     {proj.title}
                   </h3>
                   <p className="font-['Inter'] text-[#ff2b55] font-bold text-[10px] uppercase mt-2 tracking-[0.2em]">
-                    {proj.category || proj.sub}
+                    {proj.sub}
                   </p>
                 </div>
               </motion.div>

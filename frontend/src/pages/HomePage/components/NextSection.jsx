@@ -1,7 +1,5 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { useQuery } from '@apollo/client/react';
-import { GET_VISION_SECTION } from '../../../graphql/queries';
 
 const NextSection = () => {
   // Animation Variants
@@ -44,16 +42,6 @@ const NextSection = () => {
     }
   };
 
-  const { data, loading, error } = useQuery(GET_VISION_SECTION);
-  
-  const visionData = data?.vision || {
-    title: "VISION\nHAS NO\nLIMITS.",
-    highlightedWord: "LIMITS.",
-    description: "We don't follow limits,<br />we transform them into<br />new possibilities.",
-    buttonText: "OUR STORY",
-    artwork: "/assets/heroMOV2.png"
-  };
-
   return (
     <div className="relative w-full h-screen font-sans overflow-hidden" style={{ backgroundColor: '#d6b899' }}>
 
@@ -61,8 +49,8 @@ const NextSection = () => {
       <div className="absolute inset-0 z-0 flex items-start justify-center pointer-events-none">
         <motion.img
           initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }} variants={imageVariants}
-          src={visionData.artwork || "/assets/heroMOV2.png"}
-          alt="Vision Illustration"
+          src="/assets/heroMOV2.png"
+          alt="MOV Illustration 2"
           draggable="false"
           className="w-full h-[85%] object-contain object-[40%_top] select-none"
         />
@@ -85,30 +73,28 @@ const NextSection = () => {
 
             {/* Huge Hero Title */}
             <div className="font-['Bebas_Neue'] text-[7.5vw] leading-[0.85] uppercase flex flex-col tracking-wider -ml-[0.3vw]">
-              {(visionData.title || "VISION\nHAS NO\nLIMITS.").split('\n').map((line, idx) => (
-                <div key={idx} className="overflow-hidden pt-[0.5vw]">
-                  <motion.div variants={textRevealVariants} className="origin-top-left">
-                    {line.split(' ').map((word, wIdx) => (
-                      <span key={wIdx} className={word === visionData.highlightedWord ? 'text-[#F53171] mr-[1.5vw]' : 'text-[#151515] mr-[1.5vw]'}>
-                        {word}
-                      </span>
-                    ))}
-                  </motion.div>
-                </div>
-              ))}
+              <div className="overflow-hidden pt-[0.5vw]">
+                <motion.div variants={textRevealVariants} className="text-[#151515] origin-top-left">VISION</motion.div>
+              </div>
+              <div className="overflow-hidden pt-[0.5vw]">
+                <motion.div variants={textRevealVariants} className="text-[#151515] origin-top-left">HAS NO</motion.div>
+              </div>
+              <div className="overflow-hidden pt-[0.5vw]">
+                <motion.div variants={textRevealVariants} className="text-[#F53171] origin-top-left">LIMITS.</motion.div>
+              </div>
             </div>
 
             {/* Tagline / Paragraph */}
-            <motion.div 
-              variants={slideUpVariants} 
-              className="mt-[2vh] font-['Inter'] text-[1vw] leading-[1.6] font-medium tracking-[0.02vw] text-[#151515]"
-              dangerouslySetInnerHTML={{ __html: (visionData.description || "").replace(/\n/g, '<br/>') }}
-            />
+            <motion.div variants={slideUpVariants} className="mt-[2vh] font-['Inter'] text-[1vw] leading-[1.6] font-medium tracking-[0.02vw] text-[#151515]">
+              We don't follow limits,<br />
+              we transform them into<br />
+              new possibilities.
+            </motion.div>
 
             {/* CTA */}
             <motion.div variants={slideUpVariants} className="mt-[4vh] group inline-block w-fit cursor-pointer">
               <div className="flex items-center gap-[0.5vw] text-[#F53171] font-['Inter'] text-[0.75vw] font-bold tracking-[0.15vw] uppercase">
-                {visionData.buttonText || "OUR STORY"}
+                OUR STORY
                 <span className="text-[1vw] font-normal group-hover:translate-x-[4px] group-hover:-translate-y-[4px] transition-transform">↗</span>
               </div>
               {/* The line below the CTA */}

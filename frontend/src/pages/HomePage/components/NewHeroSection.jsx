@@ -1,7 +1,5 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { useQuery } from '@apollo/client/react';
-import { GET_HERO_SECTION } from '../../../graphql/queries';
 
 const NewHeroSection = () => {
   // Animation Variants
@@ -63,17 +61,6 @@ const NewHeroSection = () => {
     }
   };
 
-  const { data, loading, error } = useQuery(GET_HERO_SECTION);
-
-  const heroData = data?.hero || {
-    title: "MAN ON VISION",
-    highlightedWord: "VISION",
-    subtitle: "VISION FUELS STORIES.<br/>WE BRING THEM TO LIFE.",
-    buttonText: "EXPLORE OUR WORK",
-    buttonLink: "#",
-    heroImage: "/assets/heroMOV.png"
-  };
-
   return (
     <motion.div 
       variants={containerVariants}
@@ -89,8 +76,8 @@ const NewHeroSection = () => {
           initial="hidden"
           animate="visible"
           variants={imageVariants}
-          src={heroData.heroImage || "/assets/heroMOV.png"} 
-          alt="Hero Illustration"
+          src="/assets/heroMOV.png" 
+          alt="Founder Illustration"
           draggable="false"
           className="w-full h-full object-contain object-[right_bottom] select-none"
         />
@@ -116,36 +103,32 @@ const NewHeroSection = () => {
           
           {/* Huge Hero Title - Staggered Letter Reveal (Drops from TOP) */}
           <div className="font-['Bebas_Neue'] text-[7.5vw] leading-[0.85] uppercase flex flex-col tracking-wider -ml-[0.3vw]">
-            {(heroData.title || "MAN ON VISION").split(' ').map((word, idx) => (
-              <div key={idx} className="overflow-hidden pt-[0.5vw]">
-                <motion.div 
-                  variants={textRevealVariants} 
-                  className={`${word === heroData.highlightedWord ? 'text-[#F53171]' : 'text-[#151515]'} origin-top-left`}
-                >
-                  {word}
-                </motion.div>
-              </div>
-            ))}
+            <div className="overflow-hidden pt-[0.5vw]">
+              <motion.div variants={textRevealVariants} className="text-[#151515] origin-top-left">MAN</motion.div>
+            </div>
+            <div className="overflow-hidden pt-[0.5vw]">
+              <motion.div variants={textRevealVariants} className="text-[#151515] origin-top-left">ON</motion.div>
+            </div>
+            <div className="overflow-hidden pt-[0.5vw]">
+              <motion.div variants={textRevealVariants} className="text-[#F53171] origin-top-left">VISION</motion.div>
+            </div>
           </div>
 
           {/* Tagline */}
-          <motion.div 
-            variants={slideUpVariants} 
-            className="mt-[2vh] font-['Inter'] text-[1vw] leading-[1.4] font-medium tracking-[0.05vw] text-[#151515]"
-            dangerouslySetInnerHTML={{ 
-              __html: (heroData.subtitle || "").replace(/\n/g, '<br/>').replace(new RegExp(heroData.highlightedWord, 'g'), `<span class="text-[#F53171]">${heroData.highlightedWord}</span>`) 
-            }}
-          />
+          <motion.div variants={slideUpVariants} className="mt-[2vh] font-['Inter'] text-[1vw] leading-[1.4] font-medium tracking-[0.05vw] text-[#151515]">
+            <span className="text-[#F53171]">VISION</span> <span>FUELS STORIES.</span><br/>
+            <span>WE BRING THEM TO LIFE.</span>
+          </motion.div>
 
           {/* CTA */}
-          <motion.a href={heroData.buttonLink || "#"} variants={slideUpVariants} className="mt-[4vh] group inline-block w-fit cursor-pointer">
+          <motion.div variants={slideUpVariants} className="mt-[4vh] group inline-block w-fit cursor-pointer">
             <div className="flex items-center gap-[0.5vw] text-[#F53171] font-['Inter'] text-[0.75vw] font-bold tracking-[0.15vw] uppercase">
-              {heroData.buttonText || "EXPLORE OUR WORK"}
+              EXPLORE OUR WORK
               <span className="text-[1vw] font-normal group-hover:translate-x-[4px] group-hover:-translate-y-[4px] transition-transform">↗</span>
             </div>
             {/* The line below the CTA */}
             <div className="w-full h-[1px] bg-[#F53171] mt-[0.5vw] opacity-40 group-hover:opacity-100 transition-opacity"></div>
-          </motion.a>
+          </motion.div>
         </div>
 
         {/* Social Links (Pinned to Bottom) */}

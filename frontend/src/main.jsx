@@ -9,24 +9,19 @@ import { ThemeProvider } from './context/ThemeContext'
 import { Provider } from 'react-redux';
 import { store } from './store/store';
 
-import { ApolloProvider } from '@apollo/client/react';
-import apolloClient from './apollo/client';
-
 const rootElement = document.getElementById('root');
 if (rootElement) {
   const root = createRoot(rootElement);
   root.render(
     <StrictMode>
       <Provider store={store}>
-        <ApolloProvider client={apolloClient}>
-          <BrowserRouter>
-            <AuthProvider>
-              <ThemeProvider>
-                <App />
-              </ThemeProvider>
-            </AuthProvider>
-          </BrowserRouter>
-        </ApolloProvider>
+        <BrowserRouter>
+          <AuthProvider>
+            <ThemeProvider>
+              <App />
+            </ThemeProvider>
+          </AuthProvider>
+        </BrowserRouter>
       </Provider>
     </StrictMode>,
   );

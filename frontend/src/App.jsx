@@ -12,7 +12,6 @@ import PageTransition from './components/common/PageTransition';
 import LoadingScreen from './components/common/LoadingScreen';
 import ScrollToTop from './components/common/ScrollToTop';
 import MainLayout from './components/common/MainLayout';
-import { usePreloadData } from './hooks/usePreloadData';
 
 // Lazy load the main components
 const HomePage = lazy(() => import('./pages/HomePage/HomePage'));
@@ -96,12 +95,12 @@ const PortalLayout = () => {
         <ClientSidebar onClose={() => setIsSidebarOpen(false)} />
       </div>
 
-      <div className="flex-1 flex flex-col min-w-0 relative">
+      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto relative">
         <div className="lg:hidden">
           <ClientHeader toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
         </div>
 
-        <main className="flex-1 w-full max-w-[1200px] px-4 md:px-6 lg:px-8 py-6 lg:py-8 space-y-8 lg:space-y-12 pt-20 lg:pt-8 pb-32 lg:pb-12 mx-auto overflow-y-auto overscroll-contain" data-lenis-prevent style={{ WebkitOverflowScrolling: 'touch' }}>
+        <main className="flex-1 w-full max-w-[1200px] px-4 md:px-6 lg:px-8 py-6 lg:py-8 space-y-8 lg:space-y-12 pt-20 lg:pt-8 pb-32 lg:pb-12 mx-auto">
           <div className="mb-4 flex justify-between items-center relative z-50">
             <Breadcrumbs />
 
@@ -146,7 +145,6 @@ function App() {
   const location = useLocation();
   const { isDarkMode } = useTheme();
   const [siteLoading, setSiteLoading] = useState(true);
-  const { isReady } = usePreloadData();
 
   return (
     <LenisProvider>
@@ -157,7 +155,7 @@ function App() {
       }`}>
         <ScrollToTop />
         <AnimatePresence mode="wait">
-          {siteLoading && <LoadingScreen key="site-loader" isLoading={!isReady} onFinished={() => setSiteLoading(false)} />}
+          {siteLoading && <LoadingScreen key="site-loader" onFinished={() => setSiteLoading(false)} />}
         </AnimatePresence>
 
         <Toaster position="top-right" />

@@ -1,24 +1,18 @@
 import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { useQuery } from '@apollo/client/react';
-import { GET_SERVICES } from '../../../graphql/queries';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const FourthSection = () => {
   const containerRef = useRef(null);
 
-  const { data, loading, error } = useQuery(GET_SERVICES);
-
-  const fallbackServices = [
-    { image: '/assets/gallery/digital_zen.png', title: 'CINEMATOGRAPHY' },
-    { image: '/assets/gallery/neon_nights.png', title: 'POST-PRODUCTION' },
-    { image: '/assets/gallery/visionary.png', title: 'CREATIVE DIR.' },
-    { image: '/assets/gallery/legacy.png', title: 'CONCEPTUALIZATION' }
+  const services = [
+    { src: '/assets/gallery/digital_zen.png', title: 'CINEMATOGRAPHY' },
+    { src: '/assets/gallery/neon_nights.png', title: 'POST-PRODUCTION' },
+    { src: '/assets/gallery/visionary.png', title: 'CREATIVE DIR.' },
+    { src: '/assets/gallery/legacy.png', title: 'CONCEPTUALIZATION' }
   ];
-
-  const services = data?.services && data.services.length > 0 ? data.services : fallbackServices;
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -73,7 +67,7 @@ const FourthSection = () => {
           <div key={idx} className="relative flex-1 h-full overflow-hidden">
             <div 
               className={`reveal-img-${idx} absolute inset-0 w-full h-full bg-cover bg-center will-change-transform flex items-center justify-center`}
-              style={{ backgroundImage: `url('${service.image || service.src}')` }}
+              style={{ backgroundImage: `url('${service.src}')` }}
             >
               {/* Vertical Text Overlay */}
               <div 

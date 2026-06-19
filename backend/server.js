@@ -42,8 +42,7 @@ app.set('onlineUsers', onlineUsers);
 // CRITICAL: Attach io instance so routes can access it for real-time broadcasts
 app.set('io', io);
 
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(express.json());
 const allowedOrigins = [
     process.env.FRONTEND_URL ? process.env.FRONTEND_URL.replace(/\/$/, "") : null
 ].filter(Boolean);
@@ -164,6 +163,10 @@ io.on('connection', (socket) => {
         socket.broadcast.to(chatId).emit('chat_seen', data);
         socket.broadcast.to('admin').emit('chat_seen', data);
     });
+
+    socket.on('disconnect', () => {
+        console.log('User disconnected');
+    });
 });
 
 app.set('io', io);
@@ -205,7 +208,7 @@ authRouter.post('/register', async (req, res) => {
         let user = await User.findOne({ email });
         if (user) return res.status(400).json({ msg: "User already exists" });
 
-        const hashedPassword = await bcrypt.hash(password, 12);
+        const hashedPassword = await bcrypt.hash(password, 10);
         user = new User({ firstName, lastName, email, password: hashedPassword });
         await user.save();
 
@@ -440,19 +443,7 @@ app.use('/api/services', serviceRoutes);
 app.use('/api/games', require('./routes/gameRoutes'));
 app.use('/api/admin/games', require('./routes/adminGameRoutes'));
 
-// --- Apollo GraphQL Server Configuration ---
-const { ApolloServer } = require('@apollo/server');
-const { expressMiddleware } = require('@apollo/server/express4');
-const typeDefs = require('./graphql/schema');
-const resolvers = require('./graphql/resolvers');
 
-async function startApolloServer() {
-    const apolloServer = new ApolloServer({ typeDefs, resolvers });
-    await apolloServer.start();
-    app.use('/graphql', express.json(), expressMiddleware(apolloServer));
-    console.log('🔮 GraphQL API running at /graphql');
-}
-startApolloServer().catch(err => console.error("Apollo Server Error:", err));
 
 // --- Standalone API Configuration ---
 // Root route for initial verification
@@ -480,30 +471,5 @@ server.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 API Server running on port ${PORT}`);
     console.log(`🔗 CORS configured for: ${allowedOrigins.join(', ')}`);
     console.log('-------------------------------------------');
-});
-
-// Graceful shutdown
-process.on('SIGTERM', () => {
-    console.log('SIGTERM received. Shutting down gracefully...');
-    server.close(() => {
-        mongoose.connection.close();
-        process.exit(0);
-    });
-});
-
-process.on('SIGINT', () => {
-    console.log('SIGINT received. Shutting down gracefully...');
-    server.close(() => {
-        mongoose.connection.close();
-        process.exit(0);
-    });
-});
-
-// Error handling middleware
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(err.status || 500).json({
-        msg: process.env.NODE_ENV === 'production' ? 'Internal server error' : err.message
-    });
 });
 // Trigger Restart
