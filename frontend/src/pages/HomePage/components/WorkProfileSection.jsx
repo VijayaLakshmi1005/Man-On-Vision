@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import CinematicCarouselSection from './CinematicCarouselSection';
+import EditableElement from './AdminEditor/EditableElement';
 
 const WorkProfileSection = () => {
 
@@ -18,27 +19,27 @@ const WorkProfileSection = () => {
             className="my-auto z-50 relative" 
             initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}
           >
-            <p className="font-['Inter'] font-medium text-[clamp(12px,1vw,14px)] tracking-[2px] text-[#111111] uppercase mb-[16px]">
+            <EditableElement section="workProfileSection" fieldKey="subtitle" as="p" className="font-['Inter'] font-medium text-[clamp(12px,1vw,14px)] tracking-[2px] text-[#111111] uppercase mb-[16px]">
               SELECTED WORKS
-            </p>
+            </EditableElement>
             <h2 className="font-['Bebas_Neue'] text-[clamp(50px,5vw,100px)] leading-[0.85] font-bold tracking-normal flex flex-col mb-[24px] whitespace-nowrap">
-              <span className="text-[#111111]">VISIONS</span>
-              <span className="text-[#FF1D48]">MADE REAL</span>
+              <EditableElement section="workProfileSection" fieldKey="titleLine1" as="span" className="text-[#111111]">VISIONS</EditableElement>
+              <EditableElement section="workProfileSection" fieldKey="titleLine2" as="span" className="text-[#FF1D48]">MADE REAL</EditableElement>
             </h2>
             <div className="w-[80px] h-[6px] bg-[#FF1D48] rounded-full" />
             
             {/* New Text Block */}
             <div className="mt-[30px] flex flex-col gap-5">
-              <p className="font-['Inter'] font-medium text-[#111111] text-[clamp(14px,1.2vw,18px)] leading-[1.6] max-w-[320px]">
+              <EditableElement section="workProfileSection" fieldKey="description" as="p" className="font-['Inter'] font-medium text-[#111111] text-[clamp(14px,1.2vw,18px)] leading-[1.6] max-w-[320px] whitespace-pre-line">
                 We sculpt raw imagination, <br/>
                 translating bold visions into <br/>
                 cinematic realities.
-              </p>
+              </EditableElement>
               
               {/* Our Works Link */}
               <div className="group flex flex-col w-fit cursor-pointer mt-2 ml-[12px]">
                 <div className="flex items-center gap-2 text-[#FF1D48] font-bold text-[12px] tracking-[0.15em] uppercase">
-                  OUR WORKS <span className="text-[14px] font-normal group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">↗</span>
+                  <EditableElement section="workProfileSection" fieldKey="ctaText" as="span">OUR WORKS</EditableElement> <span className="text-[14px] font-normal group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">↗</span>
                 </div>
                 <div className="w-full h-[1px] bg-[#FF1D48]/40 mt-[6px] group-hover:bg-[#FF1D48] transition-colors" />
               </div>

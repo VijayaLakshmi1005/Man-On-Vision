@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import EditableElement from './AdminEditor/EditableElement';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -70,12 +71,16 @@ const FourthSection = () => {
               style={{ backgroundImage: `url('${service.src}')` }}
             >
               {/* Vertical Text Overlay */}
-              <div 
+              <EditableElement 
+                section="fourthSection" 
+                fieldKey="services" 
+                index={idx}
+                as="div"
                 className="relative z-10 text-white font-['Bebas_Neue'] text-[4vw] md:text-[5vw] tracking-[0.15em] drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]" 
                 style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
               >
                 {service.title}
-              </div>
+              </EditableElement>
             </div>
           </div>
         ))}
@@ -85,18 +90,19 @@ const FourthSection = () => {
       <div className="absolute inset-0 flex flex-col items-center justify-center z-10 pointer-events-none">
         
         <h2 className="font-['Bebas_Neue'] text-[clamp(80px,12vw,160px)] text-white leading-[0.85] uppercase tracking-wider text-center flex flex-wrap justify-center gap-x-[2vw] drop-shadow-2xl">
-          <span>OUR</span> <span className="text-[#F53171]">SERVICES</span>
+          <EditableElement section="fourthSection" fieldKey="titlePrefix" as="span">OUR</EditableElement> 
+          <EditableElement section="fourthSection" fieldKey="titleSuffix" as="span" className="text-[#F53171]">SERVICES</EditableElement>
         </h2>
 
         {/* Filling Tagline Text */}
-        <p className="mt-[4vh] font-['Inter'] text-[clamp(14px,1vw,18px)] leading-[1.6] font-medium text-white/90 text-center max-w-[450px] drop-shadow-lg">
+        <EditableElement section="fourthSection" fieldKey="description" as="p" className="mt-[4vh] font-['Inter'] text-[clamp(14px,1vw,18px)] leading-[1.6] font-medium text-white/90 text-center max-w-[450px] drop-shadow-lg">
           From conceptualization to the final cinematic cut, we craft tailored visual experiences that transcend boundaries and bring your boldest ideas to life.
-        </p>
+        </EditableElement>
 
         {/* CTA Link matching previous sections */}
         <div className="mt-[4vh] group inline-flex flex-col items-center cursor-pointer pointer-events-auto">
           <div className="flex items-center gap-[8px] text-[#FF1D48] font-['Inter'] text-[14px] font-bold tracking-[0.15em] uppercase drop-shadow-md">
-            SHARE YOUR VISION
+            <EditableElement section="fourthSection" fieldKey="ctaText" as="span">SHARE YOUR VISION</EditableElement>
             <span className="text-[18px] font-normal group-hover:translate-x-[4px] group-hover:-translate-y-[4px] transition-transform">↗</span>
           </div>
           <div className="w-full h-[1px] bg-[#FF1D48]/40 mt-[8px] group-hover:bg-[#FF1D48] transition-colors" />

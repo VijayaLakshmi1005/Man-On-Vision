@@ -170,7 +170,7 @@ function App() {
                   <Route path="/quote" element={<GetQuote />} />
                 </Route>
                 
-                <Route element={<ProtectedRoute allowedRoles={['client']} />}>
+                <Route element={<ProtectedRoute allowedRoles={['client', 'admin']} />}>
                   <Route path="/portal" element={<PortalLayout />}>
                     <Route index element={<ClientDashboard />} />
                     <Route path="gallery" element={<ClientGallery />} />

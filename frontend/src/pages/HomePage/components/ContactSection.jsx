@@ -1,4 +1,5 @@
 import React from 'react';
+import EditableElement from './AdminEditor/EditableElement';
 
 const ContactSection = () => {
   // SVG for the old-fashioned film tape with REAL transparent holes using an SVG mask and TORN edges
@@ -36,7 +37,7 @@ const ContactSection = () => {
           <path id="circlePath" d="M 50, 50 m -37, 0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0" fill="none" />
           <text fill="#111111" className="font-['Inter'] font-bold text-[10.5px] tracking-[0.25em] uppercase">
             <textPath href="#circlePath" startOffset="0%">
-              • PREMIUM CINEMATOGRAPHY • EST. 2026 
+              <EditableElement section="contactSection" fieldKey="spinningBadge" as="tspan">• PREMIUM CINEMATOGRAPHY • EST. 2026</EditableElement> 
             </textPath>
           </text>
         </svg>
@@ -49,16 +50,16 @@ const ContactSection = () => {
             {/* We render exactly identical sets of content to make the -50% jump invisible */}
             <div className="flex w-1/2 h-full justify-around items-center">
               {[...Array(4)].map((_, i) => (
-                <span key={`a-${i}`} className="whitespace-nowrap font-['Bebas_Neue'] text-[#F53171] text-[60px] tracking-[0.2em] pt-2 opacity-80 blur-[0.5px]">
-                  LET'S CREATE A MASTERPIECE <span className="text-[#e0d6cc] mx-8">●</span>
-                </span>
+                <EditableElement key={`a-${i}`} section="contactSection" fieldKey="tape1Text" as="span" className="whitespace-nowrap font-['Bebas_Neue'] text-[#F53171] text-[60px] tracking-[0.2em] pt-2 opacity-80 blur-[0.5px]">
+                  LET'S CREATE A MASTERPIECE ●
+                </EditableElement>
               ))}
             </div>
             <div className="flex w-1/2 h-full justify-around items-center">
               {[...Array(4)].map((_, i) => (
-                <span key={`b-${i}`} className="whitespace-nowrap font-['Bebas_Neue'] text-[#F53171] text-[60px] tracking-[0.2em] pt-2 opacity-80 blur-[0.5px]">
-                  LET'S CREATE A MASTERPIECE <span className="text-[#e0d6cc] mx-8">●</span>
-                </span>
+                <EditableElement key={`b-${i}`} section="contactSection" fieldKey="tape1Text" as="span" className="whitespace-nowrap font-['Bebas_Neue'] text-[#F53171] text-[60px] tracking-[0.2em] pt-2 opacity-80 blur-[0.5px]">
+                  LET'S CREATE A MASTERPIECE ●
+                </EditableElement>
               ))}
             </div>
          </div>
@@ -69,16 +70,16 @@ const ContactSection = () => {
          <div className="flex h-full w-[200%] animate-tape-reverse film-tape-bg">
             <div className="flex w-1/2 h-full justify-around items-center">
               {[...Array(4)].map((_, i) => (
-                <span key={`c-${i}`} className="whitespace-nowrap font-['Bebas_Neue'] text-[#e0d6cc] text-[60px] tracking-[0.2em] pt-2 opacity-80 blur-[0.5px]">
-                  YOUR VISION, OUR LENS <span className="text-[#F53171] mx-8">●</span>
-                </span>
+                <EditableElement key={`c-${i}`} section="contactSection" fieldKey="tape2Text" as="span" className="whitespace-nowrap font-['Bebas_Neue'] text-[#e0d6cc] text-[60px] tracking-[0.2em] pt-2 opacity-80 blur-[0.5px]">
+                  YOUR VISION, OUR LENS ●
+                </EditableElement>
               ))}
             </div>
             <div className="flex w-1/2 h-full justify-around items-center">
               {[...Array(4)].map((_, i) => (
-                <span key={`d-${i}`} className="whitespace-nowrap font-['Bebas_Neue'] text-[#e0d6cc] text-[60px] tracking-[0.2em] pt-2 opacity-80 blur-[0.5px]">
-                  YOUR VISION, OUR LENS <span className="text-[#F53171] mx-8">●</span>
-                </span>
+                <EditableElement key={`d-${i}`} section="contactSection" fieldKey="tape2Text" as="span" className="whitespace-nowrap font-['Bebas_Neue'] text-[#e0d6cc] text-[60px] tracking-[0.2em] pt-2 opacity-80 blur-[0.5px]">
+                  YOUR VISION, OUR LENS ●
+                </EditableElement>
               ))}
             </div>
          </div>
@@ -88,14 +89,15 @@ const ContactSection = () => {
       <div className="relative z-20 flex flex-col items-center justify-center max-w-4xl w-[90%] text-center">
         
         <h2 className="font-['Bebas_Neue'] text-[70px] md:text-[120px] text-white leading-[0.85] mb-6 tracking-wider [-webkit-text-stroke:_1px_#000] [text-shadow:_0_4px_30px_#000,_0_0_80px_#000]">
-          LET'S <span className="text-[#F53171] [-webkit-text-stroke:_1px_#000]">CREATE</span>
+          <EditableElement section="contactSection" fieldKey="titleLine1" as="span">LET'S</EditableElement> 
+          <EditableElement section="contactSection" fieldKey="titleLine2" as="span" className="text-[#F53171] [-webkit-text-stroke:_1px_#000] ml-[20px]">CREATE</EditableElement>
         </h2>
         
 
         {/* Classy, Minimal Link with Animated Underline */}
         <a href="mailto:hello@manonvision.com" className="group relative inline-flex items-center gap-3 text-[#111111] font-['Inter'] font-bold tracking-[0.2em] text-sm md:text-lg transition-colors [text-shadow:_0_0_15px_rgba(255,255,255,0.8),_0_0_30px_rgba(255,255,255,0.6)] mt-2">
           <span className="relative pb-1">
-            HELLO@MANONVISION.COM
+            <EditableElement section="contactSection" fieldKey="email" as="span">HELLO@MANONVISION.COM</EditableElement>
             {/* Minimal Underline that expands on hover */}
             <span className="absolute left-0 bottom-0 w-full h-[2px] bg-[#F53171] transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out" />
           </span>
@@ -104,11 +106,11 @@ const ContactSection = () => {
 
         {/* Social Links in White */}
         <div className="flex flex-wrap items-center justify-center gap-6 mt-16 font-['Inter'] font-bold text-[10px] md:text-xs tracking-[0.2em] md:tracking-[0.3em] text-white [text-shadow:_0_2px_8px_#000,_0_0_20px_#000]">
-          <a href="#" className="hover:text-[#F53171] hover:-translate-y-1 transition-all">INSTAGRAM</a>
+          <a href="#" className="hover:text-[#F53171] hover:-translate-y-1 transition-all"><EditableElement section="contactSection" fieldKey="social1" as="span">INSTAGRAM</EditableElement></a>
           <span className="opacity-50 text-white">|</span>
-          <a href="#" className="hover:text-[#F53171] hover:-translate-y-1 transition-all">LINKEDIN</a>
+          <a href="#" className="hover:text-[#F53171] hover:-translate-y-1 transition-all"><EditableElement section="contactSection" fieldKey="social2" as="span">LINKEDIN</EditableElement></a>
           <span className="opacity-50 text-white">|</span>
-          <a href="#" className="hover:text-[#F53171] hover:-translate-y-1 transition-all">YOUTUBE</a>
+          <a href="#" className="hover:text-[#F53171] hover:-translate-y-1 transition-all"><EditableElement section="contactSection" fieldKey="social3" as="span">YOUTUBE</EditableElement></a>
         </div>
 
       </div>

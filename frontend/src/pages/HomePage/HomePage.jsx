@@ -7,6 +7,7 @@ import NextSection from './components/NextSection';
 import WorkProfileSection from './components/WorkProfileSection';
 import FourthSection from './components/FourthSection';
 import ContactSection from './components/ContactSection';
+import AdminPenIcon from './components/AdminEditor/AdminPenIcon';
 
 const HomePage = () => {
     const mainRef = useRef(null);
@@ -32,6 +33,7 @@ const HomePage = () => {
 
             {/* Universal Navbar */}
             <Navbar />
+            <AdminPenIcon />
 
 
 

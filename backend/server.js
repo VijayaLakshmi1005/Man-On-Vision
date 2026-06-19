@@ -442,6 +442,7 @@ app.use('/api/admin-users', require('./routes/adminUserRoutes'));
 app.use('/api/services', serviceRoutes);
 app.use('/api/games', require('./routes/gameRoutes'));
 app.use('/api/admin/games', require('./routes/adminGameRoutes'));
+app.use('/api/content', require('./routes/content'));
 
 
 

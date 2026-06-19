@@ -1,7 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import EditableElement from './AdminEditor/EditableElement';
+import { useContent } from '../../../context/ContentContext';
 
 const NewHeroSection = () => {
+  const { content } = useContent();
+  const heroContent = content?.heroSection || {};
+
   // Animation Variants
   const containerVariants = {
     hidden: { opacity: 1 },
@@ -97,37 +102,36 @@ const NewHeroSection = () => {
         {/* Center Text Block */}
         <div className="flex flex-col mt-[16vh] mb-auto pb-[6vh]">
           {/* Small Header */}
-          <motion.div variants={slideUpVariants} className="font-['Inter'] text-[0.7vw] font-bold tracking-[0.2vw] uppercase text-[#151515] mb-[1vh]">
-            Media Production Company
+          <motion.div variants={slideUpVariants} className="font-['Inter'] font-bold uppercase mb-[1vh]">
+             <EditableElement section="heroSection" fieldKey="smallHeader" className="tracking-[0.2vw]" />
           </motion.div>
           
           {/* Huge Hero Title - Staggered Letter Reveal (Drops from TOP) */}
           <div className="font-['Bebas_Neue'] text-[7.5vw] leading-[0.85] uppercase flex flex-col tracking-wider -ml-[0.3vw]">
-            <div className="overflow-hidden pt-[0.5vw]">
-              <motion.div variants={textRevealVariants} className="text-[#151515] origin-top-left">MAN</motion.div>
-            </div>
-            <div className="overflow-hidden pt-[0.5vw]">
-              <motion.div variants={textRevealVariants} className="text-[#151515] origin-top-left">ON</motion.div>
-            </div>
-            <div className="overflow-hidden pt-[0.5vw]">
-              <motion.div variants={textRevealVariants} className="text-[#F53171] origin-top-left">VISION</motion.div>
-            </div>
+            {(heroContent.titleBlocks || []).map((block, i) => (
+               <div key={block.id || i} className="overflow-hidden pt-[0.5vw]">
+                 <motion.div variants={textRevealVariants} className="origin-top-left">
+                    <EditableElement section="heroSection" fieldKey="titleBlocks" index={i} />
+                 </motion.div>
+               </div>
+            ))}
           </div>
 
           {/* Tagline */}
-          <motion.div variants={slideUpVariants} className="mt-[2vh] font-['Inter'] text-[1vw] leading-[1.4] font-medium tracking-[0.05vw] text-[#151515]">
-            <span className="text-[#F53171]">VISION</span> <span>FUELS STORIES.</span><br/>
-            <span>WE BRING THEM TO LIFE.</span>
+          <motion.div variants={slideUpVariants} className="mt-[2vh] font-['Inter'] text-[1vw] leading-[1.4] font-medium tracking-[0.05vw]">
+            <EditableElement section="heroSection" fieldKey="tagline" index="line1A" as="span" />{" "}
+            <EditableElement section="heroSection" fieldKey="tagline" index="line1B" as="span" /><br/>
+            <EditableElement section="heroSection" fieldKey="tagline" index="line2" as="span" />
           </motion.div>
 
           {/* CTA */}
           <motion.div variants={slideUpVariants} className="mt-[4vh] group inline-block w-fit cursor-pointer">
-            <div className="flex items-center gap-[0.5vw] text-[#F53171] font-['Inter'] text-[0.75vw] font-bold tracking-[0.15vw] uppercase">
-              EXPLORE OUR WORK
+            <div className="flex items-center gap-[0.5vw] font-['Inter'] text-[0.75vw] font-bold tracking-[0.15vw] uppercase">
+              <EditableElement section="heroSection" fieldKey="cta" as="span" />
               <span className="text-[1vw] font-normal group-hover:translate-x-[4px] group-hover:-translate-y-[4px] transition-transform">↗</span>
             </div>
             {/* The line below the CTA */}
-            <div className="w-full h-[1px] bg-[#F53171] mt-[0.5vw] opacity-40 group-hover:opacity-100 transition-opacity"></div>
+            <div className="w-full h-[1px] bg-current mt-[0.5vw] opacity-40 group-hover:opacity-100 transition-opacity"></div>
           </motion.div>
         </div>
 

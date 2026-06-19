@@ -6,6 +6,7 @@ import App from './App.jsx'
 
 import { AuthProvider } from './context/AuthContext'
 import { ThemeProvider } from './context/ThemeContext'
+import { ContentProvider } from './context/ContentContext'
 import { Provider } from 'react-redux';
 import { store } from './store/store';
 
@@ -18,7 +19,9 @@ if (rootElement) {
         <BrowserRouter>
           <AuthProvider>
             <ThemeProvider>
-              <App />
+              <ContentProvider>
+                <App />
+              </ContentProvider>
             </ThemeProvider>
           </AuthProvider>
         </BrowserRouter>
